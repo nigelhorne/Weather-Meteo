@@ -14,5 +14,8 @@ t/eol.t
 t/links.t
 t/no404s.t
 t/noplan.t
+t/pod-cm.t
+t/pod-coverage.t
+t/pod-snippets.t
 t/pod-spelling.t
 t/weather.t

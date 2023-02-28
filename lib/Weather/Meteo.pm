@@ -1,4 +1,4 @@
-package Weather::Meteo
+package Weather::Meteo;
 
 use strict;
 use warnings;
@@ -28,7 +28,7 @@ our $VERSION = '0.01';
       use Weather::Meteo
 
       my $meteo = Weather::Meteo->new();
-      my $weather = $meteo->weather({ latitude => '0.1', longitude => '0.2', date => '25/12/2022' });
+      my $weather = $meteo->weather({ latitude => '0.1', longitude => '0.2', date => '2022-12-25' });
 
 =head1 DESCRIPTION
 
@@ -76,34 +76,39 @@ sub new {
 
 =cut
 
-sub geocode {
+sub weather {
 	my $self = shift;
 	my %param;
 
 	if(ref($_[0]) eq 'HASH') {
 		%param = %{$_[0]};
 	} elsif(ref($_[0])) {
-		Carp::croak('Usage: geocode(location => $location)');
+		Carp::croak('Usage: weather(latitude => $latitude, longitude => $logitude, date => "YYYY-MM-DD")');
 		return;
 	} elsif(@_ % 2 == 0) {
 		%param = @_;
-	} else {
-		$param{location} = shift;
 	}
 
-	my $location = $param{location};
-	if(!defined($location)) {
-		Carp::croak('Usage: geocode(location => $location)');
+	my $latitude = $param{latitude};
+	my $longitude = $param{longitude};
+	my $date = $param{'date'};
+
+	if(!defined($latitude)) {
+		Carp::croak('Usage: weather(latitude => $latitude, longitude => $logitude, date => "YYYY-MM-DD")');
 		return;
 	}
 
-	if (Encode::is_utf8($location)) {
-		$location = Encode::encode_utf8($location);
-	}
-
-	my $uri = URI->new("https://$self->{host}/some_location");
-	$location =~ s/\s/+/g;
-	my %query_parameters = ('locate' => $location, 'json' => 1, 'strictmode' => 1);
+	my $uri = URI->new("https://$self->{host}/va/archive");
+	my %query_parameters = (
+		'latitude' => $latitude,
+		'longitude' => $longitude,
+		'start_date' => $date,
+		'end_date' => $date,
+		'hourly' => 'temperature_2m,rain,snowfall,weathercode',
+		'timezone' => 'Europe%2FLondon',
+		'windspeed_unit' => 'mph',
+		'priciptation_unit' => 'inch'
+	);
 	$uri->query_form(%query_parameters);
 	my $url = $uri->as_string();
 
@@ -122,23 +127,9 @@ sub geocode {
 			# TODO - send patch to the H:G:V3 author
 			return;
 		}
-		if(defined($rc->{'latt'}) && defined($rc->{'longt'})) {
+		if(defined($rc->{'hourly'})) {
 			return $rc;	# No support for list context, yet
 		}
-
-		# if($location =~ /^(\w+),\+*(\w+),\+*(USA|US|United States)$/i) {
-			# $query_parameters{'locate'} = "$1 County, $2, $3";
-			# $uri->query_form(%query_parameters);
-			# $url = $uri->as_string();
-			#
-			# $res = $self->{ua}->get($url);
-			#
-			# if($res->is_error()) {
-				# Carp::croak("geocoder.ca API returned error: " . $res->status_line());
-				# return;
-			# }
-			# return $json->decode($res->content());
-		# }
 	}
 
 	# my @results = @{ $data || [] };
@@ -167,30 +158,6 @@ sub ua {
 		$self->{ua} = shift;
 	}
 	$self->{ua};
-}
-
-=head2 reverse_geocode
-
-    $location = $geo_coder->reverse_geocode(latlng => '37.778907,-122.39732');
-
-Similar to geocode except it expects a latitude/longitude parameter.
-
-=cut
-
-sub reverse_geocode {
-	my $self = shift;
-
-	my %param;
-	if (@_ % 2 == 0) {
-		%param = @_;
-	} else {
-		$param{latlng} = shift;
-	}
-
-	my $latlng = $param{latlng}
-		or Carp::croak('Usage: reverse_geocode(latlng => $latlng)');
-
-	return $self->geocode(location => $latlng, reverse => 1);
 }
 
 =head2 run
@@ -223,12 +190,10 @@ sub run {
 
 Nigel Horne, C<< <njh@bandsman.co.uk> >>
 
-Based on L<Geo::Coder::Googleplaces>.
-
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
-Lots of thanks to the folks at geocoder.ca.
+Lots of thanks to the folks at open-meteo.com.
 
 =head1 BUGS
 
@@ -236,11 +201,9 @@ Should be called Geo::Coder::NA for North America.
 
 =head1 SEE ALSO
 
-L<Geo::Coder::GooglePlaces>, L<HTML::GoogleMaps::V3>
-
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2017-2023 Nigel Horne.
+Copyright 2023 Nigel Horne.
 
 This program is released under the following licence: GPL2
 

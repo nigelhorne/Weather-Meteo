@@ -20,13 +20,11 @@ if($ENV{AUTHOR_TESTING}) {
 	}
 }
 
-
 my $test_requires = {
 	'autodie' => 0,
 	'IPC::System::Simple' => 0,	# http://www.cpantesters.org/cpan/report/0b994acc-7a03-11e8-a944-5f7713bf8fb6
 	'Test::Most' => 0,
 	'Test::NoWarnings' => 0,
-	'Test::Number::Delta' => 0,
 	'Test::Carp' => 0,
 	'Test::Script' => 1.12,
 	'WWW::RT::CPAN' => 0

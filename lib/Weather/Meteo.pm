@@ -61,7 +61,7 @@ sub new {
 		$ua = LWP::UserAgent->new(agent => __PACKAGE__ . "/$VERSION");
 		$ua->default_header(accept_encoding => 'gzip,deflate');
 	}
-	my $host = $args{host} || 'open-meteo.com';
+	my $host = $args{host} || 'archive-api.open-meteo.com';
 
 	return bless { ua => $ua, host => $host }, $class;
 }
@@ -98,19 +98,21 @@ sub weather {
 		return;
 	}
 
-	my $uri = URI->new("https://$self->{host}/va/archive");
+	my $uri = URI->new("https://$self->{host}/v1/archive");
 	my %query_parameters = (
 		'latitude' => $latitude,
 		'longitude' => $longitude,
 		'start_date' => $date,
 		'end_date' => $date,
 		'hourly' => 'temperature_2m,rain,snowfall,weathercode',
-		'timezone' => 'Europe%2FLondon',
+		'timezone' => 'Europe/London',
 		'windspeed_unit' => 'mph',
-		'priciptation_unit' => 'inch'
+		'precipitation_unit' => 'inch'
 	);
 	$uri->query_form(%query_parameters);
 	my $url = $uri->as_string();
+
+	$url =~ s/%2C/,/g;
 
 	my $res = $self->{ua}->get($url);
 

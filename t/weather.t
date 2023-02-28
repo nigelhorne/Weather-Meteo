@@ -13,10 +13,10 @@ WEATHER: {
 		if(!-e 't/online.enabled') {
 			if(!$ENV{AUTHOR_TESTING}) {
 				diag('Author tests not required for installation');
-				skip('Author tests not required for installation', 4);
+				skip('Author tests not required for installation', 3);
 			} else {
 				diag('Test requires Internet access');
-				skip('Test requires Internet access', 4);
+				skip('Test requires Internet access', 3);
 			}
 		}
 

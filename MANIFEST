@@ -11,6 +11,7 @@ t/20-new.t
 t/comment-spelling.t
 t/eof.t
 t/eol.t
+t/links.t
 t/noplan.t
 t/pod-spelling.t
 t/weather.t

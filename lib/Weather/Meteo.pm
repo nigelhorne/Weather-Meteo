@@ -28,7 +28,7 @@ our $VERSION = '0.02';
       use Weather::Meteo;
 
       my $meteo = Weather::Meteo->new();
-      my $weather = $meteo->weather({ latitude => '0.1', longitude => '0.2', date => '2022-12-25' });
+      my $weather = $meteo->weather({ latitude => 0.1, longitude => 0.2, date => '2022-12-25' });
 
 =head1 DESCRIPTION
 

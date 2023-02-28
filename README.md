@@ -41,13 +41,13 @@ Accessor method to get and set UserAgent object used internally. You
 can call _env\_proxy_ for example, to get the proxy information from
 environment variables:
 
-    $geo_coder->ua()->env_proxy(1);
+    $weather->ua()->env_proxy(1);
 
 You can also set your own User-Agent object:
 
     my $ua = LWP::UserAgent::Throttled->new();
-    $ua->throttle('geocoder.ca' => 1);
-    $geo_coder->ua($ua);
+    $ua->throttle('open-meteo.com' => 1);
+    $weather->ua($ua);
 
 # AUTHOR
 

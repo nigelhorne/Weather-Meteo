@@ -32,16 +32,17 @@ our $VERSION = '0.01';
 
 =head1 DESCRIPTION
 
-Geo::Coder::CA provides an interface to geocoder.ca.
+Weather::Meteo provides an interface to open-meteo.com
+for historical weather data
 
 =head1 METHODS
 
 =head2 new
 
-    $geo_coder = Geo::Coder::CA->new();
+    my $meteo = Weather::Meteo->new();
     my $ua = LWP::UserAgent->new();
     $ua->env_proxy(1);
-    $geo_coder = Geo::Coder::CA->new(ua => $ua);
+    $meteo = Weather::Meteo->new(ua => $ua);
 
 =cut
 
@@ -49,7 +50,7 @@ sub new {
 	my($class, %args) = @_;
 
 	if(!defined($class)) {
-		# Geo::Coder::CA::new() used rather than Geo::Coder::CA->new()
+		# Weather::Meteo::new() used rather than Weather::Meteo->new()
 		$class = __PACKAGE__;
 	} elsif(ref($class)) {
 		# clone the given object
@@ -68,11 +69,12 @@ sub new {
 
 =head2 weather
 
-    $location = $geo_coder->geocode(location => $location);
-    # @location = $geo_coder->geocode(location => $location);
+    # Print snowfall at 1AM on Christmas morning in Ramsgate
+    $weather = $meteo->weather({ latitude => 51.34, longitude => 1.42, date => '2022-12-25' });
+    my @snowfall = @{$weather->{'hourly'}->{'snowfall'}};
+		cmp_ok(scalar(@{$weather->{'hourly'}->{'rain'}}), '==', 24, '24 sets of hourly rainfall data');
 
-    print 'Latitude: ', $location->{'latt'}, "\n";
-    print 'Longitude: ', $location->{'longt'}, "\n";
+    print 'Number of cms of snow: ', $snowfall[1], "\n";
 
 =cut
 
@@ -125,8 +127,7 @@ sub weather {
 	my $json = JSON::MaybeXS->new()->utf8();
 	if(my $rc = $json->decode($res->decoded_content())) {
 		if($rc->{'error'}) {
-			# Sorry - you lose the error code, but HTML::GoogleMaps::V3 relies on this
-			# TODO - send patch to the H:G:V3 author
+			# TODO: print error code
 			return;
 		}
 		if(defined($rc->{'hourly'})) {
@@ -162,32 +163,6 @@ sub ua {
 	$self->{ua};
 }
 
-=head2 run
-
-You can also run this module from the command line:
-
-    perl CA.pm 1600 Pennsylvania Avenue NW, Washington DC
-
-=cut
-
-__PACKAGE__->run(@ARGV) unless caller();
-
-sub run {
-	require Data::Dumper;
-
-	my $class = shift;
-
-	my $location = join(' ', @_);
-
-	my @rc = $class->new()->geocode($location);
-
-	if(scalar(@rc)) {
-		print Data::Dumper->new([\@rc])->Dump();
-	} else {
-		die "$0: geo-coding failed";
-	}
-}
-
 =head1 AUTHOR
 
 Nigel Horne, C<< <njh@bandsman.co.uk> >>
@@ -195,11 +170,9 @@ Nigel Horne, C<< <njh@bandsman.co.uk> >>
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
-Lots of thanks to the folks at open-meteo.com.
+Lots of thanks to the folks at L<https://open-meteo.com>.
 
 =head1 BUGS
-
-Should be called Geo::Coder::NA for North America.
 
 =head1 SEE ALSO
 

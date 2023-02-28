@@ -72,7 +72,6 @@ sub new {
     # Print snowfall at 1AM on Christmas morning in Ramsgate
     $weather = $meteo->weather({ latitude => 51.34, longitude => 1.42, date => '2022-12-25' });
     my @snowfall = @{$weather->{'hourly'}->{'snowfall'}};
-		cmp_ok(scalar(@{$weather->{'hourly'}->{'rain'}}), '==', 24, '24 sets of hourly rainfall data');
 
     print 'Number of cms of snow: ', $snowfall[1], "\n";
 

@@ -18,3 +18,9 @@ if($ENV{AUTHOR_TESTING}) {
 }
 
 __END__
+GPL2
+licence
+meteo
+TODO
+ua
+useragent

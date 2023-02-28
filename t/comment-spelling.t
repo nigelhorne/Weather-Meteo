@@ -19,3 +19,5 @@ if($ENV{AUTHOR_TESTING} ) {
 }
 
 __DATA__
+Meteo
+TODO

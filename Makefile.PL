@@ -28,7 +28,6 @@ my $test_requires = {
 	'Test::Most' => 0,
 	'Test::NoWarnings' => 0,
 	'Test::Requires' => 0,
-	'Test::Script' => 1.12,
 	'WWW::RT::CPAN' => 0
 };
 
@@ -54,9 +53,7 @@ WriteMakefile(
 	PREREQ_PM => {
 		'Encode' => 0,
 		'JSON::MaybeXS' => 0,
-		'HTTP::Request' => 0,
 		'LWP::UserAgent' => 0,
-		'LWP::Protocol::https' => 0,
 		'URI' => 0,
 	},
 	dist		=> { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },

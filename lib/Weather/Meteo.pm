@@ -4,11 +4,8 @@ use strict;
 use warnings;
 
 use Carp;
-use Encode;
 use JSON::MaybeXS;
-use HTTP::Request;
 use LWP::UserAgent;
-use LWP::Protocol::https;
 use URI;
 
 =head1 NAME

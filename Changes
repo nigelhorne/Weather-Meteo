@@ -2,6 +2,7 @@ Revision history for Weather::Meteo
 
 0.03
 	Remove unused modules
+	Refactored t/unused.t
 
 0.02	Tue Feb 28 11:57:35 EST 2023
 	Remove references left from the template code

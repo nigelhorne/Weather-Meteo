@@ -27,7 +27,6 @@ my $test_requires = {
 	'Test::Compile' => 0,
 	'Test::Most' => 0,
 	'Test::NoWarnings' => 0,
-	'Test::Requires' => 0,
 	'WWW::RT::CPAN' => 0
 };
 

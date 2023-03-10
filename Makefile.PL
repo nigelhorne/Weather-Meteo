@@ -57,7 +57,7 @@ WriteMakefile(
 		'URI' => 0,
 	},
 	dist		=> { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
-	clean		=> { FILES => 'Weather-Meto-*' },
+	clean		=> { FILES => 'Weather-Meteo-*' },
 	META_MERGE => {	# https://perldoc.perl.org/CPAN::Meta::Spec
 		'meta-spec' => { version => 2 },
 		resources => {

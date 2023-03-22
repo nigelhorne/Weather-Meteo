@@ -116,10 +116,12 @@ sub weather {
 		'start_date' => $date,
 		'end_date' => $date,
 		'hourly' => 'temperature_2m,rain,snowfall,weathercode',
+		'daily' => 'weathercode,temperature_2m_max,temperature_2m_min,rain_sum,snowfall_sum,precipitation_hours',
 		'timezone' => 'Europe/London',	# FIXME
 		'windspeed_unit' => 'mph',
 		'precipitation_unit' => 'inch'
 	);
+
 	$uri->query_form(%query_parameters);
 	my $url = $uri->as_string();
 

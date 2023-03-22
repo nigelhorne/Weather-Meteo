@@ -116,7 +116,7 @@ sub weather {
 		'start_date' => $date,
 		'end_date' => $date,
 		'hourly' => 'temperature_2m,rain,snowfall,weathercode',
-		'timezone' => 'Europe/London',
+		'timezone' => 'Europe/London',	# FIXME
 		'windspeed_unit' => 'mph',
 		'precipitation_unit' => 'inch'
 	);

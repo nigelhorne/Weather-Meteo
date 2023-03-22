@@ -189,6 +189,8 @@ Lots of thanks to the folks at L<https://open-meteo.com>.
 
 =head1 SEE ALSO
 
+Open Meteo API: L<https://open-meteo.com/en/docs#api_form>
+
 =head1 LICENSE AND COPYRIGHT
 
 Copyright 2023 Nigel Horne.

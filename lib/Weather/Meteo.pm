@@ -8,6 +8,8 @@ use JSON::MaybeXS;
 use LWP::UserAgent;
 use URI;
 
+use constant FIRST_YEAR => 1940;
+
 =head1 NAME
 
 Weather::Meteo - Interface to L<https://open-meteo.com> for historical weather data
@@ -109,6 +111,15 @@ sub weather {
 		return;
 	}
 
+	if($date =~ /^(\d{4})-/) {
+		my $year = $1;
+
+		return if($1 < FIRST_YEAR);
+	} else {
+		Carp::carp("'$date' is not a valid date");
+		return;
+	}
+
 	my $uri = URI->new("https://$self->{host}/v1/archive");
 	my %query_parameters = (
 		'latitude' => $latitude,
@@ -191,6 +202,38 @@ Lots of thanks to the folks at L<https://open-meteo.com>.
 =head1 SEE ALSO
 
 Open Meteo API: L<https://open-meteo.com/en/docs#api_form>
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Weather::Meteo
+
+You can also look for information at:
+
+=over 4
+
+=item * MetaCPAN
+
+L<https://metacpan.org/release/Weather-Meteo>
+
+=item * RT: CPAN's request tracker
+
+L<https://rt.cpan.org/NoAuth/Bugs.html?Dist=Weather-Meteo>
+
+=item * CPANTS
+
+L<http://cpants.cpanauthors.org/dist/Weather-Meteo>
+
+=item * CPAN Testers' Matrix
+
+L<http://matrix.cpantesters.org/?dist=Weather-Meteo>
+
+=item * CPAN Testers Dependencies
+
+L<http://deps.cpantesters.org/?module=Weather-Meteo>
+
+=back
 
 =head1 LICENSE AND COPYRIGHT
 

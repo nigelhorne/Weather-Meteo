@@ -2,8 +2,8 @@
 
 use warnings;
 use strict;
-use Test::Most tests => 7;
-use Geo::Location::Point 0.07;	# FIXME: 0.08
+use Test::Most tests => 8;
+use Geo::Location::Point 0.08;
 
 BEGIN {
 	use_ok('Weather::Meteo');
@@ -16,10 +16,10 @@ WEATHER: {
 		if(!-e 't/online.enabled') {
 			if(!$ENV{AUTHOR_TESTING}) {
 				diag('Author tests not required for installation');
-				skip('Author tests not required for installation', 5);
+				skip('Author tests not required for installation', 6);
 			} else {
 				diag('Test requires Internet access');
-				skip('Test requires Internet access', 5);
+				skip('Test requires Internet access', 6);
 			}
 		}
 
@@ -38,5 +38,9 @@ WEATHER: {
 		cmp_ok(scalar(@{$weather->{'hourly'}->{'rain'}}), '==', 24, '24 sets of hourly rainfall data');
 		@rain = @{$weather->{'hourly'}->{'rain'}};
 		isnt(qr/\D/, $rain[1]);	# Must only be digits
+
+		# Data prior to 1940 is not in the database
+
+		is($meteo->weather(latitude => 51.34, longitute => 1.42, date => '1704-11-14'), undef, 'pre 1940 data is not found');
 	}
 }

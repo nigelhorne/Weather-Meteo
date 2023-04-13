@@ -32,7 +32,7 @@ our $VERSION = '0.04';
 =head1 DESCRIPTION
 
 Weather::Meteo provides an interface to open-meteo.com
-for historical weather data
+for historical weather data from 1940.
 
 =head1 METHODS
 

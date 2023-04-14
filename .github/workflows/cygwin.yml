@@ -22,15 +22,17 @@ jobs:
       - name: Set up Cygwin
         uses: egor-tensin/setup-cygwin@master
         with:
-          platform: x64
+          # platform: x64
           packages: perl_base perl-ExtUtils-MakeMaker make gcc-g++ libcrypt-devel libnsl-devel bash
       - uses: actions/checkout@main
         with:
           submodules: recursive
       - run: perl -V
       - run: cpan App::cpanminus
+      - name: Install Prerequisites
+        run: cd $GITHUB_WORKSPACE; cpanm --notest --installdeps LWP::Protocol::https
       - name: Install Dependencies
-        run: cd $GITHUB_WORKSPACE; cpanm --verbose --notest --installdeps --with-configure --with-develop .
+        run: cd $GITHUB_WORKSPACE; cpanm --notest --installdeps --with-configure --with-develop .
       - name: perl Makefile.PL
         run: cd $GITHUB_WORKSPACE; perl Makefile.PL
       - name: make

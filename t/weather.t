@@ -2,7 +2,7 @@
 
 use warnings;
 use strict;
-use Test::Most tests => 8;
+use Test::Most tests => 9;
 use Geo::Location::Point 0.08;
 
 BEGIN {
@@ -16,10 +16,10 @@ WEATHER: {
 		if(!-e 't/online.enabled') {
 			if(!$ENV{AUTHOR_TESTING}) {
 				diag('Author tests not required for installation');
-				skip('Author tests not required for installation', 6);
+				skip('Author tests not required for installation', 7);
 			} else {
 				diag('Test requires Internet access');
-				skip('Test requires Internet access', 6);
+				skip('Test requires Internet access', 7);
 			}
 		}
 
@@ -42,5 +42,7 @@ WEATHER: {
 		# Data prior to 1940 is not in the database
 
 		is($meteo->weather(latitude => 51.34, longitute => 1.42, date => '1704-11-14'), undef, 'pre 1940 data is not found');
+
+		is(ref($meteo->ua()), 'LWP::UserAgent', 'get ua works');
 	}
 }

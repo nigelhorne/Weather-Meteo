@@ -127,7 +127,7 @@ sub weather {
 		'start_date' => $date,
 		'end_date' => $date,
 		'hourly' => 'temperature_2m,rain,snowfall,weathercode',
-		'daily' => 'weathercode,temperature_2m_max,temperature_2m_min,rain_sum,snowfall_sum,precipitation_hours',
+		'daily' => 'weathercode,temperature_2m_max,temperature_2m_min,rain_sum,snowfall_sum,precipitation_hours,windspeed_10m_max',
 		'timezone' => 'Europe/London',	# FIXME
 			# https://stackoverflow.com/questions/16086962/how-to-get-a-time-zone-from-a-location-using-latitude-and-longitude-coordinates
 		'windspeed_unit' => 'mph',

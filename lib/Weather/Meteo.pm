@@ -82,6 +82,8 @@ sub new {
 
     print 'Number of cms of snow: ', $snowfall[1], "\n";
 
+    Takes an optional argument, tz, which defaults to 'Europe/London'.
+
 =cut
 
 sub weather {
@@ -96,7 +98,7 @@ sub weather {
 		$param{longitude} = $location->longitude();
 		$param{'date'} = $_[1];
 	} elsif(ref($_[0])) {
-		Carp::croak('Usage: weather(latitude => $latitude, longitude => $logitude, date => "YYYY-MM-DD")');
+		Carp::croak('Usage: weather(latitude => $latitude, longitude => $logitude, date => "YYYY-MM-DD" [ , tz = $tz ])');
 		return;
 	} elsif(@_ % 2 == 0) {
 		%param = @_;
@@ -105,6 +107,7 @@ sub weather {
 	my $latitude = $param{latitude};
 	my $longitude = $param{longitude};
 	my $date = $param{'date'};
+	my $tz = $param{'tz'} || 'Europe/London';
 
 	if(!defined($latitude)) {
 		Carp::croak('Usage: weather(latitude => $latitude, longitude => $logitude, date => "YYYY-MM-DD")');
@@ -128,7 +131,7 @@ sub weather {
 		'end_date' => $date,
 		'hourly' => 'temperature_2m,rain,snowfall,weathercode',
 		'daily' => 'weathercode,temperature_2m_max,temperature_2m_min,rain_sum,snowfall_sum,precipitation_hours,windspeed_10m_max,windgusts_10m_max',
-		'timezone' => 'Europe/London',	# FIXME
+		'timezone' => $tz,
 			# https://stackoverflow.com/questions/16086962/how-to-get-a-time-zone-from-a-location-using-latitude-and-longitude-coordinates
 		'windspeed_unit' => 'mph',
 		'precipitation_unit' => 'inch'

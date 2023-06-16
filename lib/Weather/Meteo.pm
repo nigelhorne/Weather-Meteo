@@ -83,6 +83,7 @@ sub new {
     print 'Number of cms of snow: ', $snowfall[1], "\n";
 
     Takes an optional argument, tz, which defaults to 'Europe/London'.
+    For that to work set TIMEZONEDB_KEY to be your API key from L<https://timezonedb.com>.
 
 =cut
 
@@ -97,6 +98,9 @@ sub weather {
 		$param{latitude} = $location->latitude();
 		$param{longitude} = $location->longitude();
 		$param{'date'} = $_[1];
+		if($_[0]->can('tz') && $ENV{'TIMEZONEDB_KEY'}) {
+			$param{'tz'} = $_[0]->tz();
+		}
 	} elsif(ref($_[0])) {
 		Carp::croak('Usage: weather(latitude => $latitude, longitude => $logitude, date => "YYYY-MM-DD" [ , tz = $tz ])');
 		return;

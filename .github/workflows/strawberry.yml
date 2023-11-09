@@ -35,6 +35,6 @@ jobs:
           cpanm -iqn --skip-satisfied Test::Script Test::Carp Test::Compile Test::Pod::Coverage LWP::UserAgent
           cpanm -iqn --skip-satisfied --installdeps --notest .
       - name: Run Tests
-        run: prove -l t
+        run: make test AUTOMATED_TESTING=1
         env:
           AUTOMATED_TESTING: 1

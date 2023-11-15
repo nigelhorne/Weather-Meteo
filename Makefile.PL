@@ -35,6 +35,9 @@ if($online_tests) {
 	open(my $enabled, '>', 't/online.enabled') || die "Can't touch t/online.enabled $!";
 	close($enabled) || die "Can't touch t/online.enabled $!";
 	$test_requires->{'Test::LWP::UserAgent'} = 0;
+	if(defined($ENV{'TIMEZONEDB_KEY'})) {
+		$test_requires->{'TimeZone::TimeZoneDB'} = 0;
+	}
 } else {
 	unlink('t/online.enabled');
 }

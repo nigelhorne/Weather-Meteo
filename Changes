@@ -2,6 +2,8 @@ Revision history for Weather::Meteo
 
 0.08
 	Test needs TimeZone::TimeZoneDB when TIMEZONEDB_KEY is set
+	Fix https://github.com/nigelhorne/Weather-Meteo/issues/3
+	Fix https://github.com/nigelhorne/Weather-Meteo/issues/4
 
 0.07	Thu  9 Nov 07:45:17 EST 2023
 	Fix http://www.cpantesters.org/cpan/report/b25e6af8-0ce4-11ee-8f82-220d6e8775ea

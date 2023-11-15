@@ -68,14 +68,14 @@ WriteMakefile(
 		resources => {
 			repository => {
 				type => 'git',
-				url => 'git://github.com/nigelhorne/Weather-Meto.git',
-				web => 'https://github.com/nigelhorne/Weather-Meto',
-				repository => 'https://github.com/nigelhorne/Weather-Meto',
+				url => 'git://github.com/nigelhorne/Weather-Meteo.git',
+				web => 'https://github.com/nigelhorne/Weather-Meteo',
+				repository => 'https://github.com/nigelhorne/Weather-Meteo',
 			}, bugtracker => {
-				# web => 'https://rt.cpan.org/Public/Dist/Display.html?Name=Weather-Meto',
-				web => 'https://github.com/nigelhorne/Weather-Meto/issues',
-				url => 'https://github.com/nigelhorne/Weather-Meto/issues',
-				mailto => 'bug-Weather-Meto@rt.cpan.org'
+				# web => 'https://rt.cpan.org/Public/Dist/Display.html?Name=Weather-Meteo',
+				web => 'https://github.com/nigelhorne/Weather-Meteo/issues',
+				url => 'https://github.com/nigelhorne/Weather-Meteo/issues',
+				mailto => 'bug-Weather-Meteo@rt.cpan.org'
 			}
 		},
 	},

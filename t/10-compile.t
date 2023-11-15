@@ -3,7 +3,8 @@
 use strict;
 use warnings;
 
-eval 'use Test::Compile';
+# The PBP handbook method fails
+eval 'use Test::Compile';	## no critic
 
 if($@) {
 	plan(skip_all => 'Test::Compile needed to verify module compiles');

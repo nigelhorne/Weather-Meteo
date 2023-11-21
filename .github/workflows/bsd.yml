@@ -25,7 +25,7 @@ jobs:
           - name: openbsd
             version: '7.1'
             pkginstall: |
-              sudo pkg_add p5-JSON-MaybeXS p5-LWP-Protocol-https p5-Params-Util
+              pkg_add p5-JSON-MaybeXS p5-LWP-Protocol-https p5-Params-Util
 
     steps:
       - uses: actions/checkout@main

@@ -25,6 +25,7 @@ WEATHER: {
 
 		# Weather in Ramsgate on Christmas Day 2022
 		my $weather = $meteo->weather({ latitude => 51.34, longitude => 1.42, date => '2022-12-25' });
+		ok(defined($weather), 'We get data back');
 		cmp_ok(scalar(@{$weather->{'hourly'}->{'rain'}}), '==', 24, '24 sets of hourly rainfall data');
 		my @rain = @{$weather->{'hourly'}->{'rain'}};
 		isnt(qr/\D/, $rain[1]);	# Must only be digits

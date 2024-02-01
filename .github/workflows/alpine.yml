@@ -25,7 +25,7 @@ jobs:
           apk upgrade
           apk add perl perl-app-cpanminus make gzip git
           apk add perl-test-most perl-test-nowarnings perl-lwp-protocol-https
-          apk add perl-json-maybexs perl-params-util
+          apk add perl-json-maybexs perl-params-util perl-datetime
           perl -V
           # cpanm -iqn ExtUtils::MakeMaker File::Spec Test::Most
           # cpanm -iqn Sub::Identify Log::Any
@@ -39,11 +39,12 @@ jobs:
         run: |
           # find ~ -name build.log | xargs cat
           cd $GITHUB_WORKSPACE
-          perl Makefile.PL
+          perl Makefile.PL AUTOMATED_TESTING=1
           make
       - name: Run Tests
         run: |
           cd $GITHUB_WORKSPACE
-          make test AUTHOR_TESTING=1
+          make test AUTHOR_TESTING=1 AUTOMATED_TESTING=1
         env:
           AUTHOR_TESTING: 1
+          AUTOMATED_TESTING: 1

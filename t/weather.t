@@ -2,7 +2,6 @@
 
 use warnings;
 use strict;
-use DateTime;
 use Test::Most tests => 11;
 use Geo::Location::Point 0.09;
 
@@ -12,6 +11,9 @@ BEGIN {
 
 WEATHER: {
 	SKIP: {
+		require DateTime;
+		DateTime->import();
+
 		my $meteo = new_ok('Weather::Meteo');
 
 		if(!-e 't/online.enabled') {

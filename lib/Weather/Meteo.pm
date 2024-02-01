@@ -6,6 +6,7 @@ use warnings;
 use Carp;
 use JSON::MaybeXS;
 use LWP::UserAgent;
+use Scalar::Util;
 use URI;
 
 use constant FIRST_YEAR => 1940;
@@ -75,12 +76,19 @@ sub new {
 
     use Geo::Location::Point;
 
+The date argument can be an ISO-8601 formatted date,
+or an object that understands the strftime method.
+
     my $ramsgate = Geo::Location::Point->new({ latitude => 51.34, longitude => 1.42 });
     # Print snowfall at 1AM on Christmas morning in Ramsgate
     $weather = $meteo->weather($ramsgate, '2022-12-25');
     @snowfall = @{$weather->{'hourly'}->{'snowfall'}};
 
     print 'Number of cms of snow: ', $snowfall[1], "\n";
+
+    use DateTime;
+    my $dt = DateTime->new(year => 2024, month => 2, day => 1);
+    $weather = $meteo->weather($ramsgate, $dt);
 
 Takes an optional argument, tz, which defaults to 'Europe/London'.
 For that to work set TIMEZONEDB_KEY to be your API key from L<https://timezonedb.com>.
@@ -118,7 +126,9 @@ sub weather {
 		return;
 	}
 
-	if($date =~ /^(\d{4})-/) {
+	if(Scalar::Util::blessed($date) && $date->can('strftime')) {
+		$date = $date->strftime('%F');
+	} elsif($date =~ /^(\d{4})-/) {
 		my $year = $1;
 
 		return if($1 < FIRST_YEAR);
@@ -149,13 +159,12 @@ sub weather {
 	my $res = $self->{ua}->get($url);
 
 	if($res->is_error()) {
-		Carp::carp("$url API returned error: ", $res->status_line());
+		Carp::carp(ref($self), ": $url API returned error: ", $res->status_line());
 		return;
 	}
 	# $res->content_type('text/plain');	# May be needed to decode correctly
 
-	my $json = JSON::MaybeXS->new()->utf8();
-	if(my $rc = $json->decode($res->decoded_content())) {
+	if(my $rc = JSON::MaybeXS->new()->utf8()->decode($res->decoded_content())) {
 		if($rc->{'error'}) {
 			# TODO: print error code
 			return;

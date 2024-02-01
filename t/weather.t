@@ -2,7 +2,8 @@
 
 use warnings;
 use strict;
-use Test::Most tests => 10;
+use DateTime;
+use Test::Most tests => 11;
 use Geo::Location::Point 0.09;
 
 BEGIN {
@@ -16,10 +17,10 @@ WEATHER: {
 		if(!-e 't/online.enabled') {
 			if(!$ENV{AUTHOR_TESTING}) {
 				diag('Author tests not required for installation');
-				skip('Author tests not required for installation', 8);
+				skip('Author tests not required for installation', 9);
 			} else {
 				diag('Test requires Internet access');
-				skip('Test requires Internet access', 8);
+				skip('Test requires Internet access', 9);
 			}
 		}
 
@@ -44,6 +45,8 @@ WEATHER: {
 		cmp_ok(scalar(@{$weather->{'hourly'}->{'rain'}}), '==', 24, '24 sets of hourly rainfall data');
 		@rain = @{$weather->{'hourly'}->{'rain'}};
 		isnt(qr/\D/, $rain[1]);	# Must only be digits
+
+		$weather = $meteo->weather($location, new_ok('DateTime' => [ year => 2000, month => 6, day => 5 ]));
 
 		# Data prior to 1940 is not in the database
 

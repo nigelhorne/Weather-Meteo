@@ -11,21 +11,18 @@ BEGIN {
 
 WEATHER: {
 	SKIP: {
-		require DateTime;
-		DateTime->import();
-
 		my $meteo = new_ok('Weather::Meteo');
 
-		if(!-e 't/online.enabled') {
-			if(!$ENV{AUTHOR_TESTING}) {
-				diag('Author tests not required for installation');
-				skip('Author tests not required for installation', 9);
-			} else {
-				diag('Test requires Internet access');
-				skip('Test requires Internet access', 9);
-			}
+		if(-e 't/online.enabled') {
+			require DateTime;
+			DateTime->import();
+		} elsif($ENV{'AUTHOR_TESTING'}) {
+			diag('Test requires Internet access');
+			skip('Test requires Internet access', 9);
+		} else {
+			diag('Author tests not required for installation');
+			skip('Author tests not required for installation', 9);
 		}
-
 		# Weather in Ramsgate on Christmas Day 2022
 		my $weather = $meteo->weather({ latitude => 51.34, longitude => 1.42, date => '2022-12-25' });
 		ok(defined($weather), 'We get data back');

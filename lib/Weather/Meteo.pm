@@ -101,7 +101,7 @@ sub weather {
 
 	if(ref($_[0]) eq 'HASH') {
 		%param = %{$_[0]};
-	} elsif((@_ == 2) && (ref($_[0]) =~ /::/) && ($_[0]->can('latitude'))) {
+	} elsif((@_ == 2) && Scalar::Util::blessed($_[0]) && ($_[0]->can('latitude'))) {
 		my $location = $_[0];
 		$param{latitude} = $location->latitude();
 		$param{longitude} = $location->longitude();

@@ -36,12 +36,19 @@ for historical weather data from 1940.
 
     use Geo::Location::Point;
 
+The date argument can be an ISO-8601 formatted date,
+or an object that understands the strftime method.
+
     my $ramsgate = Geo::Location::Point->new({ latitude => 51.34, longitude => 1.42 });
     # Print snowfall at 1AM on Christmas morning in Ramsgate
     $weather = $meteo->weather($ramsgate, '2022-12-25');
     @snowfall = @{$weather->{'hourly'}->{'snowfall'}};
 
     print 'Number of cms of snow: ', $snowfall[1], "\n";
+
+    use DateTime;
+    my $dt = DateTime->new(year => 2024, month => 2, day => 1);
+    $weather = $meteo->weather({ location => $ramsgate, date => $dt });
 
 Takes an optional argument, tz, which defaults to 'Europe/London'.
 For that to work set TIMEZONEDB\_KEY to be your API key from [https://timezonedb.com](https://timezonedb.com).
@@ -107,6 +114,6 @@ You can also look for information at:
 
 # LICENSE AND COPYRIGHT
 
-Copyright 2023 Nigel Horne.
+Copyright 2024 Nigel Horne.
 
 This program is released under the following licence: GPL2

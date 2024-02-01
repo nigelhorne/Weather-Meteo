@@ -88,7 +88,7 @@ or an object that understands the strftime method.
 
     use DateTime;
     my $dt = DateTime->new(year => 2024, month => 2, day => 1);
-    $weather = $meteo->weather($ramsgate, $dt);
+    $weather = $meteo->weather({ location => $ramsgate, date => $dt });
 
 Takes an optional argument, tz, which defaults to 'Europe/London'.
 For that to work set TIMEZONEDB_KEY to be your API key from L<https://timezonedb.com>.
@@ -198,10 +198,11 @@ You can also set your own User-Agent object:
 
 sub ua {
 	my $self = shift;
+
 	if (@_) {
 		$self->{ua} = shift;
 	}
-	$self->{ua};
+	return $self->{ua}
 }
 
 =head1 AUTHOR

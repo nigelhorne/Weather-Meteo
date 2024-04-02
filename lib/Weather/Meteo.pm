@@ -95,7 +95,8 @@ For that to work set TIMEZONEDB_KEY to be your API key from L<https://timezonedb
 
 =cut
 
-sub weather {
+sub weather
+{
 	my $self = shift;
 	my %param;
 
@@ -129,8 +130,6 @@ sub weather {
 	if(Scalar::Util::blessed($date) && $date->can('strftime')) {
 		$date = $date->strftime('%F');
 	} elsif($date =~ /^(\d{4})-/) {
-		my $year = $1;
-
 		return if($1 < FIRST_YEAR);
 	} else {
 		Carp::carp("'$date' is not a valid date");

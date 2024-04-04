@@ -35,6 +35,7 @@ my $test_requires = {
 	'Test::Carp' => 0,
 	'Test::Compile' => 0,
 	'Test::Most' => 0,
+	'Test::Needs' => 0,
 	'Test::NoWarnings' => 0,
 	'WWW::RT::CPAN' => 0
 };
@@ -60,6 +61,7 @@ WriteMakefile(
 	 ($ExtUtils::MakeMaker::VERSION >= 6.3002))
 	  ? ('LICENSE'=> 'GPL')
 	  : ()),
+	EXE_FILES => [ 'bin/weather' ],
 	PL_FILES	=> {},
 	TEST_REQUIRES => $test_requires,
 	PREREQ_PM => {

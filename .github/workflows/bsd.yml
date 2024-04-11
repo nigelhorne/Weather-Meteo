@@ -19,8 +19,8 @@ jobs:
           - name: freebsd
             version: '13.0'
             pkginstall: |
-              sudo pkg install -y p5-ExtUtils-MakeMaker p5-JSON-MaybeXS
-              sudo pkg install -y p5-Params-Util p5-LWP-Protocol-https
+              sudo pkg install -y p5-ExtUtils-MakeMaker p5-JSON-MaybeXS p5-IPC-System-Simple p5-Test-Needs
+              sudo pkg install -y p5-Params-Util p5-LWP-Protocol-https p5-Test-NoWarning
               sudo pkg install -y p5-Devel-StackTrace
           - name: openbsd
             version: '7.1'

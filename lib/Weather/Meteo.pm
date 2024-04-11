@@ -111,7 +111,7 @@ sub weather
 			$param{'tz'} = $_[0]->tz();
 		}
 	} elsif(ref($_[0])) {
-		Carp::croak('Usage: weather(latitude => $latitude, longitude => $logitude, date => "YYYY-MM-DD" [ , tz = $tz ])');
+		Carp::croak('Usage: weather(latitude => $latitude, longitude => $longitude, date => "YYYY-MM-DD" [ , tz = $tz ])');
 		return;
 	} elsif(@_ % 2 == 0) {
 		%param = @_;
@@ -119,11 +119,17 @@ sub weather
 
 	my $latitude = $param{latitude};
 	my $longitude = $param{longitude};
+	my $location = $param{'location'};
 	my $date = $param{'date'};
 	my $tz = $param{'tz'} || 'Europe/London';
 
+	if((!defined($latitude)) && defined($location) &&
+	   Scalar::Util::blessed($location) && $location->can('latitude')) {
+		$latitude = $location->latitude();
+		$longitude = $location->longitude();
+	}
 	if(!defined($latitude)) {
-		Carp::croak('Usage: weather(latitude => $latitude, longitude => $logitude, date => "YYYY-MM-DD")');
+		Carp::croak('Usage: weather(latitude => $latitude, longitude => $longitude, date => "YYYY-MM-DD")');
 		return;
 	}
 

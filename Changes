@@ -4,6 +4,7 @@ Revision history for Weather::Meteo
 	Attempt to fix https://www.cpantesters.org/cpan/report/cb5e2b52-a699-11ee-9c1e-22106e8775ea
 	Added t/carp.t
 	The date argument to weather() can now be a DateTime, or similar, object
+	Fix giving location as a named argument
 
 0.08	Wed Nov 29 07:08:36 EST 2023
 	Test needs TimeZone::TimeZoneDB when TIMEZONEDB_KEY is set

@@ -45,7 +45,7 @@ WEATHER: {
 		@rain = @{$weather->{'hourly'}->{'rain'}};
 		isnt(qr/\D/, $rain[1]);	# Must only be digits
 
-		$weather = $meteo->weather($location, new_ok('DateTime' => [ year => 2000, month => 6, day => 5 ]));
+		$weather = $meteo->weather({ location => $location, date => new_ok('DateTime' => [ year => 2000, month => 6, day => 5 ]) });
 
 		# Data prior to 1940 is not in the database
 

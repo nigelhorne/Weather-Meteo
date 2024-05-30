@@ -265,7 +265,7 @@ L<http://deps.cpantesters.org/?module=Weather-Meteo>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2024 Nigel Horne.
+Copyright 2023-2024 Nigel Horne.
 
 This program is released under the following licence: GPL2
 

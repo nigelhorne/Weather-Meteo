@@ -221,6 +221,12 @@ Lots of thanks to the folks at L<https://open-meteo.com>.
 
 =head1 BUGS
 
+Please report any bugs or feature requests to C<bug-weather-meteo at rt.cpan.org>,
+or through the web interface at
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Weather-Meteo>.
+I will be notified, and then you'll
+automatically be notified of progress on your bug as I make changes.
+
 =head1 SEE ALSO
 
 Open Meteo API: L<https://open-meteo.com/en/docs#api_form>

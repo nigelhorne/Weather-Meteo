@@ -4,7 +4,7 @@ Weather::Meteo - Interface to [https://open-meteo.com](https://open-meteo.com) f
 
 # VERSION
 
-Version 0.08
+Version 0.09
 
 # SYNOPSIS
 
@@ -79,6 +79,12 @@ it under the same terms as Perl itself.
 Lots of thanks to the folks at [https://open-meteo.com](https://open-meteo.com).
 
 # BUGS
+
+Please report any bugs or feature requests to `bug-weather-meteo at rt.cpan.org`,
+or through the web interface at
+[http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Weather-Meteo](http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Weather-Meteo).
+I will be notified, and then you'll
+automatically be notified of progress on your bug as I make changes.
 
 # SEE ALSO
 

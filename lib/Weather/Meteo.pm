@@ -52,7 +52,8 @@ for historical weather data from 1940.
 =cut
 
 sub new {
-	my($class, %args) = @_;
+	my $class = shift;
+	my %args = (ref($_[0]) eq 'HASH') ? %{$_[0]} : @_;
 
 	if(!defined($class)) {
 		# Weather::Meteo::new() used rather than Weather::Meteo->new()

@@ -128,9 +128,17 @@ sub weather
 		$latitude = $location->latitude();
 		$longitude = $location->longitude();
 	}
-	if((!defined($latitude)) || (!defined($longitude))) {
+	if((!defined($latitude)) || (!defined($longitude)) || (!defined($date))) {
 		Carp::croak('Usage: weather(latitude => $latitude, longitude => $longitude, date => "YYYY-MM-DD")');
 		return;
+	}
+
+	# Handle numbers starting with a decimal point
+	if($latitude =~ /^\./) {
+		$latitude = "0$latitude";
+	}
+	if($longitude =~ /^\./) {
+		$longitude = "0$longitude";
 	}
 
 	if(($latitude !~ /^-?\d+(\.\d+)?$/) || ($longitude !~ /^-?\d+(\.\d+)?$/)) {

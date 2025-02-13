@@ -114,7 +114,7 @@ sub weather
 	} elsif(ref($_[0])) {
 		Carp::croak('Usage: weather(latitude => $latitude, longitude => $longitude, date => "YYYY-MM-DD" [ , tz = $tz ])');
 		return;
-	} elsif(@_ % 2 == 0) {
+	} elsif((@_ % 2) == 0) {
 		%param = @_;
 	}
 
@@ -170,7 +170,14 @@ sub weather
 	}
 	# $res->content_type('text/plain');	# May be needed to decode correctly
 
-	if(my $rc = JSON::MaybeXS->new()->utf8()->decode($res->decoded_content())) {
+	my $rc;
+	eval { $rc = JSON::MaybeXS->new()->utf8()->decode($res->decoded_content()) };
+	if($@) {
+		Carp::carp("Failed to parse JSON response: $@");
+		return;
+	}
+
+	if($rc) {
 		if($rc->{'error'}) {
 			# TODO: print error code
 			return;
@@ -222,6 +229,8 @@ Lots of thanks to the folks at L<https://open-meteo.com>.
 
 =head1 BUGS
 
+This module is provided as-is without any warranty.
+
 Please report any bugs or feature requests to C<bug-weather-meteo at rt.cpan.org>,
 or through the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Weather-Meteo>.
@@ -266,7 +275,7 @@ L<http://deps.cpantesters.org/?module=Weather-Meteo>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2023-2024 Nigel Horne.
+Copyright 2023-2025 Nigel Horne.
 
 This program is released under the following licence: GPL2
 

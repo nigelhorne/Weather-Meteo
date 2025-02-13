@@ -1,6 +1,6 @@
 Revision history for Weather::Meteo
 
-0.10
+0.10	Thu Feb 13 07:47:59 EST 2025
 	Better handling of JSON decode errors
 	Added t/30-basics.t
 	Better arg checking

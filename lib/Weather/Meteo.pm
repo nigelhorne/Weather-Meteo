@@ -134,7 +134,7 @@ sub weather
 	}
 
 	if(($latitude !~ /^-?\d+(\.\d+)?$/) || ($longitude !~ /^-?\d+(\.\d+)?$/)) {
-		Carp::croak(__PACKAGE__, ': Invalid latitude/longitude format');
+		Carp::croak(__PACKAGE__, ": Invalid latitude/longitude format ($latitude, $longitude)");
 	}
 
 	if(Scalar::Util::blessed($date) && $date->can('strftime')) {

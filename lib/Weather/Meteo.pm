@@ -25,15 +25,14 @@ our $VERSION = '0.09';
 
 =head1 SYNOPSIS
 
+The C<Weather::Meteo> module provides an interface to the Open-Meteo API for retrieving historical weather data from 1940.
+It allows users to fetch weather information by specifying latitude, longitude, and a date.
+The module supports object-oriented usage and allows customization of the HTTP user agent.
+
       use Weather::Meteo;
 
       my $meteo = Weather::Meteo->new();
       my $weather = $meteo->weather({ latitude => 0.1, longitude => 0.2, date => '2022-12-25' });
-
-=head1 DESCRIPTION
-
-Weather::Meteo provides an interface to open-meteo.com
-for historical weather data from 1940.
 
 =head1 METHODS
 
@@ -129,9 +128,13 @@ sub weather
 		$latitude = $location->latitude();
 		$longitude = $location->longitude();
 	}
-	if(!defined($latitude)) {
+	if((!defined($latitude)) || (!defined($longitude))) {
 		Carp::croak('Usage: weather(latitude => $latitude, longitude => $longitude, date => "YYYY-MM-DD")');
 		return;
+	}
+
+	if(($latitude !~ /^-?\d+(\.\d+)?$/) || ($longitude !~ /^-?\d+(\.\d+)?$/)) {
+		Carp::croak(__PACKAGE__, ': Invalid latitude/longitude format');
 	}
 
 	if(Scalar::Util::blessed($date) && $date->can('strftime')) {
@@ -141,6 +144,10 @@ sub weather
 	} else {
 		Carp::carp("'$date' is not a valid date");
 		return;
+	}
+
+	unless($date =~ /^\d{4}-\d{2}-\d{2}$/) {
+		croak('Invalid date format. Expected YYYY-MM-DD');
 	}
 
 	my $uri = URI->new("https://$self->{host}/v1/archive");

@@ -35,6 +35,7 @@ my $test_requires = {
 	'Test::Carp' => 0,
 	'Test::Compile' => 0,
 	'Test::DescribeMe' => 0,
+	'Test::MockModule' => 0,
 	'Test::Most' => 0,
 	'Test::Needs' => 0,
 	'Test::NoWarnings' => 0,
@@ -105,10 +106,8 @@ WriteMakefile(
 
 sub are_online
 {
-	return 0 if($ENV{'NO_NETWORK_TESTING'} || $ENV{'TRAVIS_PERL_VERSION'});
 	# See https://www.cpantesters.org/cpan/report/b38913a6-8e30-11ee-884e-494b6e8775
-	return 0 if($ENV{'AUTOMATED_TESTING'});	# Don't overload the server by default
-	return 0 if(!-t STDIN);
+	return 0 if($ENV{'NO_NETWORK_TESTING'} || $ENV{'CIRCLECI'} || $ENV{'TRAVIS_PERL_VERSION'} || $ENV{'AUTOMATED_TESTING'} || $ENV{'NONINTERACTIVE_TESTING'} || (!-t STDIN));
 
 	if(my $s = IO::Socket::INET->new(
 		PeerAddr => 'open-meteo.com:443',

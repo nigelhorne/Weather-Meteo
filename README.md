@@ -17,6 +17,19 @@ The module supports object-oriented usage and allows customization of the HTTP u
       my $meteo = Weather::Meteo->new();
       my $weather = $meteo->weather({ latitude => 0.1, longitude => 0.2, date => '2022-12-25' });
 
+- Rate-Limiting
+
+    A minimum interval between successive API calls can be enforced to ensure that the API is not overwhelmed and to comply with any request throttling requirements.
+
+    Rate-limiting is implemented using [Time::HiRes](https://metacpan.org/pod/Time%3A%3AHiRes).
+    A minimum interval between API
+    calls can be specified via the `min_interval` parameter in the constructor.
+    Before making an API call,
+    the module checks how much time has elapsed since the
+    last request and,
+    if necessary,
+    sleeps for the remaining time.
+
 # METHODS
 
 ## new
@@ -30,6 +43,22 @@ The module supports object-oriented usage and allows customization of the HTTP u
     my @snowfall = @{$weather->{'hourly'}->{'snowfall'}};
 
     print 'Number of cms of snow: ', $snowfall[1], "\n";
+
+- `ua`
+
+    An object to use for HTTP requests.
+    If not provided, a default user agent is created.
+
+- `host`
+
+    The API host endpoint.
+    Defaults to [https://archive-api.open-meteo.com](https://archive-api.open-meteo.com).
+
+- `min_interval`
+
+    Minimum number of seconds to wait between API requests.
+    Defaults to `0` (no delay).
+    Use this option to enforce rate-limiting.
 
 ## weather
 

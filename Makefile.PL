@@ -82,6 +82,7 @@ WriteMakefile(
 		'LWP::UserAgent' => 0,
 		'LWP::Protocol::https' => 0,
 		'Scalar::Util' => 0,
+		'Time::HiRes' => 0,
 		'URI' => 0,
 	}, dist => $dist,
 	clean		=> { FILES => 'Weather-Meteo-*' },

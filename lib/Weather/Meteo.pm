@@ -7,6 +7,7 @@ use Carp;
 use JSON::MaybeXS;
 use LWP::UserAgent;
 use Scalar::Util;
+use Time::HiRes;
 use URI;
 
 use constant FIRST_YEAR => 1940;
@@ -34,6 +35,23 @@ The module supports object-oriented usage and allows customization of the HTTP u
       my $meteo = Weather::Meteo->new();
       my $weather = $meteo->weather({ latitude => 0.1, longitude => 0.2, date => '2022-12-25' });
 
+=over 4
+
+=item * Rate-Limiting
+
+A minimum interval between successive API calls can be enforced to ensure that the API is not overwhelmed and to comply with any request throttling requirements.
+
+Rate-limiting is implemented using L<Time::HiRes>.
+A minimum interval between API
+calls can be specified via the C<min_interval> parameter in the constructor.
+Before making an API call,
+the module checks how much time has elapsed since the
+last request and,
+if necessary,
+sleeps for the remaining time.
+
+=back
+
 =head1 METHODS
 
 =head2 new
@@ -47,6 +65,27 @@ The module supports object-oriented usage and allows customization of the HTTP u
     my @snowfall = @{$weather->{'hourly'}->{'snowfall'}};
 
     print 'Number of cms of snow: ', $snowfall[1], "\n";
+
+=over 4
+
+=item * C<ua>
+
+An object to use for HTTP requests.
+If not provided, a default user agent is created.
+
+=item * C<host>
+
+The API host endpoint.
+Defaults to L<https://archive-api.open-meteo.com>.
+
+=item * C<min_interval>
+
+Minimum number of seconds to wait between API requests.
+Defaults to C<0> (no delay).
+Use this option to enforce rate-limiting.
+
+=back
+
 
 =cut
 
@@ -69,7 +108,16 @@ sub new {
 	}
 	my $host = $args{host} || 'archive-api.open-meteo.com';
 
-	return bless { ua => $ua, host => $host }, $class;
+	# Set up rate-limiting: minimum interval between requests (in seconds)
+	my $min_interval = $args{min_interval} || 0;	# default: no delay
+
+	return bless {
+		min_interval => $min_interval,
+		last_request => 0,	# Initialize last_request timestamp
+		%args,
+		host => $host,
+		ua => $ua
+	}, $class;
 }
 
 =head2 weather
@@ -177,7 +225,17 @@ sub weather
 
 	$url =~ s/%2C/,/g;
 
+	# Enforce rate-limiting: ensure at least min_interval seconds between requests.
+	my $now = time();
+	my $elapsed = $now - $self->{last_request};
+	if($elapsed < $self->{min_interval}) {
+		Time::HiRes::sleep($self->{min_interval} - $elapsed);
+	}
+
 	my $res = $self->{ua}->get($url);
+
+	# Update last_request timestamp
+	$self->{last_request} = time();
 
 	if($res->is_error()) {
 		Carp::carp(ref($self), ": $url API returned error: ", $res->status_line());

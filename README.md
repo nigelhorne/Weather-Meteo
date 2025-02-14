@@ -4,7 +4,7 @@ Weather::Meteo - Interface to [https://open-meteo.com](https://open-meteo.com) f
 
 # VERSION
 
-Version 0.10
+Version 0.11
 
 # SYNOPSIS
 

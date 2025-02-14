@@ -19,11 +19,11 @@ Weather::Meteo - Interface to L<https://open-meteo.com> for historical weather d
 
 =head1 VERSION
 
-Version 0.10
+Version 0.11
 
 =cut
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 =head1 SYNOPSIS
 
@@ -257,7 +257,6 @@ sub weather
 	# Create a cache key based on the location, date and time zone (might want to use a stronger hash function if needed)
 	my $cache_key = "weather:$latitude:$longitude:$date:$tz";
 	if(my $cached = $self->{cache}->get($cache_key)) {
-	::diag($cache_key);
 		return $cached;
 	}
 

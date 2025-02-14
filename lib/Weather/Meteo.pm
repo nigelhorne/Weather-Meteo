@@ -166,8 +166,10 @@ sub new {
 The date argument can be an ISO-8601 formatted date,
 or an object that understands the strftime method.
 
-Takes an optional argument, tz, which defaults to 'Europe/London'.
-For that to work set TIMEZONEDB_KEY to be your API key from L<https://timezonedb.com>.
+Takes an optional argument, tz, containing the time zone.
+If not given, the module tries to work it out from the given location,
+for that to work set TIMEZONEDB_KEY to be your API key from L<https://timezonedb.com>.
+If all else fails, the module falls back to Europe/London.
 
 =cut
 

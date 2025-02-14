@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Carp;
+use CHI;
 use JSON::MaybeXS;
 use LWP::UserAgent;
 use Scalar::Util;
@@ -37,6 +38,18 @@ The module supports object-oriented usage and allows customization of the HTTP u
 
 =over 4
 
+=item * Caching
+
+Identical requests are cached (using L<CHI> or a user-supplied caching object),
+reducing the number of HTTP requests to the API and speeding up repeated queries.
+
+This module leverages L<CHI> for caching geocoding responses.
+When a geocode request is made,
+a cache key is constructed from the request.
+If a cached response exists,
+it is returned immediately,
+avoiding unnecessary API calls.
+
 =item * Rate-Limiting
 
 A minimum interval between successive API calls can be enforced to ensure that the API is not overwhelmed and to comply with any request throttling requirements.
@@ -66,12 +79,15 @@ sleeps for the remaining time.
 
     print 'Number of cms of snow: ', $snowfall[1], "\n";
 
+Creates a new instance. Acceptable options include:
+
 =over 4
 
-=item * C<ua>
+=item * C<cache>
 
-An object to use for HTTP requests.
-If not provided, a default user agent is created.
+A caching object.
+If not provided,
+an in-memory cache is created with a default expiration of one hour.
 
 =item * C<host>
 
@@ -84,8 +100,12 @@ Minimum number of seconds to wait between API requests.
 Defaults to C<0> (no delay).
 Use this option to enforce rate-limiting.
 
-=back
+=item * C<ua>
 
+An object to use for HTTP requests.
+If not provided, a default user agent is created.
+
+=back
 
 =cut
 
@@ -108,6 +128,13 @@ sub new {
 	}
 	my $host = $args{host} || 'archive-api.open-meteo.com';
 
+	# Set up caching (default to an in-memory cache if none provided)
+	my $cache = $args{cache} || CHI->new(
+		driver => 'Memory',
+		global => 1,
+		expires_in => '1 day',
+	);
+
 	# Set up rate-limiting: minimum interval between requests (in seconds)
 	my $min_interval = $args{min_interval} || 0;	# default: no delay
 
@@ -115,6 +142,7 @@ sub new {
 		min_interval => $min_interval,
 		last_request => 0,	# Initialize last_request timestamp
 		%args,
+		cache => $cache,
 		host => $host,
 		ua => $ua
 	}, $class;
@@ -150,7 +178,8 @@ sub weather
 
 	if(ref($_[0]) eq 'HASH') {
 		%param = %{$_[0]};
-	} elsif((@_ == 2) && Scalar::Util::blessed($_[0]) && ($_[0]->can('latitude'))) {
+	} elsif((scalar(@_) == 2) && Scalar::Util::blessed($_[0]) && ($_[0]->can('latitude'))) {
+		# Two arguments - a location object and a date
 		my $location = $_[0];
 		$param{latitude} = $location->latitude();
 		$param{longitude} = $location->longitude();
@@ -225,7 +254,14 @@ sub weather
 
 	$url =~ s/%2C/,/g;
 
-	# Enforce rate-limiting: ensure at least min_interval seconds between requests.
+	# Create a cache key based on the location, date and time zone (might want to use a stronger hash function if needed)
+	my $cache_key = "weather:$latitude:$longitude:$date:$tz";
+	if(my $cached = $self->{cache}->get($cache_key)) {
+	::diag($cache_key);
+		return $cached;
+	}
+
+	# Enforce rate-limiting: ensure at least min_interval seconds between requests
 	my $now = time();
 	my $elapsed = $now - $self->{last_request};
 	if($elapsed < $self->{min_interval}) {
@@ -256,6 +292,9 @@ sub weather
 			return;
 		}
 		if(defined($rc->{'hourly'})) {
+			# Cache the result before returning it
+			$self->{'cache'}->set($cache_key, $rc);
+
 			return $rc;	# No support for list context, yet
 		}
 	}

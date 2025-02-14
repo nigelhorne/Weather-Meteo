@@ -17,6 +17,18 @@ The module supports object-oriented usage and allows customization of the HTTP u
       my $meteo = Weather::Meteo->new();
       my $weather = $meteo->weather({ latitude => 0.1, longitude => 0.2, date => '2022-12-25' });
 
+- Caching
+
+    Identical requests are cached (using [CHI](https://metacpan.org/pod/CHI) or a user-supplied caching object),
+    reducing the number of HTTP requests to the API and speeding up repeated queries.
+
+    This module leverages [CHI](https://metacpan.org/pod/CHI) for caching geocoding responses.
+    When a geocode request is made,
+    a cache key is constructed from the request.
+    If a cached response exists,
+    it is returned immediately,
+    avoiding unnecessary API calls.
+
 - Rate-Limiting
 
     A minimum interval between successive API calls can be enforced to ensure that the API is not overwhelmed and to comply with any request throttling requirements.
@@ -44,10 +56,13 @@ The module supports object-oriented usage and allows customization of the HTTP u
 
     print 'Number of cms of snow: ', $snowfall[1], "\n";
 
-- `ua`
+Creates a new instance. Acceptable options include:
 
-    An object to use for HTTP requests.
-    If not provided, a default user agent is created.
+- `cache`
+
+    A caching object.
+    If not provided,
+    an in-memory cache is created with a default expiration of one hour.
 
 - `host`
 
@@ -59,6 +74,11 @@ The module supports object-oriented usage and allows customization of the HTTP u
     Minimum number of seconds to wait between API requests.
     Defaults to `0` (no delay).
     Use this option to enforce rate-limiting.
+
+- `ua`
+
+    An object to use for HTTP requests.
+    If not provided, a default user agent is created.
 
 ## weather
 

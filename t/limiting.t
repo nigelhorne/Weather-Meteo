@@ -1,11 +1,13 @@
 #!/usr/bin/env perl
 
-# Test rate limiting
+# Test rate limiting and cache
 
 use strict;
 use warnings;
+
+use CHI;
 use Time::HiRes qw(time);
-use Test::Most tests => 4;
+use Test::Most tests => 5;
 
 BEGIN { use_ok('Weather::Meteo') }
 
@@ -39,8 +41,16 @@ RATE_LIMIT: {
 	# Create our custom user agent
 	my $ua = MyTestUA->new();
 
+	# Create an in-memory cache using CHI
+	my $cache = CHI->new(
+		driver => 'Memory',
+		global => 1,
+		expires_in => '1 hour',
+	);
+
 	# Instantiate with our custom UA and min_interval
 	my $meteo = Weather::Meteo->new(
+		cache => $cache,
 		min_interval => $min_interval,
 		ua => $ua
 	);
@@ -58,5 +68,7 @@ RATE_LIMIT: {
 		my $elapsed = $MyTestUA::REQUEST_TIMES[1] - $MyTestUA::REQUEST_TIMES[0];
 		cmp_ok($elapsed, '>=', $min_interval, "Rate limiting enforced: elapsed time >= $min_interval sec");
 	}
+
+	cmp_ok(ref($cache->get('weather:39.1155:-77.5644:2023-12-25:Europe/London')), 'eq', 'HASH');
 }
 

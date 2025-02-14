@@ -124,9 +124,6 @@ sub new {
 
     use Geo::Location::Point;
 
-The date argument can be an ISO-8601 formatted date,
-or an object that understands the strftime method.
-
     my $ramsgate = Geo::Location::Point->new({ latitude => 51.34, longitude => 1.42 });
     # Print snowfall at 1AM on Christmas morning in Ramsgate
     $weather = $meteo->weather($ramsgate, '2022-12-25');
@@ -137,6 +134,9 @@ or an object that understands the strftime method.
     use DateTime;
     my $dt = DateTime->new(year => 2024, month => 2, day => 1);
     $weather = $meteo->weather({ location => $ramsgate, date => $dt });
+
+The date argument can be an ISO-8601 formatted date,
+or an object that understands the strftime method.
 
 Takes an optional argument, tz, which defaults to 'Europe/London'.
 For that to work set TIMEZONEDB_KEY to be your API key from L<https://timezonedb.com>.

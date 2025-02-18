@@ -216,8 +216,14 @@ sub weather
 	if($latitude =~ /^\./) {
 		$latitude = "0$latitude";
 	}
+	if($latitude =~ /^\-\.(\d+)$/) {
+		$latitude = "-0.$1";
+	}
 	if($longitude =~ /^\./) {
 		$longitude = "0$longitude";
+	}
+	if($longitude =~ /^\-\.(\d+)$/) {
+		$longitude = "-0.$1";
 	}
 
 	if(($latitude !~ /^-?\d+(\.\d+)?$/) || ($longitude !~ /^-?\d+(\.\d+)?$/)) {

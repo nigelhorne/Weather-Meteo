@@ -1,6 +1,6 @@
 Revision history for Weather::Meteo
 
-0.12
+0.12	Mon Feb 24 07:44:44 EST 2025
 	Corrected the documentation for tz
 	Handle "0.25" as a co-ordinate
 

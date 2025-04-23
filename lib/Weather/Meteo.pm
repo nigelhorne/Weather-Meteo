@@ -132,7 +132,7 @@ sub new {
 	my $cache = $args{cache} || CHI->new(
 		driver => 'Memory',
 		global => 1,
-		expires_in => '1 day',
+		expires_in => '1 hour',
 	);
 
 	# Set up rate-limiting: minimum interval between requests (in seconds)
@@ -361,6 +361,8 @@ automatically be notified of progress on your bug as I make changes.
 Open Meteo API: L<https://open-meteo.com/en/docs#api_form>
 
 =head1 SUPPORT
+
+This module is provided as-is without any warranty.
 
 You can find documentation for this module with the perldoc command.
 

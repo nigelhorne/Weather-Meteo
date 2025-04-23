@@ -144,6 +144,8 @@ Open Meteo API: [https://open-meteo.com/en/docs#api\_form](https://open-meteo.co
 
 # SUPPORT
 
+This module is provided as-is without any warranty.
+
 You can find documentation for this module with the perldoc command.
 
     perldoc Weather::Meteo

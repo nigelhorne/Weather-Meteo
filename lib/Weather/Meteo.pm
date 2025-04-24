@@ -116,8 +116,8 @@ sub new {
 	if(!defined($class)) {
 		# Weather::Meteo::new() used rather than Weather::Meteo->new()
 		$class = __PACKAGE__;
-	} elsif(ref($class)) {
-		# clone the given object
+	} elsif(Scalar::Util::blessed($class)) {
+		# If $class is an object, clone it with new arguments
 		return bless { %{$class}, %args }, ref($class);
 	}
 

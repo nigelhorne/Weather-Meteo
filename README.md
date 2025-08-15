@@ -80,6 +80,12 @@ Creates a new instance. Acceptable options include:
     An object to use for HTTP requests.
     If not provided, a default user agent is created.
 
+The class can be configured at runtime using environments and configuration files,
+for example,
+setting `$ENV{'WEATHER__METEO__carp_on_warn'}` causes warnings to use [Carp](https://metacpan.org/pod/Carp).
+For more information about runtime configuration,
+see [Object::Configure](https://metacpan.org/pod/Object%3A%3AConfigure).
+
 ## weather
 
     use Geo::Location::Point;
@@ -130,8 +136,6 @@ Lots of thanks to the folks at [https://open-meteo.com](https://open-meteo.com).
 
 # BUGS
 
-This module is provided as-is without any warranty.
-
 Please report any bugs or feature requests to `bug-weather-meteo at rt.cpan.org`,
 or through the web interface at
 [http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Weather-Meteo](http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Weather-Meteo).
@@ -140,7 +144,8 @@ automatically be notified of progress on your bug as I make changes.
 
 # SEE ALSO
 
-Open Meteo API: [https://open-meteo.com/en/docs#api\_form](https://open-meteo.com/en/docs#api_form)
+- Open Meteo API: [https://open-meteo.com/en/docs#api\_form](https://open-meteo.com/en/docs#api_form)
+- [Object::Configure](https://metacpan.org/pod/Object%3A%3AConfigure)
 
 # SUPPORT
 

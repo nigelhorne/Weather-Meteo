@@ -7,6 +7,9 @@ use Carp;
 use CHI;
 use JSON::MaybeXS;
 use LWP::UserAgent;
+use Object::Configure;
+use Params::Get 0.13;
+use Return::Set;
 use Scalar::Util;
 use Time::HiRes;
 use URI;
@@ -107,41 +110,49 @@ If not provided, a default user agent is created.
 
 =back
 
+The class can be configured at runtime using environments and configuration files,
+for example,
+setting C<$ENV{'WEATHER__METEO__carp_on_warn'}> causes warnings to use L<Carp>.
+For more information about runtime configuration,
+see L<Object::Configure>.
+
 =cut
 
 sub new {
 	my $class = shift;
-	my %args = (ref($_[0]) eq 'HASH') ? %{$_[0]} : @_;
+	my $params = Params::Get::get_params(undef, \@_) || {};
 
 	if(!defined($class)) {
 		# Weather::Meteo::new() used rather than Weather::Meteo->new()
 		$class = __PACKAGE__;
 	} elsif(Scalar::Util::blessed($class)) {
 		# If $class is an object, clone it with new arguments
-		return bless { %{$class}, %args }, ref($class);
+		return bless { %{$class}, %{$params} }, ref($class);
 	}
 
-	my $ua = $args{ua};
+	$params = Object::Configure::configure($class, $params);
+
+	my $ua = $params->{ua};
 	if(!defined($ua)) {
 		$ua = LWP::UserAgent->new(agent => __PACKAGE__ . "/$VERSION");
 		$ua->default_header(accept_encoding => 'gzip,deflate');
 	}
-	my $host = $args{host} || 'archive-api.open-meteo.com';
+	my $host = $params->{host} || 'archive-api.open-meteo.com';
 
 	# Set up caching (default to an in-memory cache if none provided)
-	my $cache = $args{cache} || CHI->new(
+	my $cache = $params->{cache} || CHI->new(
 		driver => 'Memory',
 		global => 1,
 		expires_in => '1 hour',
 	);
 
 	# Set up rate-limiting: minimum interval between requests (in seconds)
-	my $min_interval = $args{min_interval} || 0;	# default: no delay
+	my $min_interval = $params->{min_interval} || 0;	# default: no delay
 
 	return bless {
 		min_interval => $min_interval,
 		last_request => 0,	# Initialize last_request timestamp
-		%args,
+		%{$params},
 		cache => $cache,
 		host => $host,
 		ua => $ua
@@ -176,31 +187,26 @@ If all else fails, the module falls back to Europe/London.
 sub weather
 {
 	my $self = shift;
-	my %param;
+	my $params;
 
-	if(ref($_[0]) eq 'HASH') {
-		%param = %{$_[0]};
-	} elsif((scalar(@_) == 2) && Scalar::Util::blessed($_[0]) && ($_[0]->can('latitude'))) {
+	if((scalar(@_) == 2) && Scalar::Util::blessed($_[0]) && ($_[0]->can('latitude'))) {
 		# Two arguments - a location object and a date
 		my $location = $_[0];
-		$param{latitude} = $location->latitude();
-		$param{longitude} = $location->longitude();
-		$param{'date'} = $_[1];
+		$params->{latitude} = $location->latitude();
+		$params->{longitude} = $location->longitude();
+		$params->{'date'} = $_[1];
 		if($_[0]->can('tz') && $ENV{'TIMEZONEDB_KEY'}) {
-			$param{'tz'} = $_[0]->tz();
+			$params->{'tz'} = $_[0]->tz();
 		}
-	} elsif(ref($_[0])) {
-		Carp::croak('Usage: weather(latitude => $latitude, longitude => $longitude, date => "YYYY-MM-DD" [ , tz = $tz ])');
-		return;
-	} elsif((@_ % 2) == 0) {
-		%param = @_;
+	} else {
+		$params = Params::Get::get_params(undef, \@_);
 	}
 
-	my $latitude = $param{latitude};
-	my $longitude = $param{longitude};
-	my $location = $param{'location'};
-	my $date = $param{'date'};
-	my $tz = $param{'tz'} || 'Europe/London';
+	my $latitude = $params->{latitude};
+	my $longitude = $params->{longitude};
+	my $location = $params->{'location'};
+	my $date = $params->{'date'};
+	my $tz = $params->{'tz'} || 'Europe/London';
 
 	if((!defined($latitude)) && defined($location) &&
 	   Scalar::Util::blessed($location) && $location->can('latitude')) {
@@ -302,7 +308,7 @@ sub weather
 			# Cache the result before returning it
 			$self->{'cache'}->set($cache_key, $rc);
 
-			return $rc;	# No support for list context, yet
+			return Return::Set::set_return($rc, { type => 'hashref', min => 1 });	# No support for list context, yet
 		}
 	}
 
@@ -348,8 +354,6 @@ Lots of thanks to the folks at L<https://open-meteo.com>.
 
 =head1 BUGS
 
-This module is provided as-is without any warranty.
-
 Please report any bugs or feature requests to C<bug-weather-meteo at rt.cpan.org>,
 or through the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Weather-Meteo>.
@@ -358,7 +362,13 @@ automatically be notified of progress on your bug as I make changes.
 
 =head1 SEE ALSO
 
-Open Meteo API: L<https://open-meteo.com/en/docs#api_form>
+=over 4
+
+=item * Open Meteo API: L<https://open-meteo.com/en/docs#api_form>
+
+=item * L<Object::Configure>
+
+=back
 
 =head1 SUPPORT
 

@@ -214,6 +214,9 @@ sub weather
 		$longitude = $location->longitude();
 	}
 	if((!defined($latitude)) || (!defined($longitude)) || (!defined($date))) {
+		if(my $logger = $self->{'logger'}) {
+			$logger->error('Usage: weather(latitude => $latitude, longitude => $longitude, date => "YYYY-MM-DD")');
+		}
 		Carp::croak('Usage: weather(latitude => $latitude, longitude => $longitude, date => "YYYY-MM-DD")');
 		return;
 	}
@@ -233,6 +236,9 @@ sub weather
 	}
 
 	if(($latitude !~ /^-?\d+(\.\d+)?$/) || ($longitude !~ /^-?\d+(\.\d+)?$/)) {
+		if(my $logger = $self->{'logger'}) {
+			$self->error(__PACKAGE__ . ": Invalid latitude/longitude format ($latitude, $longitude)");
+		}
 		Carp::croak(__PACKAGE__, ": Invalid latitude/longitude format ($latitude, $longitude)");
 	}
 
@@ -246,6 +252,9 @@ sub weather
 	}
 
 	unless($date =~ /^\d{4}-\d{2}-\d{2}$/) {
+		if(my $logger = $self->{'logger'}) {
+			$self->error('Invalid date format. Expected YYYY-MM-DD');
+		}
 		croak('Invalid date format. Expected YYYY-MM-DD');
 	}
 

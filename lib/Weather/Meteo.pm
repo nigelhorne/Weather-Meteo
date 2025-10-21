@@ -15,6 +15,8 @@ use Time::HiRes;
 use URI;
 
 use constant FIRST_YEAR => 1940;
+use constant EXPIRES_IN => '1 hour';
+use constant MIN_INTERVAL => 0;	# default: no rate-limiting delay
 
 =head1 NAME
 
@@ -143,11 +145,11 @@ sub new {
 	my $cache = $params->{cache} || CHI->new(
 		driver => 'Memory',
 		global => 1,
-		expires_in => '1 hour',
+		expires_in => EXPIRES_IN,
 	);
 
 	# Set up rate-limiting: minimum interval between requests (in seconds)
-	my $min_interval = $params->{min_interval} || 0;	# default: no delay
+	my $min_interval = $params->{min_interval} || MIN_INTERVAL;
 
 	return bless {
 		min_interval => $min_interval,
@@ -354,7 +356,7 @@ sub ua {
 
 =head1 AUTHOR
 
-Nigel Horne, C<< <njh@bandsman.co.uk> >>
+Nigel Horne, C<< <njh@nigelhorne.com> >>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
@@ -372,6 +374,8 @@ automatically be notified of progress on your bug as I make changes.
 =head1 SEE ALSO
 
 =over 4
+
+=item * Test coverage report: L<https://nigelhorne.github.io/Weather-Meteo/coverage/>
 
 =item * Open Meteo API: L<https://open-meteo.com/en/docs#api_form>
 

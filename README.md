@@ -127,7 +127,7 @@ You can also set your own User-Agent object:
 
 # AUTHOR
 
-Nigel Horne, `<njh@bandsman.co.uk>`
+Nigel Horne, `<njh@nigelhorne.com>`
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
@@ -144,6 +144,7 @@ automatically be notified of progress on your bug as I make changes.
 
 # SEE ALSO
 
+- Test coverage report: [https://nigelhorne.github.io/Weather-Meteo/coverage/](https://nigelhorne.github.io/Weather-Meteo/coverage/)
 - Open Meteo API: [https://open-meteo.com/en/docs#api\_form](https://open-meteo.com/en/docs#api_form)
 - [Object::Configure](https://metacpan.org/pod/Object%3A%3AConfigure)
 

@@ -2,6 +2,8 @@ Revision history for Weather::Meteo
 
 0.13
 	Use Object::Configure to allow runtime configuration
+	Remove magic numbers
+	Added test dashboard
 
 0.12	Mon Feb 24 07:44:44 EST 2025
 	Corrected the documentation for tz

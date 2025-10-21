@@ -28,7 +28,7 @@ jobs:
           apk add --no-cache perl-dev build-base
           apk add perl perl-app-cpanminus make gzip git
           apk add perl-test-most perl-test-nowarnings perl-lwp-protocol-https perl-chi
-          apk add perl-json-maybexs perl-params-util perl-datetime perl-test-mockmodule yaml-dev
+          apk add perl-json-maybexs perl-params-util perl-datetime perl-test-mockmodule yaml-dev libffi-dev openssl-dev
           perl -V
           # cpanm -iqn ExtUtils::MakeMaker File::Spec Test::Most
           # cpanm -iqn Sub::Identify Log::Any
@@ -36,6 +36,9 @@ jobs:
           cd $RUNNER_WORKSPACE
           git clone --recurse-submodules $GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git
           cd $GITHUB_WORKSPACE
+          mkdir -p /github/home/cpanm-logs
+          cpanm --verbose --log /github/home/cpanm-logs/Config-Abstraction.log Config::Abstraction || { echo "Config::Abstraction install failed — dumping log:"; sed -n '1,200p' /github/home/cpanm-logs/Config-Abstraction.log; exit 1; }
+          cpanm --quiet --notest YAML::XS Data::Alias Data::Reuse JSON::Parse Scalar::Readonly Readonly::Enum Readonly::Values::Syslog Log::Abstraction Object::Configure || cpanm --force Log::Abstraction Object::Configure
           cpanm --iqn YAML::XS Data::Alias Data::Reuse JSON::Parse Scalar::Readonly Readonly::Enum Readonly::Values::Syslog Config::Abstraction Log::Abstraction Object::Configure
           cpanm -iqn File::Spec ExtUtils::MakeMaker Geo::Location::Point Log::Abstraction
           cpanm -iqn --installdeps .

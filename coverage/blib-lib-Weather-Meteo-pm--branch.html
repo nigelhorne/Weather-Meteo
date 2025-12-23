@@ -29,28 +29,28 @@ https://pjcj.net
 <tr><td class="h"></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">elsif (&amp;Scalar::Util::blessed($class)) { }</td></tr>
 <tr><td class="h"><a id="L138">138</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (defined $ua)</td></tr>
 <tr><td class="h"><a id="L194">194</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if (scalar @_ == 2 and &amp;Scalar::Util::blessed($_[0]) and $_[0]-&gt;can(&#39;latitude&#39;)) { }</td></tr>
-<tr><td class="h"><a id="L200">200</a></td><td class="c0">0</td><td class="c0">T</td><td class="c0">F</td><td class="s">if ($_[0]-&gt;can(&quot;tz&quot;) and $ENV{&quot;TIMEZONEDB_KEY&quot;})</td></tr>
+<tr><td class="h"><a id="L200">200</a></td><td class="c0">0</td><td class="c0">T</td><td class="c0">F</td><td class="s">if ($_[0]-&gt;can(&quot;tz&quot;) and $ENV{&#39;TIMEZONEDB_KEY&#39;})</td></tr>
 <tr><td class="h"><a id="L213">213</a></td><td class="c0">0</td><td class="c0">T</td><td class="c0">F</td><td class="s">if (not defined $latitude and defined $location and &amp;Scalar::Util::blessed($location) and $location-&gt;can(&quot;latitude&quot;))</td></tr>
 <tr><td class="h"><a id="L218">218</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">unless (defined $latitude and defined $longitude and defined $date)</td></tr>
-<tr><td class="h"><a id="L219">219</a></td><td class="c0">50</td><td class="c3">T</td><td class="c0">F</td><td class="s">if (my $logger = $$self{&quot;logger&quot;})</td></tr>
+<tr><td class="h"><a id="L219">219</a></td><td class="c0">50</td><td class="c3">T</td><td class="c0">F</td><td class="s">if (my $logger = $self-&gt;{&#39;logger&#39;})</td></tr>
 <tr><td class="h"><a id="L227">227</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if ($latitude =~ /^\./)</td></tr>
 <tr><td class="h"><a id="L230">230</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if ($latitude =~ /^\-\.(\d+)$/)</td></tr>
 <tr><td class="h"><a id="L233">233</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if ($longitude =~ /^\./)</td></tr>
 <tr><td class="h"><a id="L236">236</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if ($longitude =~ /^\-\.(\d+)$/)</td></tr>
 <tr><td class="h"><a id="L240">240</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">unless ($latitude =~ /^-?\d+(\.\d+)?$/ and $longitude =~ /^-?\d+(\.\d+)?$/)</td></tr>
-<tr><td class="h"><a id="L241">241</a></td><td class="c0">0</td><td class="c0">T</td><td class="c0">F</td><td class="s">if (my $logger = $$self{&quot;logger&quot;})</td></tr>
+<tr><td class="h"><a id="L241">241</a></td><td class="c0">0</td><td class="c0">T</td><td class="c0">F</td><td class="s">if (my $logger = $self-&gt;{&#39;logger&#39;})</td></tr>
 <tr><td class="h"><a id="L247">247</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if (&amp;Scalar::Util::blessed($date) and $date-&gt;can(&#39;strftime&#39;)) { }</td></tr>
 <tr><td class="h"></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">elsif ($date =~ /^(\d{4})-/) { }</td></tr>
 <tr><td class="h"><a id="L250">250</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $1 &lt; 1940</td></tr>
 <tr><td class="h"><a id="L256">256</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">unless ($date =~ /^\d{4}-\d{2}-\d{2}$/)</td></tr>
-<tr><td class="h"><a id="L257">257</a></td><td class="c0">0</td><td class="c0">T</td><td class="c0">F</td><td class="s">if (my $logger = $$self{&quot;logger&quot;})</td></tr>
-<tr><td class="h"><a id="L284">284</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if (my $cached = $$self{&quot;cache&quot;}-&gt;get($cache_key))</td></tr>
-<tr><td class="h"><a id="L291">291</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($elapsed &lt; $$self{&quot;min_interval&quot;})</td></tr>
+<tr><td class="h"><a id="L257">257</a></td><td class="c0">0</td><td class="c0">T</td><td class="c0">F</td><td class="s">if (my $logger = $self-&gt;{&#39;logger&#39;})</td></tr>
+<tr><td class="h"><a id="L284">284</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if (my $cached = $self-&gt;{&#39;cache&#39;}-&gt;get($cache_key))</td></tr>
+<tr><td class="h"><a id="L291">291</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($elapsed &lt; $self-&gt;{&#39;min_interval&#39;})</td></tr>
 <tr><td class="h"><a id="L300">300</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if ($res-&gt;is_error)</td></tr>
 <tr><td class="h"><a id="L308">308</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($@)</td></tr>
 <tr><td class="h"><a id="L313">313</a></td><td class="c0">50</td><td class="c3">T</td><td class="c0">F</td><td class="s">if ($rc)</td></tr>
-<tr><td class="h"><a id="L314">314</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if ($$rc{&quot;error&quot;})</td></tr>
-<tr><td class="h"><a id="L318">318</a></td><td class="c0">50</td><td class="c3">T</td><td class="c0">F</td><td class="s">if (defined $$rc{&quot;hourly&quot;})</td></tr>
+<tr><td class="h"><a id="L314">314</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if ($rc-&gt;{&#39;error&#39;})</td></tr>
+<tr><td class="h"><a id="L318">318</a></td><td class="c0">50</td><td class="c3">T</td><td class="c0">F</td><td class="s">if (defined $rc-&gt;{&#39;hourly&#39;})</td></tr>
 <tr><td class="h"><a id="L351">351</a></td><td class="c0">0</td><td class="c0">T</td><td class="c0">F</td><td class="s">if (@_)</td></tr>
 </table>
 </body>

@@ -9,6 +9,7 @@ use JSON::MaybeXS;
 use LWP::UserAgent;
 use Object::Configure;
 use Params::Get 0.13;
+use Params::Validate::Strict;
 use Return::Set;
 use Scalar::Util;
 use Time::HiRes;
@@ -349,7 +350,16 @@ sub ua {
 	my $self = shift;
 
 	if (@_) {
-		$self->{ua} = shift;
+		my $params = Params::Validate::Strict::validate_strict({
+			args => Params::Get::get_params('ua', @_),
+			schema => {
+				ua => {
+					type => 'obj',
+					can => 'get'
+				}
+			}
+		});
+		$self->{ua} = $params->{ua};
 	}
 	return $self->{ua};
 }

@@ -354,7 +354,7 @@ sub ua {
 			args => Params::Get::get_params('ua', @_),
 			schema => {
 				ua => {
-					type => 'obj',
+					type => 'object',
 					can => 'get'
 				}
 			}

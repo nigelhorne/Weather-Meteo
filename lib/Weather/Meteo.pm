@@ -329,8 +329,8 @@ sub weather
 
 =head2 ua
 
-Accessor method to get and set UserAgent object used internally. You
-can call I<env_proxy> for example, to get the proxy information from
+Accessor method to get and set UserAgent object used internally.
+You can call I<env_proxy> for example, to get the proxy information from
 environment variables:
 
     $meteo->ua()->env_proxy(1);
@@ -351,7 +351,7 @@ sub ua {
 	if (@_) {
 		$self->{ua} = shift;
 	}
-	return $self->{ua}
+	return $self->{ua};
 }
 
 =head1 AUTHOR

@@ -1,5 +1,6 @@
 ---
 config:
+  dedup: 1
   test_empty: 1
   test_non_ascii: 0
   test_nuls: 0

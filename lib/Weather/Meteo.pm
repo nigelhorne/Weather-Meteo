@@ -385,7 +385,7 @@ automatically be notified of progress on your bug as I make changes.
 
 =over 4
 
-=item * Test coverage report: L<https://nigelhorne.github.io/Weather-Meteo/coverage/>
+=item * L<Test Dashboard|https://nigelhorne.github.io/Weather-Meteo/coverage/>
 
 =item * Open Meteo API: L<https://open-meteo.com/en/docs#api_form>
 

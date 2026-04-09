@@ -1,6 +1,6 @@
 Revision history for Weather::Meteo
 
-0.13
+0.13	Thu Apr  9 07:48:29 EDT 2026
 	Use Object::Configure to allow runtime configuration
 	Remove magic numbers
 	Added test dashboard

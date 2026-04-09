@@ -25,11 +25,11 @@ Weather::Meteo - Interface to L<https://open-meteo.com> for historical weather d
 
 =head1 VERSION
 
-Version 0.12
+Version 0.13
 
 =cut
 
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
 =head1 SYNOPSIS
 
@@ -429,7 +429,7 @@ L<http://deps.cpantesters.org/?module=Weather-Meteo>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2023-2025 Nigel Horne.
+Copyright 2023-2026 Nigel Horne.
 
 This program is released under the following licence: GPL2
 

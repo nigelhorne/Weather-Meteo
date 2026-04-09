@@ -1,5 +1,6 @@
 bin/weather
 Changes
+cpanfile
 lib/Weather/Meteo.pm
 LICENSE
 Makefile.PL

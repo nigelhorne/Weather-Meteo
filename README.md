@@ -4,7 +4,7 @@ Weather::Meteo - Interface to [https://open-meteo.com](https://open-meteo.com) f
 
 # VERSION
 
-Version 0.12
+Version 0.13
 
 # SYNOPSIS
 
@@ -111,8 +111,8 @@ If all else fails, the module falls back to Europe/London.
 
 ## ua
 
-Accessor method to get and set UserAgent object used internally. You
-can call _env\_proxy_ for example, to get the proxy information from
+Accessor method to get and set UserAgent object used internally.
+You can call _env\_proxy_ for example, to get the proxy information from
 environment variables:
 
     $meteo->ua()->env_proxy(1);
@@ -144,7 +144,7 @@ automatically be notified of progress on your bug as I make changes.
 
 # SEE ALSO
 
-- Test coverage report: [https://nigelhorne.github.io/Weather-Meteo/coverage/](https://nigelhorne.github.io/Weather-Meteo/coverage/)
+- [Test Dashboard](https://nigelhorne.github.io/Weather-Meteo/coverage/)
 - Open Meteo API: [https://open-meteo.com/en/docs#api\_form](https://open-meteo.com/en/docs#api_form)
 - [Object::Configure](https://metacpan.org/pod/Object%3A%3AConfigure)
 
@@ -180,6 +180,6 @@ You can also look for information at:
 
 # LICENSE AND COPYRIGHT
 
-Copyright 2023-2025 Nigel Horne.
+Copyright 2023-2026 Nigel Horne.
 
 This program is released under the following licence: GPL2

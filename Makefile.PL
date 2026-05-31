@@ -54,6 +54,7 @@ if($online_tests) {
 	close($enabled) || die "Can't touch t/online.enabled $!";
 	$test_requires->{'Test::LWP::UserAgent'} = 0;
 	$test_requires->{'DateTime'} = 0;
+	$test_requires->{'Test::Memory::Cycle'} = 0;
 	if(defined($ENV{'TIMEZONEDB_KEY'})) {
 		$test_requires->{'TimeZone::TimeZoneDB'} = 0;
 	}

@@ -15,6 +15,7 @@ t/comment-spelling.t
 t/critic.t
 t/eof.t
 t/eol.t
+t/function.t
 t/fuzz.t
 t/kwalitee.t
 t/limiting.t
@@ -29,6 +30,7 @@ t/pod-synopsis.t
 t/pod.t
 t/port.t
 t/strict.t
+t/unit.t
 t/unused.t
 t/vars.t
 t/version.t

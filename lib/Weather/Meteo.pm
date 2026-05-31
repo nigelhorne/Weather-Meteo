@@ -240,7 +240,7 @@ sub weather
 
 	if(($latitude !~ /^-?\d+(\.\d+)?$/) || ($longitude !~ /^-?\d+(\.\d+)?$/)) {
 		if(my $logger = $self->{'logger'}) {
-			$self->error(__PACKAGE__ . ": Invalid latitude/longitude format ($latitude, $longitude)");
+			$logger->error(__PACKAGE__ . ": Invalid latitude/longitude format ($latitude, $longitude)");
 		}
 		Carp::croak(__PACKAGE__, ": Invalid latitude/longitude format ($latitude, $longitude)");
 	}
@@ -256,7 +256,7 @@ sub weather
 
 	unless($date =~ /^\d{4}-\d{2}-\d{2}$/) {
 		if(my $logger = $self->{'logger'}) {
-			$self->error('Invalid date format. Expected YYYY-MM-DD');
+			$logger->error('Invalid date format. Expected YYYY-MM-DD');
 		}
 		croak('Invalid date format. Expected YYYY-MM-DD');
 	}
@@ -324,8 +324,7 @@ sub weather
 		}
 	}
 
-	# my @results = @{ $data || [] };
-	# wantarray ? @results : $results[0];
+	return;
 }
 
 =head2 ua

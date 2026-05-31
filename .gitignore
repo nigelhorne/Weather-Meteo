@@ -9,6 +9,7 @@
 
 # Devel::Cover
 cover_db/
+cover_html/
 
 # Devel::NYTProf
 nytprof.out
@@ -36,3 +37,11 @@ inc/
 *.swp
 t/online.enabled
 CLAUDE.md
+mutation.json
+.DS_Store
+
+# Carton/Carmel
+/local/
+/.carmel/
+# cpanfile.snapshot should generally be ignored for library code, otherwise included
+# cpanfile.snapshot 

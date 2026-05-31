@@ -1,5 +1,8 @@
 Revision history for Weather::Meteo
 
+0.14
+	Use Test::Mockingbird instead of Test::MockModule
+
 0.13	Thu Apr  9 07:48:29 EDT 2026
 	Use Object::Configure to allow runtime configuration
 	Remove magic numbers

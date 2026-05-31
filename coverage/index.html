@@ -66,7 +66,7 @@
 			color: #666;
 		}
 		tr.cpan-na td {
-			background-color: #f77f50;
+			background-color: #ffffde;
 			color: #666;
 		}
 		.new-failure {
@@ -134,7 +134,7 @@
 	<a href="https://github.com/nigelhorne/Weather-Meteo">
 		<img src="https://img.shields.io/github/stars/nigelhorne/Weather-Meteo?style=social" alt="GitHub stars">
 	</a>
-	<img src="https://img.shields.io/badge/coverage-70%25-red" alt="Coverage badge">
+	<img src="https://img.shields.io/badge/coverage-73%25-yellow" alt="Coverage badge">
 </div>
 <h1>Weather::Meteo</h1><h2>Coverage Report</h2>
 <table data-sort-col="0" data-sort-order="asc">
@@ -153,9 +153,9 @@
 
 <tbody>
 
-<tr class="med"><td><a href="blib-lib-Weather-Meteo-pm.html" title="View coverage line by line" target="_blank">blib/lib/Weather/Meteo.pm</a> <a href="https://github.com/nigelhorne/Weather-Meteo/blob/ee705e38d9b0e7a0ab92cc2cc88f3daed4c88115/blib/lib/Weather/Meteo.pm" class="icon-link" title="View source on GitHub">&#128269;</a><canvas class="sparkline" width="80" height="20" data-points="69.8,69.8,69.8,69.8,69.8,70.0,70.0,70.0,70.0,70.0"></canvas></td><td>79.7</td><td>53.7</td><td>46.3</td><td>94.7</td><td><span class="coverage-badge badge-warn" title="Moderate coverage">70.0%</span></td><td class="neutral" title="Previous: 70.0%">&#9679; 0.0%</td></tr>
-<tr class="summary-row nosort"><td colspan="2"><strong>Summary</strong></td><td colspan="2">1 files</td><td colspan="3">Avg: 70%, Low: 0</td></tr>
-<tr class="med nosort"><td><strong>Total</strong></td><td>79.7</td><td>53.7</td><td>46.3</td><td>94.7</td><td colspan="2"><strong>70.0</strong></td></tr>
+<tr class="med"><td><a href="blib-lib-Weather-Meteo-pm.html" title="View coverage line by line" target="_blank">lib/Weather/Meteo.pm</a> <a href="https://github.com/nigelhorne/Weather-Meteo/blob/4107b022cd203c9b24d0ef240da3db3ee91863e9/lib/Weather/Meteo.pm" class="icon-link" title="View source on GitHub">&#128269;</a><canvas class="sparkline" width="80" height="20" data-points="69.8,69.8,69.8,69.8,70.0,70.0,70.0,70.0,70.0,70.0"></canvas></td><td>83.2</td><td>57.4</td><td>46.3</td><td>100.0</td><td><span class="coverage-badge badge-warn" title="Moderate coverage">73.2%</span></td><td class="neutral" title="Previous (sparkline): 70.0%">&#9679; 0.0%</td></tr>
+<tr class="summary-row nosort"><td colspan="2"><strong>Summary</strong></td><td colspan="2">1 files</td><td colspan="3">Avg: 73%, Low: 0</td></tr>
+<tr class="med nosort"><td><strong>Total</strong></td><td>83.2</td><td>57.4</td><td>46.3</td><td>100.0</td><td colspan="2"><strong>73.2</strong></td></tr>
 </tbody></table>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1em;">
 	<div>
@@ -172,12 +172,11 @@
 		<button id="resetZoomBtn" type="button">Reset Zoom</button>
 	</div>
 </div>
-
 <canvas id="coverageTrend" width="600" height="300"></canvas>
 <!-- Zoom controls for the trend chart -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- Add chartjs-plugin-zoom (required for wheel/pinch/drag zoom & pan) -->
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.1.1/dist/chartjs-plugin-zoom.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom\@2.1.1/dist/chartjs-plugin-zoom.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 <script>
 function linearRegression(data) {
@@ -190,7 +189,7 @@ function linearRegression(data) {
 	const sumXY = xs.reduce((acc, val, i) => acc + val * ys[i], 0);
 	const sumX2 = xs.reduce((acc, val) => acc + val * val, 0);
 
-	if (n < 2 || (n * sumX2 - sumX * sumX) === 0) {
+	if(n < 2 || (n * sumX2 - sumX * sumX) === 0) {
 		return [];
 	}
 	const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
@@ -202,23 +201,24 @@ function linearRegression(data) {
 	}));
 }
 
-const dataPoints = [ { x: "2025-10-21T08:36:40-04:00", y: 69.8412698412698, delta: 0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/038192d", label: "2025-10-21T08:36:40-04:00", pointBackgroundColor: "gray", comment: "Added the testing dashboard generation script" },
-{ x: "2025-10-21T08:40:45-04:00", y: 69.8412698412698, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/0c370d0", label: "2025-10-21T08:40:45-04:00", pointBackgroundColor: "gray", comment: "More Alpine packages" },
-{ x: "2025-10-21T11:24:59-04:00", y: 69.8412698412698, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/9c5af14", label: "2025-10-21T11:24:59-04:00", pointBackgroundColor: "gray", comment: "More Apline nonsense" },
-{ x: "2025-12-23T12:04:35-05:00", y: 69.8412698412698, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/8ca1e97", label: "2025-12-23T12:04:35-05:00", pointBackgroundColor: "gray", comment: "Started fuzz testing support" },
-{ x: "2026-02-08T21:38:03-05:00", y: 70.0389105058366, delta: 0.2, url: "https://github.com/nigelhorne/Weather-Meteo/commit/5acb697", label: "2026-02-08T21:38:03-05:00", pointBackgroundColor: "green", comment: "Latest test dashboard" },
-{ x: "2026-02-09T15:44:14-05:00", y: 70.0389105058366, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/4b6fff5", label: "2026-02-09T15:44:14-05:00", pointBackgroundColor: "gray", comment: "Added fuzz testing for ua" },
-{ x: "2026-02-09T19:19:42-05:00", y: 70.0389105058366, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/6d0f332", label: "2026-02-09T19:19:42-05:00", pointBackgroundColor: "gray", comment: "Latest fuzz.t" },
-{ x: "2026-03-23T08:42:20-04:00", y: 70.0389105058366, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/c69074e", label: "2026-03-23T08:42:20-04:00", pointBackgroundColor: "gray", comment: "Meet PBP level 5" },
-{ x: "2026-04-09T07:55:02-04:00", y: 70.0389105058366, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/b302a06", label: "2026-04-09T07:55:02-04:00", pointBackgroundColor: "gray", comment: "Remove cpanfile" } ];
 
+const dataPoints = [ { x: "2025-10-21T08:36:40-04:00", y: 69.8412698412698, delta: 0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/038192d8a66597a0ded98274c44b41a2e4e3e13c", label: "2025-10-21T08:36:40-04:00", pointBackgroundColor: "gray", comment: "Added the testing dashboard generation script" },
+{ x: "2025-10-21T08:40:45-04:00", y: 69.8412698412698, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/0c370d04639ae99bd24c8670a410f49485e0111d", label: "2025-10-21T08:40:45-04:00", pointBackgroundColor: "gray", comment: "More Alpine packages" },
+{ x: "2025-10-21T11:24:59-04:00", y: 69.8412698412698, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/9c5af1425cfd749bb6cf5bc856b081c750c0ff2d", label: "2025-10-21T11:24:59-04:00", pointBackgroundColor: "gray", comment: "More Apline nonsense" },
+{ x: "2025-12-23T12:04:35-05:00", y: 69.8412698412698, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/8ca1e976db882e8c78b1389799877203776e4024", label: "2025-12-23T12:04:35-05:00", pointBackgroundColor: "gray", comment: "Started fuzz testing support" },
+{ x: "2026-02-08T21:38:03-05:00", y: 70.0389105058366, delta: 0.2, url: "https://github.com/nigelhorne/Weather-Meteo/commit/5acb697c24a3825d7285be256674e5d75395a318", label: "2026-02-08T21:38:03-05:00", pointBackgroundColor: "green", comment: "Latest test dashboard" },
+{ x: "2026-02-09T15:44:14-05:00", y: 70.0389105058366, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/4b6fff55eff5b8ea7037b3de8673b773828398bf", label: "2026-02-09T15:44:14-05:00", pointBackgroundColor: "gray", comment: "Added fuzz testing for ua" },
+{ x: "2026-02-09T19:19:42-05:00", y: 70.0389105058366, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/6d0f332e0dc145fb65fdca597b1ff26c6f6783a7", label: "2026-02-09T19:19:42-05:00", pointBackgroundColor: "gray", comment: "Latest fuzz.t" },
+{ x: "2026-03-23T08:42:20-04:00", y: 70.0389105058366, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/c69074e1a3e41a6b7eb07546bc334e76460e71b6", label: "2026-03-23T08:42:20-04:00", pointBackgroundColor: "gray", comment: "Meet PBP level 5" },
+{ x: "2026-04-09T07:55:02-04:00", y: 70.0389105058366, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/b302a06d6be55573bd5eb8b4641386078557c31e", label: "2026-04-09T07:55:02-04:00", pointBackgroundColor: "gray", comment: "Remove cpanfile" },
+{ x: "2026-05-31T09:06:35-04:00", y: 70.0389105058366, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/ee705e38d9b0e7a0ab92cc2cc88f3daed4c88115", label: "2026-05-31T09:06:35-04:00", pointBackgroundColor: "gray", comment: "Use Test::Mockingbird instead of Test::MockModule" } ];
 const regressionPoints = linearRegression(dataPoints);
 // Try to register the zoom plugin (handles different UMD builds)
 (function registerZoomPlugin(){
 	try {
 		const candidates = ['chartjsPluginZoom','ChartZoom','zoomPlugin','chartjs_plugin_zoom','ChartjsPluginZoom','chartjsPluginZoom'];
-		for (const name of candidates) {
-			if (window[name]) {
+		for(const name of candidates) {
+			if(window[name]) {
 				try { Chart.register(window[name]); console.log('Registered zoom plugin:', name); return; } catch(e) { console.warn('zoom register failed for', name, e); }
 			}
 		}
@@ -303,7 +303,7 @@ const chart = new Chart(ctx, {
 			}
 		}, onClick: (e) => {
 			const points = chart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
-			if (points.length) {
+			if(points.length) {
 				const url = chart.data.datasets[0].data[points[0].index].url;
 				window.open(url, '_blank');
 			}
@@ -320,10 +320,10 @@ document.getElementById('toggleTrend').addEventListener('change', function(e) {
 
 // Reset Zoom button handler (calls plugin API if available)
 const resetBtn = document.getElementById('resetZoomBtn');
-if (resetBtn) {
+if(resetBtn) {
 	resetBtn.addEventListener('click', function() {
 		try {
-			if (chart && typeof chart.resetZoom === 'function') {
+			if(chart && typeof chart.resetZoom === 'function') {
 				chart.resetZoom();
 			} else {
 				console.warn('resetZoom not available; zoom plugin may not be registered.');
@@ -336,7 +336,7 @@ if (resetBtn) {
 
 function sortTable(th, colIndex) {
 	const table = th.closest("table");
-	if (!table || !table.tBodies.length) return;
+	if(!table || !table.tBodies.length) return;
 
 	const tbody = table.tBodies[0];
 	const rows = Array.from(tbody.rows);
@@ -354,7 +354,7 @@ function sortTable(th, colIndex) {
 		let x = a.cells[colIndex]?.innerText.trim() || "";
 		let y = b.cells[colIndex]?.innerText.trim() || "";
 
-		if (isNumeric) {
+		if(isNumeric) {
 			x = Date.parse(x) || 0;
 			y = Date.parse(y) || 0;
 		} else {
@@ -362,8 +362,8 @@ function sortTable(th, colIndex) {
 			y = y.toLowerCase();
 		}
 
-		if (x < y) return asc ? -1 : 1;
-		if (x > y) return asc ? 1 : -1;
+		if(x < y) return asc ? -1 : 1;
+		if(x > y) return asc ? 1 : -1;
 		return 0;
 	});
 
@@ -372,11 +372,11 @@ function sortTable(th, colIndex) {
 
 	// Update arrows
 	const headers = table.tHead.rows[0].cells;
-	for (let i = 0; i < headers.length; i++) {
+	for(let i = 0; i < headers.length; i++) {
 		const arrow = headers[i].querySelector(".arrow");
-		if (!arrow) continue;
+		if(!arrow) continue;
 
-		if (i === colIndex) {
+		if(i === colIndex) {
 			arrow.textContent = asc ? "▲" : "▼";
 			arrow.classList.add("active");
 		} else {
@@ -394,14 +394,14 @@ function sortTable(th, colIndex) {
 // The table has been set up sorted in ascending order on the filename; reflect that in the GUI
 document.addEventListener("DOMContentLoaded", () => {
 	const table = document.querySelector("table");
-	if (!table) return;
+	if(!table) return;
 
 	const headers = table.tHead.rows[0].cells;
-	for (let i = 0; i < headers.length; i++) {
+	for(let i = 0; i < headers.length; i++) {
 		const arrow = headers[i].querySelector(".arrow");
-		if (!arrow) continue;
+		if(!arrow) continue;
 
-		if (i === 0) {
+		if(i === 0) {
 			arrow.textContent = "▲";
 			arrow.classList.add("active");
 		} else {
@@ -414,7 +414,7 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
 	document.querySelectorAll("canvas.sparkline").forEach(canvas => {
 		const raw = canvas.getAttribute("data-points");
-		if (!raw) return;
+		if(!raw) return;
 		const points = raw.split(",").map(v => parseFloat(v));
 
 		new Chart(canvas.getContext("2d"), {
@@ -464,10 +464,40 @@ function refresh(){
 <p><center>Use mouse wheel or pinch to zoom; drag to pan</center></p>
 <p>No issues active on <a href="https://rt.cpan.org/Public/Dist/Display.html?Name=Weather-Meteo">RT</a></p>
 <p>No <A HREF="https://fast2-matrix.cpantesters.org/?dist=Weather-Meteo+0.13">CPAN Testers</A> failures reported for Weather-Meteo 0.13</p>
+<h2>Mutation Report</h2>
+<h3>Mutation Summary</h3>
+<ul>
+<li><b>Score</b>: 100%</li>
+<li><b>Total</b>: 0</li>
+<li><b>Killed</b>: 
+0
+</li>
+<li><b>Survived</b>: 
+0
+</li>
+</ul>
+<h3>Mutation Files</h3>
+
+<table border='1' cellpadding='5'>
+
+<tr><th>File</th><th>Total</th><th>Killed</th><th>Survivors</th><th>Skipped</th><th>Score%</th><th>Complexity</th><th title="TER1=Statement, TER2=Branch, TER3=LCSAJ Path">TER1 / TER2 / TER3</th></tr>
+
+</table>
+
+<h2>Structural Coverage (Approximate)</h2>
+<div class='summary'>
+Statement Coverage: 83.22% (119 / 143)<br>
+Branch Coverage: 57.41% (31 / 54)<br>
+<em>Approximate LCSAJ derived from branch and statement coverage.</em>
+</div>
+<h2>Executive Summary</h2>
+<div class='summary'>
+Tests execute 83.22% of the code. No mutation data available yet — trigger the mutation workflow for fault detection analysis.
+</div>
 <footer>
 	<p>Project: <a href="https://github.com/nigelhorne/Weather-Meteo">Weather-Meteo</a></p>
-	<p><em>Last updated: 2026-05-31 13:10:31 - <a href="https://github.com/nigelhorne/Weather-Meteo/commit/ee705e38d9b0e7a0ab92cc2cc88f3daed4c88115">commit <code>ee705e3</code></a></em></p>
+	<p><em>Last updated: 2026-05-31 15:51:27 - <a href="https://github.com/nigelhorne/Weather-Meteo/commit/4107b022cd203c9b24d0ef240da3db3ee91863e9">commit <code>4107b02</code></a></em></p>
+	<p style="float: right; font-size: 0.85em; color: #999;">Powered by <a href="https://metacpan.org/dist/App-Test-Generator">App::Test::Generator 0.38</a></p>
 </footer>
-
 </body>
 </html>

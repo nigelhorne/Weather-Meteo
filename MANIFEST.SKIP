@@ -69,3 +69,4 @@
 Weather-.*
 t/online.enabled
 CLAUDE.md
+mutation.json

@@ -1,0 +1,851 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+
+/* --------------------------------------------------
+   CSS Variables (Light Mode Default)
+-------------------------------------------------- */
+
+:root {
+    --bg: #ffffff;
+    --text: #000000;
+    --table-header: #333;
+    --table-header-text: #ffffff;
+
+    --survived-1: #f8d7da;
+    --survived-2: #f5b7b1;
+    --survived-3: #ec7063;
+
+    --killed: #d4edda;
+    --border: #cccccc;
+}
+
+/* --------------------------------------------------
+   Dark Mode Overrides
+-------------------------------------------------- */
+
+html[data-theme='dark'] {
+    --bg: #1e1e1e;
+    --text: #dddddd;
+    --table-header: #222;
+    --table-header-text: #ffffff;
+
+    --survived-1: #5c2b2e;
+    --survived-2: #7b2c2f;
+    --survived-3: #a93226;
+
+    --killed: #1e4620;
+    --border: #555;
+}
+
+/* --------------------------------------------------
+   Global Styles
+-------------------------------------------------- */
+
+body {
+	font-family: sans-serif;
+	background: var(--bg);
+	color: var(--text);
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th {
+    background: var(--table-header);
+    color: var(--table-header-text);
+}
+
+.survived-1 { background-color: var(--survived-1); }
+.survived-2 { background-color: var(--survived-2); }
+.survived-3 { background-color: var(--survived-3); }
+
+.killed { background-color: var(--killed); }
+
+.legend {
+    border: 1px solid #ccc;
+    background: #fafafa;
+    padding: 10px;
+    margin: 15px 0;
+    font-size: 0.9em;
+}
+
+.legend pre {
+    background: #f4f4f4;
+    padding: 5px;
+}
+
+.legend-box {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin: 0 6px 0 20px;
+    vertical-align: middle;
+    border: 1px solid var(--border);
+}
+
+/* White box for non-mutated lines */
+.legend-box.none {
+	background-color: var(--bg);
+}
+
+/* --------------------------------------------------
+   Suggested Test Box Styling
+   Theme-aware and readable in light & dark modes
+-------------------------------------------------- */
+
+.suggested-test {
+    margin-top: 6px;
+    margin-bottom: 12px;
+
+    /* Use theme variables instead of hardcoded colors */
+    background: var(--bg);
+    color: var(--text);
+
+    padding: 8px;
+    border-radius: 4px;
+
+    /* Subtle border for visual separation */
+    border: 1px solid var(--border);
+}
+
+/* Label styling */
+.suggest-label {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+/* Ensure the test code block inherits readable colors */
+.suggested-test pre {
+    background: transparent;   /* Prevent nested dark blocks */
+    color: inherit;            /* Match theme text color */
+    margin: 0;
+    font-family: monospace;
+}
+
+pre { line-height: 1.4; }
+
+pre > details {
+    margin: 0.2em 0;
+}
+
+pre > details:first-child {
+    margin-top: 0;
+}
+
+pre > details:last-child {
+    margin-bottom: 0;
+}
+
+pre details,
+pre summary,
+pre ul,
+pre li {
+    white-space: normal;
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+}
+
+.nav { margin-bottom: 1em; }
+
+.toggle {
+    float: right;
+    cursor: pointer;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+/* Tooltip container */
+.tooltip {
+	position: relative;
+	cursor: help;
+}
+
+/* Tooltip bubble */
+.tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background: var(--table-header);
+    color: var(--table-header-text);
+    padding: 6px 10px;
+    white-space: normal;
+    max-width: 300px;
+    min-width: 30ch;
+    font-size: 12px;
+    border-radius: 6px;
+    z-index: 1000;
+    margin-left: 10ch;   /* move tooltip ~10 characters to the right */
+}
+
+.mutant-details {
+	margin-left: 2em;
+	font-size: 0.9em;
+}
+
+/* Indent the list of mutations that displays when expanding by 8 characters */
+pre details.mutant-details ul {
+	padding-left: 8ch;
+	margin: 0.2em 0;
+}
+
+.mutant-details summary {
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.lcsaj-dot {
+    color: #5555ff;
+    font-size: 10px;
+    margin-right: 3px;
+}
+
+.lcsaj-dot-uncovered {
+    color: #cc4444;
+    font-size: 10px;
+    margin-right: 3px;
+}
+
+.lcsaj-tip {
+	position: relative;
+	display: inline-block;
+}
+
+.lcsaj-tip .lcsaj-tip-text {
+	visibility: hidden;
+	background-color: #333;
+	color: #fff;
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-size: 11px;
+	white-space: nowrap;
+	position: fixed;
+	z-index: 9999;
+	pointer-events: none;
+}
+
+.lcsaj-tip:hover .lcsaj-tip-text {
+	visibility: visible;
+}
+
+</style>
+</head>
+<body>
+<button class="toggle" onclick="toggleTheme()">🌙 Toggle Theme</button>
+<h1>lib/Weather/Meteo.pm</h1>
+<div class="nav"><a href="../../../index.html">Index</a>
+</div><div class='summary'>
+<strong>Structural Coverage (Approximate)</strong><p>
+TER1 (Statement): 83.22%<br>
+TER2 (Branch): 57.41%<br>
+TER3 (LCSAJ): 100.0% (37/37)<br>
+Approximate LCSAJ segments: 55<br>
+</div>
+
+    <div class="legend">
+        <h3>LCSAJ Legend</h3>
+
+        <p>
+        <span class="lcsaj-dot">●</span>
+        <b>Covered</b> — this LCSAJ path was executed during testing.
+        </p>
+
+        <p>
+        <span class="lcsaj-dot-uncovered">●</span>
+        <b>Not covered</b> — this LCSAJ path was never executed. These are the paths to focus on.
+        </p>
+
+        <p>
+        Multiple dots on a line indicate that multiple control-flow paths begin at that line.
+        Hovering over any dot shows:
+        </p>
+
+        <pre>
+        start → end → jump
+        </pre>
+
+        <ul>
+        <li><b>start</b> – first line of the linear sequence</li>
+        <li><b>end</b> – last line before control flow changes</li>
+        <li><b>jump</b> – line execution jumps to next</li>
+        </ul>
+
+        <p>
+        Uncovered paths show <b>[NOT COVERED]</b> in the tooltip.
+	</p>
+    </div>
+
+		<div class="legend">
+			<h3>Mutant Testing Legend</h3>
+			<span class="legend-box survived-1"></span> Survived (tests missed this)
+			<span class="legend-box killed"></span> Killed (tests detected this)
+			<span class="legend-box none"></span> No mutation
+		</div>
+	<pre>
+<span class="">    1: package Weather::Meteo;
+</span><span class="">    2: 
+</span><span class="">    3: use strict;
+</span><span class="">    4: use warnings;
+</span><span class="">    5: 
+</span><span class="">    6: use Carp;
+</span><span class="">    7: use CHI;
+</span><span class="">    8: use JSON::MaybeXS;
+</span><span class="">    9: use LWP::UserAgent;
+</span><span class="">   10: use Object::Configure;
+</span><span class="">   11: use Params::Get 0.13;
+</span><span class="">   12: use Params::Validate::Strict;
+</span><span class="">   13: use Return::Set;
+</span><span class="">   14: use Scalar::Util;
+</span><span class="">   15: use Time::HiRes;
+</span><span class="">   16: use URI;
+</span><span class="">   17: 
+</span><span class="">   18: use constant FIRST_YEAR =&gt; 1940;
+</span><span class="">   19: use constant EXPIRES_IN =&gt; &#39;1 hour&#39;;
+</span><span class="">   20: use constant MIN_INTERVAL =&gt; 0;	# default: no rate-limiting delay
+</span><span class="">   21: 
+</span><span class="">   22: =head1 NAME
+</span><span class="">   23: 
+</span><span class="">   24: Weather::Meteo - Interface to L&lt;https://open-meteo.com&gt; for historical weather data
+</span><span class="">   25: 
+</span><span class="">   26: =head1 VERSION
+</span><span class="">   27: 
+</span><span class="">   28: Version 0.13
+</span><span class="">   29: 
+</span><span class="">   30: =cut
+</span><span class="">   31: 
+</span><span class="">   32: our $VERSION = &#39;0.13&#39;;
+</span><span class="">   33: 
+</span><span class="">   34: =head1 SYNOPSIS
+</span><span class="">   35: 
+</span><span class="">   36: The C&lt;Weather::Meteo&gt; module provides an interface to the Open-Meteo API for retrieving historical weather data from 1940.
+</span><span class="">   37: It allows users to fetch weather information by specifying latitude, longitude, and a date.
+</span><span class="">   38: The module supports object-oriented usage and allows customization of the HTTP user agent.
+</span><span class="">   39: 
+</span><span class="">   40:       use Weather::Meteo;
+</span><span class="">   41: 
+</span><span class="">   42:       my $meteo = Weather::Meteo-&gt;new();
+</span><span class="">   43:       my $weather = $meteo-&gt;weather({ latitude =&gt; 0.1, longitude =&gt; 0.2, date =&gt; &#39;2022-12-25&#39; });
+</span><span class="">   44: 
+</span><span class="">   45: =over 4
+</span><span class="">   46: 
+</span><span class="">   47: =item * Caching
+</span><span class="">   48: 
+</span><span class="">   49: Identical requests are cached (using L&lt;CHI&gt; or a user-supplied caching object),
+</span><span class="">   50: reducing the number of HTTP requests to the API and speeding up repeated queries.
+</span><span class="">   51: 
+</span><span class="">   52: This module leverages L&lt;CHI&gt; for caching geocoding responses.
+</span><span class="">   53: When a geocode request is made,
+</span><span class="">   54: a cache key is constructed from the request.
+</span><span class="">   55: If a cached response exists,
+</span><span class="">   56: it is returned immediately,
+</span><span class="">   57: avoiding unnecessary API calls.
+</span><span class="">   58: 
+</span><span class="">   59: =item * Rate-Limiting
+</span><span class="">   60: 
+</span><span class="">   61: A minimum interval between successive API calls can be enforced to ensure that the API is not overwhelmed and to comply with any request throttling requirements.
+</span><span class="">   62: 
+</span><span class="">   63: Rate-limiting is implemented using L&lt;Time::HiRes&gt;.
+</span><span class="">   64: A minimum interval between API
+</span><span class="">   65: calls can be specified via the C&lt;min_interval&gt; parameter in the constructor.
+</span><span class="">   66: Before making an API call,
+</span><span class="">   67: the module checks how much time has elapsed since the
+</span><span class="">   68: last request and,
+</span><span class="">   69: if necessary,
+</span><span class="">   70: sleeps for the remaining time.
+</span><span class="">   71: 
+</span><span class="">   72: =back
+</span><span class="">   73: 
+</span><span class="">   74: =head1 METHODS
+</span><span class="">   75: 
+</span><span class="">   76: =head2 new
+</span><span class="">   77: 
+</span><span class="">   78:     my $meteo = Weather::Meteo-&gt;new();
+</span><span class="">   79:     my $ua = LWP::UserAgent-&gt;new();
+</span><span class="">   80:     $ua-&gt;env_proxy(1);
+</span><span class="">   81:     $meteo = Weather::Meteo-&gt;new(ua =&gt; $ua);
+</span><span class="">   82: 
+</span><span class="">   83:     my $weather = $meteo-&gt;weather({ latitude =&gt; 51.34, longitude =&gt; 1.42, date =&gt; &#39;2022-12-25&#39; });
+</span><span class="">   84:     my @snowfall = @{$weather-&gt;{&#39;hourly&#39;}-&gt;{&#39;snowfall&#39;}};
+</span><span class="">   85: 
+</span><span class="">   86:     print &#39;Number of cms of snow: &#39;, $snowfall[1], &quot;\n&quot;;
+</span><span class="">   87: 
+</span><span class="">   88: Creates a new instance. Acceptable options include:
+</span><span class="">   89: 
+</span><span class="">   90: =over 4
+</span><span class="">   91: 
+</span><span class="">   92: =item * C&lt;cache&gt;
+</span><span class="">   93: 
+</span><span class="">   94: A caching object.
+</span><span class="">   95: If not provided,
+</span><span class="">   96: an in-memory cache is created with a default expiration of one hour.
+</span><span class="">   97: 
+</span><span class="">   98: =item * C&lt;host&gt;
+</span><span class="">   99: 
+</span><span class="">  100: The API host endpoint.
+</span><span class="">  101: Defaults to L&lt;https://archive-api.open-meteo.com&gt;.
+</span><span class="">  102: 
+</span><span class="">  103: =item * C&lt;min_interval&gt;
+</span><span class="">  104: 
+</span><span class="">  105: Minimum number of seconds to wait between API requests.
+</span><span class="">  106: Defaults to C&lt;0&gt; (no delay).
+</span><span class="">  107: Use this option to enforce rate-limiting.
+</span><span class="">  108: 
+</span><span class="">  109: =item * C&lt;ua&gt;
+</span><span class="">  110: 
+</span><span class="">  111: An object to use for HTTP requests.
+</span><span class="">  112: If not provided, a default user agent is created.
+</span><span class="">  113: 
+</span><span class="">  114: =back
+</span><span class="">  115: 
+</span><span class="">  116: The class can be configured at runtime using environments and configuration files,
+</span><span class="">  117: for example,
+</span><span class="">  118: setting C&lt;$ENV{&#39;WEATHER__METEO__carp_on_warn&#39;}&gt; causes warnings to use L&lt;Carp&gt;.
+</span><span class="">  119: For more information about runtime configuration,
+</span><span class="">  120: see L&lt;Object::Configure&gt;.
+</span><span class="">  121: 
+</span><span class="">  122: =cut
+</span><span class="">  123: 
+</span><span class="">  124: sub new {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">125 → 128 → 136</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">125 → 128 → 0</span></span>  125: 	my $class = shift;
+</span><span class="">  126: 	my $params = Params::Get::get_params(undef, \@_) || {};
+</span><span class="">  127: 
+</span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  128: 	if(!defined($class)) {
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
+					<ul>
+				<li><b>COND_INV_128_2: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
+</li></ul></details>
+<span class="">  129: 		# Weather::Meteo::new() used rather than Weather::Meteo-&gt;new()
+</span><span class="">  130: 		$class = __PACKAGE__;
+</span><span class="">  131: 	} elsif(Scalar::Util::blessed($class)) {
+</span><span class="">  132: 		# If $class is an object, clone it with new arguments
+</span><span class="">  133: 		return bless { %{$class}, %{$params} }, ref($class);
+</span><span class="">  134: 	}
+</span><span class="">  135: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">136 → 139 → 143</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">136 → 139 → 0</span></span>  136: 	$params = Object::Configure::configure($class, $params);
+</span><span class="">  137: 
+</span><span class="">  138: 	my $ua = $params-&gt;{ua};
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  139: 	if(!defined($ua)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  140: 		$ua = LWP::UserAgent-&gt;new(agent =&gt; __PACKAGE__ . &quot;/$VERSION&quot;);
+</span><span class="">  141: 		$ua-&gt;default_header(accept_encoding =&gt; &#39;gzip,deflate&#39;);
+</span><span class="">  142: 	}
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">143 → 155 → 0</span></span>  143: 	my $host = $params-&gt;{host} || &#39;archive-api.open-meteo.com&#39;;
+</span><span class="">  144: 
+</span><span class="">  145: 	# Set up caching (default to an in-memory cache if none provided)
+</span><span class="">  146: 	my $cache = $params-&gt;{cache} || CHI-&gt;new(
+</span><span class="">  147: 		driver =&gt; &#39;Memory&#39;,
+</span><span class="">  148: 		global =&gt; 1,
+</span><span class="">  149: 		expires_in =&gt; EXPIRES_IN,
+</span><span class="">  150: 	);
+</span><span class="">  151: 
+</span><span class="">  152: 	# Set up rate-limiting: minimum interval between requests (in seconds)
+</span><span class="">  153: 	my $min_interval = $params-&gt;{min_interval} || MIN_INTERVAL;
+</span><span class="">  154: 
+</span><span class="">  155: 	return bless {
+</span><span class="">  156: 		min_interval =&gt; $min_interval,
+</span><span class="">  157: 		last_request =&gt; 0,	# Initialize last_request timestamp
+</span><span class="">  158: 		%{$params},
+</span><span class="">  159: 		cache =&gt; $cache,
+</span><span class="">  160: 		host =&gt; $host,
+</span><span class="">  161: 		ua =&gt; $ua
+</span><span class="">  162: 	}, $class;
+</span><span class="">  163: }
+</span><span class="">  164: 
+</span><span class="">  165: =head2 weather
+</span><span class="">  166: 
+</span><span class="">  167:     use Geo::Location::Point;
+</span><span class="">  168: 
+</span><span class="">  169:     my $ramsgate = Geo::Location::Point-&gt;new({ latitude =&gt; 51.34, longitude =&gt; 1.42 });
+</span><span class="">  170:     # Print snowfall at 1AM on Christmas morning in Ramsgate
+</span><span class="">  171:     $weather = $meteo-&gt;weather($ramsgate, &#39;2022-12-25&#39;);
+</span><span class="">  172:     @snowfall = @{$weather-&gt;{&#39;hourly&#39;}-&gt;{&#39;snowfall&#39;}};
+</span><span class="">  173: 
+</span><span class="">  174:     print &#39;Number of cms of snow: &#39;, $snowfall[1], &quot;\n&quot;;
+</span><span class="">  175: 
+</span><span class="">  176:     use DateTime;
+</span><span class="">  177:     my $dt = DateTime-&gt;new(year =&gt; 2024, month =&gt; 2, day =&gt; 1);
+</span><span class="">  178:     $weather = $meteo-&gt;weather({ location =&gt; $ramsgate, date =&gt; $dt });
+</span><span class="">  179: 
+</span><span class="">  180: The date argument can be an ISO-8601 formatted date,
+</span><span class="">  181: or an object that understands the strftime method.
+</span><span class="">  182: 
+</span><span class="">  183: Takes an optional argument, tz, containing the time zone.
+</span><span class="">  184: If not given, the module tries to work it out from the given location,
+</span><span class="">  185: for that to work set TIMEZONEDB_KEY to be your API key from L&lt;https://timezonedb.com&gt;.
+</span><span class="">  186: If all else fails, the module falls back to Europe/London.
+</span><span class="">  187: 
+</span><span class="">  188: =cut
+</span><span class="">  189: 
+</span><span class="">  190: sub weather
+</span><span class="">  191: {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">192 → 195 → 208</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">192 → 195 → 0</span></span>  192: 	my $self = shift;
+</span><span class="">  193: 	my $params;
+</span><span class="">  194: 
+</span><span class="survived-1 tooltip" data-tooltip="Boundary mutation survived. Add tests around edge values (e.g. min, max, off-by-one).">  195: 	if((scalar(@_) == 2) &amp;&amp; Scalar::Util::blessed($_[0]) &amp;&amp; ($_[0]-&gt;can(&#39;latitude&#39;))) {
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 2, Killed: 1, Survived: 1)</summary>
+					<ul>
+				<li><b>NUM_BOUNDARY_195_17_!=: Numeric boundary flip == to !=</b><br>HIGH: Likely missing edge-case test (boundary value)
+
+								<div class="suggested-test">
+								<div class="suggest-label">🧪 Suggested Test</div>
+								<pre># Boundary test suggestion
+is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
+</pre>
+								</div>
+							</li></ul></details>
+<span class="">  196: 		# Two arguments - a location object and a date
+</span><span class="">  197: 		my $location = $_[0];
+</span><span class="">  198: 		$params-&gt;{latitude} = $location-&gt;latitude();
+</span><span class="">  199: 		$params-&gt;{longitude} = $location-&gt;longitude();
+</span><span class="">  200: 		$params-&gt;{&#39;date&#39;} = $_[1];
+</span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  201: 		if($_[0]-&gt;can(&#39;tz&#39;) &amp;&amp; $ENV{&#39;TIMEZONEDB_KEY&#39;}) {
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
+					<ul>
+				<li><b>COND_INV_201_3: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
+</li></ul></details>
+<span class="">  202: 			$params-&gt;{&#39;tz&#39;} = $_[0]-&gt;tz();
+</span><span class="">  203: 		}
+</span><span class="">  204: 	} else {
+</span><span class="">  205: 		$params = Params::Get::get_params(undef, \@_);
+</span><span class="">  206: 	}
+</span><span class="">  207: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">208 → 214 → 219</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">208 → 214 → 0</span></span>  208: 	my $latitude = $params-&gt;{latitude};
+</span><span class="">  209: 	my $longitude = $params-&gt;{longitude};
+</span><span class="">  210: 	my $location = $params-&gt;{&#39;location&#39;};
+</span><span class="">  211: 	my $date = $params-&gt;{&#39;date&#39;};
+</span><span class="">  212: 	my $tz = $params-&gt;{&#39;tz&#39;} || &#39;Europe/London&#39;;
+</span><span class="">  213: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  214: 	if((!defined($latitude)) &amp;&amp; defined($location) &amp;&amp;
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  215: 	   Scalar::Util::blessed($location) &amp;&amp; $location-&gt;can(&#39;latitude&#39;)) {
+</span><span class="">  216: 		$latitude = $location-&gt;latitude();
+</span><span class="">  217: 		$longitude = $location-&gt;longitude();
+</span><span class="">  218: 	}
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">219 → 219 → 228</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">219 → 219 → 0</span></span>  219: 	if((!defined($latitude)) || (!defined($longitude)) || (!defined($date))) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  220: 		if(my $logger = $self-&gt;{&#39;logger&#39;}) {
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
+					<ul>
+				<li><b>COND_INV_220_3: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
+</li></ul></details>
+<span class="">  221: 			$logger-&gt;error(&#39;Usage: weather(latitude =&gt; $latitude, longitude =&gt; $longitude, date =&gt; &quot;YYYY-MM-DD&quot;)&#39;);
+</span><span class="">  222: 		}
+</span><span class="">  223: 		Carp::croak(&#39;Usage: weather(latitude =&gt; $latitude, longitude =&gt; $longitude, date =&gt; &quot;YYYY-MM-DD&quot;)&#39;);
+</span><span class="">  224: 		return;
+</span><span class="">  225: 	}
+</span><span class="">  226: 
+</span><span class="">  227: 	# Handle numbers starting with a decimal point
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">228 → 228 → 231</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">228 → 228 → 0</span></span>  228: 	if($latitude =~ /^\./) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  229: 		$latitude = &quot;0$latitude&quot;;
+</span><span class="">  230: 	}
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">231 → 231 → 234</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">231 → 231 → 0</span></span>  231: 	if($latitude =~ /^\-\.(\d+)$/) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  232: 		$latitude = &quot;-0.$1&quot;;
+</span><span class="">  233: 	}
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">234 → 234 → 237</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">234 → 234 → 0</span></span>  234: 	if($longitude =~ /^\./) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  235: 		$longitude = &quot;0$longitude&quot;;
+</span><span class="">  236: 	}
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">237 → 237 → 241</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">237 → 237 → 0</span></span>  237: 	if($longitude =~ /^\-\.(\d+)$/) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  238: 		$longitude = &quot;-0.$1&quot;;
+</span><span class="">  239: 	}
+</span><span class="">  240: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">241 → 241 → 248</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">241 → 241 → 0</span></span>  241: 	if(($latitude !~ /^-?\d+(\.\d+)?$/) || ($longitude !~ /^-?\d+(\.\d+)?$/)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  242: 		if(my $logger = $self-&gt;{&#39;logger&#39;}) {
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
+					<ul>
+				<li><b>COND_INV_242_3: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
+</li></ul></details>
+<span class="">  243: 			$self-&gt;error(__PACKAGE__ . &quot;: Invalid latitude/longitude format ($latitude, $longitude)&quot;);
+</span><span class="">  244: 		}
+</span><span class="">  245: 		Carp::croak(__PACKAGE__, &quot;: Invalid latitude/longitude format ($latitude, $longitude)&quot;);
+</span><span class="">  246: 	}
+</span><span class="">  247: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">248 → 248 → 257</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">248 → 248 → 0</span></span>  248: 	if(Scalar::Util::blessed($date) &amp;&amp; $date-&gt;can(&#39;strftime&#39;)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  249: 		$date = $date-&gt;strftime(&#39;%F&#39;);
+</span><span class="">  250: 	} elsif($date =~ /^(\d{4})-/) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  251: 		return if($1 &lt; FIRST_YEAR);
+</span><p> <b> Mutants (Total: 3, Killed: 3, Survived: 0)</b><p><span class="">  252: 	} else {
+</span><span class="">  253: 		Carp::carp(&quot;&#39;$date&#39; is not a valid date&quot;);
+</span><span class="">  254: 		return;
+</span><span class="">  255: 	}
+</span><span class="">  256: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">257 → 257 → 264</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">257 → 257 → 0</span></span>  257: 	unless($date =~ /^\d{4}-\d{2}-\d{2}$/) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  258: 		if(my $logger = $self-&gt;{&#39;logger&#39;}) {
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
+					<ul>
+				<li><b>COND_INV_258_3: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
+</li></ul></details>
+<span class="">  259: 			$self-&gt;error(&#39;Invalid date format. Expected YYYY-MM-DD&#39;);
+</span><span class="">  260: 		}
+</span><span class="">  261: 		croak(&#39;Invalid date format. Expected YYYY-MM-DD&#39;);
+</span><span class="">  262: 	}
+</span><span class="">  263: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">264 → 285 → 290</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">264 → 285 → 0</span></span>  264: 	my $uri = URI-&gt;new(&quot;https://$self-&gt;{host}/v1/archive&quot;);
+</span><span class="">  265: 	my %query_parameters = (
+</span><span class="">  266: 		&#39;latitude&#39; =&gt; $latitude,
+</span><span class="">  267: 		&#39;longitude&#39; =&gt; $longitude,
+</span><span class="">  268: 		&#39;start_date&#39; =&gt; $date,
+</span><span class="">  269: 		&#39;end_date&#39; =&gt; $date,
+</span><span class="">  270: 		&#39;hourly&#39; =&gt; &#39;temperature_2m,rain,snowfall,weathercode&#39;,
+</span><span class="">  271: 		&#39;daily&#39; =&gt; &#39;weathercode,temperature_2m_max,temperature_2m_min,rain_sum,snowfall_sum,precipitation_hours,windspeed_10m_max,windgusts_10m_max&#39;,
+</span><span class="">  272: 		&#39;timezone&#39; =&gt; $tz,
+</span><span class="">  273: 			# https://stackoverflow.com/questions/16086962/how-to-get-a-time-zone-from-a-location-using-latitude-and-longitude-coordinates
+</span><span class="">  274: 		&#39;windspeed_unit&#39; =&gt; &#39;mph&#39;,
+</span><span class="">  275: 		&#39;precipitation_unit&#39; =&gt; &#39;inch&#39;
+</span><span class="">  276: 	);
+</span><span class="">  277: 
+</span><span class="">  278: 	$uri-&gt;query_form(%query_parameters);
+</span><span class="">  279: 	my $url = $uri-&gt;as_string();
+</span><span class="">  280: 
+</span><span class="">  281: 	$url =~ s/%2C/,/g;
+</span><span class="">  282: 
+</span><span class="">  283: 	# Create a cache key based on the location, date and time zone (might want to use a stronger hash function if needed)
+</span><span class="">  284: 	my $cache_key = &quot;weather:$latitude:$longitude:$date:$tz&quot;;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  285: 	if(my $cached = $self-&gt;{cache}-&gt;get($cache_key)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-2 tooltip" data-tooltip="Return value mutation survived. Add tests asserting exact return values. Boolean logic mutation survived. Add tests covering both true and false paths.">  286: 		return $cached;
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 2, Killed: 0, Survived: 2)</summary>
+					<ul>
+				<li><b>BOOL_NEGATE_286_3: Negate boolean return expression</b><br>MEDIUM: Add tests asserting both true and false outcomes
+
+								<div class="suggested-test">
+								<div class="suggest-label">🧪 Suggested Test</div>
+								<pre># Boolean branch test suggestion
+ok( !func(INPUT), &#39;Verify boolean branch behaviour&#39; );
+</pre>
+								</div>
+							</li><li><b>RETURN_UNDEF_286_3: Replace return expression with undef</b><br>LOW: Mutation survived, but impact may be minor
+
+								<div class="suggested-test">
+								<div class="suggest-label">🧪 Suggested Test</div>
+								<pre># Return value assertion
+is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
+</pre>
+								</div>
+							</li></ul></details>
+<span class="">  287: 	}
+</span><span class="">  288: 
+</span><span class="">  289: 	# Enforce rate-limiting: ensure at least min_interval seconds between requests
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">290 → 292 → 296</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">290 → 292 → 0</span></span>  290: 	my $now = time();
+</span><span class="">  291: 	my $elapsed = $now - $self-&gt;{last_request};
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  292: 	if($elapsed &lt; $self-&gt;{min_interval}) {
+</span><p> <b> Mutants (Total: 4, Killed: 4, Survived: 0)</b><p><span class="">  293: 		Time::HiRes::sleep($self-&gt;{min_interval} - $elapsed);
+</span><span class="">  294: 	}
+</span><span class="">  295: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">296 → 301 → 307</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">296 → 301 → 0</span></span>  296: 	my $res = $self-&gt;{ua}-&gt;get($url);
+</span><span class="">  297: 
+</span><span class="">  298: 	# Update last_request timestamp
+</span><span class="">  299: 	$self-&gt;{last_request} = time();
+</span><span class="">  300: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  301: 	if($res-&gt;is_error()) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  302: 		Carp::carp(ref($self), &quot;: $url API returned error: &quot;, $res-&gt;status_line());
+</span><span class="">  303: 		return;
+</span><span class="">  304: 	}
+</span><span class="">  305: 	# $res-&gt;content_type(&#39;text/plain&#39;);	# May be needed to decode correctly
+</span><span class="">  306: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">307 → 309 → 314</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">307 → 309 → 0</span></span>  307: 	my $rc;
+</span><span class="">  308: 	eval { $rc = JSON::MaybeXS-&gt;new()-&gt;utf8()-&gt;decode($res-&gt;decoded_content()) };
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  309: 	if($@) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  310: 		Carp::carp(&quot;Failed to parse JSON response: $@&quot;);
+</span><span class="">  311: 		return;
+</span><span class="">  312: 	}
+</span><span class="">  313: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">314 → 314 → 0</span></span>  314: 	if($rc) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  315: 		if($rc-&gt;{&#39;error&#39;}) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  316: 			# TODO: print error code
+</span><span class="">  317: 			return;
+</span><span class="">  318: 		}
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  319: 		if(defined($rc-&gt;{&#39;hourly&#39;})) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  320: 			# Cache the result before returning it
+</span><span class="">  321: 			$self-&gt;{&#39;cache&#39;}-&gt;set($cache_key, $rc);
+</span><span class="">  322: 
+</span><span class="">  323: 			return Return::Set::set_return($rc, { type =&gt; &#39;hashref&#39;, min =&gt; 1 });	# No support for list context, yet
+</span><span class="">  324: 		}
+</span><span class="">  325: 	}
+</span><span class="">  326: 
+</span><span class="">  327: 	# my @results = @{ $data || [] };
+</span><span class="">  328: 	# wantarray ? @results : $results[0];
+</span><span class="">  329: }
+</span><span class="">  330: 
+</span><span class="">  331: =head2 ua
+</span><span class="">  332: 
+</span><span class="">  333: Accessor method to get and set UserAgent object used internally.
+</span><span class="">  334: You can call I&lt;env_proxy&gt; for example, to get the proxy information from
+</span><span class="">  335: environment variables:
+</span><span class="">  336: 
+</span><span class="">  337:     $meteo-&gt;ua()-&gt;env_proxy(1);
+</span><span class="">  338: 
+</span><span class="">  339: You can also set your own User-Agent object:
+</span><span class="">  340: 
+</span><span class="">  341:     use LWP::UserAgent::Throttled;
+</span><span class="">  342: 
+</span><span class="">  343:     my $ua = LWP::UserAgent::Throttled-&gt;new();
+</span><span class="">  344:     $ua-&gt;throttle(&#39;open-meteo.com&#39; =&gt; 1);
+</span><span class="">  345:     $meteo-&gt;ua($ua);
+</span><span class="">  346: 
+</span><span class="">  347: =cut
+</span><span class="">  348: 
+</span><span class="">  349: sub ua {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">350 → 352 → 364</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">350 → 352 → 0</span></span>  350: 	my $self = shift;
+</span><span class="">  351: 
+</span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  352: 	if (@_) {
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
+					<ul>
+				<li><b>COND_INV_352_2: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
+</li></ul></details>
+<span class="">  353: 		my $params = Params::Validate::Strict::validate_strict({
+</span><span class="">  354: 			args =&gt; Params::Get::get_params(&#39;ua&#39;, @_),
+</span><span class="">  355: 			schema =&gt; {
+</span><span class="">  356: 				ua =&gt; {
+</span><span class="">  357: 					type =&gt; &#39;object&#39;,
+</span><span class="">  358: 					can =&gt; &#39;get&#39;
+</span><span class="">  359: 				}
+</span><span class="">  360: 			}
+</span><span class="">  361: 		});
+</span><span class="">  362: 		$self-&gt;{ua} = $params-&gt;{ua};
+</span><span class="">  363: 	}
+</span><span class="survived-2 tooltip" data-tooltip="Return value mutation survived. Add tests asserting exact return values. Boolean logic mutation survived. Add tests covering both true and false paths."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">364 → 364 → 0</span></span>  364: 	return $self-&gt;{ua};
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 2, Killed: 0, Survived: 2)</summary>
+					<ul>
+				<li><b>BOOL_NEGATE_364_2: Negate boolean return expression</b><br>MEDIUM: Add tests asserting both true and false outcomes
+
+								<div class="suggested-test">
+								<div class="suggest-label">🧪 Suggested Test</div>
+								<pre># Boolean branch test suggestion
+ok( !func(INPUT), &#39;Verify boolean branch behaviour&#39; );
+</pre>
+								</div>
+							</li><li><b>RETURN_UNDEF_364_2: Replace return expression with undef</b><br>LOW: Mutation survived, but impact may be minor
+
+								<div class="suggested-test">
+								<div class="suggest-label">🧪 Suggested Test</div>
+								<pre># Return value assertion
+is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
+</pre>
+								</div>
+							</li></ul></details>
+<span class="">  365: }
+</span><span class="">  366: 
+</span><span class="">  367: =head1 AUTHOR
+</span><span class="">  368: 
+</span><span class="">  369: Nigel Horne, C&lt;&lt; &lt;njh@nigelhorne.com&gt; &gt;&gt;
+</span><span class="">  370: 
+</span><span class="">  371: This library is free software; you can redistribute it and/or modify
+</span><span class="">  372: it under the same terms as Perl itself.
+</span><span class="">  373: 
+</span><span class="">  374: Lots of thanks to the folks at L&lt;https://open-meteo.com&gt;.
+</span><span class="">  375: 
+</span><span class="">  376: =head1 BUGS
+</span><span class="">  377: 
+</span><span class="">  378: Please report any bugs or feature requests to C&lt;bug-weather-meteo at rt.cpan.org&gt;,
+</span><span class="">  379: or through the web interface at
+</span><span class="">  380: L&lt;http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Weather-Meteo&gt;.
+</span><span class="">  381: I will be notified, and then you&#39;ll
+</span><span class="">  382: automatically be notified of progress on your bug as I make changes.
+</span><span class="">  383: 
+</span><span class="">  384: =head1 SEE ALSO
+</span><span class="">  385: 
+</span><span class="">  386: =over 4
+</span><span class="">  387: 
+</span><span class="">  388: =item * L&lt;Test Dashboard|https://nigelhorne.github.io/Weather-Meteo/coverage/&gt;
+</span><span class="">  389: 
+</span><span class="">  390: =item * Open Meteo API: L&lt;https://open-meteo.com/en/docs#api_form&gt;
+</span><span class="">  391: 
+</span><span class="">  392: =item * L&lt;Object::Configure&gt;
+</span><span class="">  393: 
+</span><span class="">  394: =back
+</span><span class="">  395: 
+</span><span class="">  396: =head1 SUPPORT
+</span><span class="">  397: 
+</span><span class="">  398: This module is provided as-is without any warranty.
+</span><span class="">  399: 
+</span><span class="">  400: You can find documentation for this module with the perldoc command.
+</span><span class="">  401: 
+</span><span class="">  402:     perldoc Weather::Meteo
+</span><span class="">  403: 
+</span><span class="">  404: You can also look for information at:
+</span><span class="">  405: 
+</span><span class="">  406: =over 4
+</span><span class="">  407: 
+</span><span class="">  408: =item * MetaCPAN
+</span><span class="">  409: 
+</span><span class="">  410: L&lt;https://metacpan.org/release/Weather-Meteo&gt;
+</span><span class="">  411: 
+</span><span class="">  412: =item * RT: CPAN&#39;s request tracker
+</span><span class="">  413: 
+</span><span class="">  414: L&lt;https://rt.cpan.org/NoAuth/Bugs.html?Dist=Weather-Meteo&gt;
+</span><span class="">  415: 
+</span><span class="">  416: =item * CPANTS
+</span><span class="">  417: 
+</span><span class="">  418: L&lt;http://cpants.cpanauthors.org/dist/Weather-Meteo&gt;
+</span><span class="">  419: 
+</span><span class="">  420: =item * CPAN Testers&#39; Matrix
+</span><span class="">  421: 
+</span><span class="">  422: L&lt;http://matrix.cpantesters.org/?dist=Weather-Meteo&gt;
+</span><span class="">  423: 
+</span><span class="">  424: =item * CPAN Testers Dependencies
+</span><span class="">  425: 
+</span><span class="">  426: L&lt;http://deps.cpantesters.org/?module=Weather-Meteo&gt;
+</span><span class="">  427: 
+</span><span class="">  428: =back
+</span><span class="">  429: 
+</span><span class="">  430: =head1 LICENSE AND COPYRIGHT
+</span><span class="">  431: 
+</span><span class="">  432: Copyright 2023-2026 Nigel Horne.
+</span><span class="">  433: 
+</span><span class="">  434: Usage is subject to the GPL2 licence terms.
+</span><span class="">  435: If you use it,
+</span><span class="">  436: please let me know.
+</span><span class="">  437: 
+</span><span class="">  438: =cut
+</span><span class="">  439: 
+</span><span class="">  440: 1;
+</span></pre>
+
+<script>
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+}
+
+(function() {
+    const saved = localStorage.getItem('theme');
+    if(saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+    }
+})();
+
+document.addEventListener("mousemove", function(e) {
+	document.querySelectorAll(".lcsaj-tip-text").forEach(function(tip) {
+		tip.style.left = (e.clientX + 12) + "px";
+		tip.style.top  = (e.clientY + 12) + "px";
+	});
+});
+</script>
+</body>
+</html>
+	

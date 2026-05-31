@@ -41,6 +41,7 @@ my $test_requires = {
 	'Test::Compile' => 0,
 	'Test::DescribeMe' => 0,
 	'Test::Mockingbird' => 0,
+	'Test::Memory::Cycle' => 0,
 	'Test::Most' => 0,
 	'Test::Needs' => 0,
 	'Test::NoWarnings' => 0,
@@ -54,7 +55,6 @@ if($online_tests) {
 	close($enabled) || die "Can't touch t/online.enabled $!";
 	$test_requires->{'Test::LWP::UserAgent'} = 0;
 	$test_requires->{'DateTime'} = 0;
-	$test_requires->{'Test::Memory::Cycle'} = 0;
 	if(defined($ENV{'TIMEZONEDB_KEY'})) {
 		$test_requires->{'TimeZone::TimeZoneDB'} = 0;
 	}

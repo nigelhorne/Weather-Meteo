@@ -25,11 +25,11 @@ Weather::Meteo - Interface to L<https://open-meteo.com> for historical weather d
 
 =head1 VERSION
 
-Version 0.13
+Version 0.14
 
 =cut
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 =head1 SYNOPSIS
 
@@ -510,10 +510,8 @@ sub ua {
 	my $self = shift;
 
 	if (@_) {
-		# Reject undef explicitly before it silently corrupts $self->{ua}
-		Carp::croak('ua() requires a defined value') unless defined $_[0];
 		my $params = Params::Validate::Strict::validate_strict({
-			args => Params::Get::get_params('ua', @_),
+			args => Params::Get::get_params('ua', \@_),
 			schema => {
 				ua => {
 					type => 'object',
@@ -521,6 +519,13 @@ sub ua {
 				}
 			}
 		});
+		# Reject undef explicitly before it silently corrupts $self->{ua}
+		if(!$params->{ua}) {
+			if(my $logger = $self->{'logger'}) {
+				$logger->error('ua() requires a defined value')
+			}
+			Carp::croak('ua() requires a defined value')
+		}
 		$self->{ua} = $params->{ua};
 	}
 	return $self->{ua};

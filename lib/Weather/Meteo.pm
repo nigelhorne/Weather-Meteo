@@ -520,7 +520,7 @@ sub ua {
 			}
 		});
 		# Reject undef explicitly before it silently corrupts $self->{ua}
-		if(!$params->{ua}) {
+		if(!defined($params->{ua})) {
 			if(my $logger = $self->{'logger'}) {
 				$logger->error('ua() requires a defined value')
 			}

@@ -20,7 +20,7 @@ https://pjcj.net
 <h1>Branch Coverage</h1>
 <table>
 <tr><td class="h" align="right">File:</td><td align="left">blib/lib/Weather/Meteo.pm</td></tr>
-<tr><td class="h" align="right">Coverage:</td><td align="left" class="c2">94.8%</td></tr>
+<tr><td class="h" align="right">Coverage:</td><td align="left" class="c2">93.3%</td></tr>
 </table>
 <div><br/></div>
 <table>
@@ -53,7 +53,8 @@ https://pjcj.net
 <tr><td class="h"><a id="L444">444</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($rc-&gt;{&#39;error&#39;})</td></tr>
 <tr><td class="h"><a id="L448">448</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (defined $rc-&gt;{&#39;hourly&#39;})</td></tr>
 <tr><td class="h"><a id="L512">512</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (@_)</td></tr>
-<tr><td class="h"><a id="L514">514</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless defined $_[0]</td></tr>
+<tr><td class="h"><a id="L523">523</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (defined $params-&gt;{&#39;ua&#39;})</td></tr>
+<tr><td class="h"><a id="L524">524</a></td><td class="c0">50</td><td class="c3">T</td><td class="c0">F</td><td class="s">if (my $logger = $self-&gt;{&#39;logger&#39;})</td></tr>
 </table>
 </body>
 </html>

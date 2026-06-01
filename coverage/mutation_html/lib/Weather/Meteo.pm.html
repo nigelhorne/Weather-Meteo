@@ -244,10 +244,10 @@ pre details.mutant-details ul {
 <div class="nav"><a href="../../../index.html">Index</a>
 </div><div class='summary'>
 <strong>Structural Coverage (Approximate)</strong><p>
-TER1 (Statement): 99.32%<br>
-TER2 (Branch): 94.83%<br>
+TER1 (Statement): 99.34%<br>
+TER2 (Branch): 93.33%<br>
 TER3 (LCSAJ): 100.0% (41/41)<br>
-Approximate LCSAJ segments: 59<br>
+Approximate LCSAJ segments: 61<br>
 </div>
 
     <div class="legend">
@@ -317,11 +317,11 @@ Approximate LCSAJ segments: 59<br>
 </span><span class="">   25: 
 </span><span class="">   26: =head1 VERSION
 </span><span class="">   27: 
-</span><span class="">   28: Version 0.13
+</span><span class="">   28: Version 0.14
 </span><span class="">   29: 
 </span><span class="">   30: =cut
 </span><span class="">   31: 
-</span><span class="">   32: our $VERSION = &#39;0.13&#39;;
+</span><span class="">   32: our $VERSION = &#39;0.14&#39;;
 </span><span class="">   33: 
 </span><span class="">   34: =head1 SYNOPSIS
 </span><span class="">   35: 
@@ -627,14 +627,8 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </span><span class="">  322: 		$params-&gt;{latitude} = $location-&gt;latitude();
 </span><span class="">  323: 		$params-&gt;{longitude} = $location-&gt;longitude();
 </span><span class="">  324: 		$params-&gt;{&#39;date&#39;} = $_[1];
-</span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  325: 		if($_[0]-&gt;can(&#39;tz&#39;) &amp;&amp; $ENV{&#39;TIMEZONEDB_KEY&#39;}) {
-</span>
-					<details class="mutant-details">
-					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
-					<ul>
-				<li><b>COND_INV_325_3: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
-</li></ul></details>
-<span class="">  326: 			$params-&gt;{&#39;tz&#39;} = $_[0]-&gt;tz();
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  325: 		if($_[0]-&gt;can(&#39;tz&#39;) &amp;&amp; $ENV{&#39;TIMEZONEDB_KEY&#39;}) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  326: 			$params-&gt;{&#39;tz&#39;} = $_[0]-&gt;tz();
 </span><span class="">  327: 		}
 </span><span class="">  328: 	} else {
 </span><span class="">  329: 		$params = Params::Get::get_params(undef, \@_);
@@ -736,29 +730,8 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </span><span class="">  407: 	# Create a cache key based on the location, date and time zone (might want to use a stronger hash function if needed)
 </span><span class="">  408: 	my $cache_key = &quot;weather:$latitude:$longitude:$date:$tz&quot;;
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  409: 	if(my $cached = $self-&gt;{cache}-&gt;get($cache_key)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-2 tooltip" data-tooltip="Boolean logic mutation survived. Add tests covering both true and false paths. Return value mutation survived. Add tests asserting exact return values.">  410: 		return $cached;
-</span>
-					<details class="mutant-details">
-					<summary>Mutants (Total: 2, Killed: 0, Survived: 2)</summary>
-					<ul>
-				<li><b>BOOL_NEGATE_410_3: Negate boolean return expression</b><br>MEDIUM: Add tests asserting both true and false outcomes
-
-								<div class="suggested-test">
-								<div class="suggest-label">🧪 Suggested Test</div>
-								<pre># Boolean branch test suggestion
-ok( !func(INPUT), &#39;Verify boolean branch behaviour&#39; );
-</pre>
-								</div>
-							</li><li><b>RETURN_UNDEF_410_3: Replace return expression with undef</b><br>LOW: Mutation survived, but impact may be minor
-
-								<div class="suggested-test">
-								<div class="suggest-label">🧪 Suggested Test</div>
-								<pre># Return value assertion
-is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
-</pre>
-								</div>
-							</li></ul></details>
-<span class="">  411: 	}
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  410: 		return $cached;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  411: 	}
 </span><span class="">  412: 
 </span><span class="">  413: 	# Enforce rate-limiting: ensure at least min_interval seconds between requests
 </span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">414 → 416 → 420</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">414 → 416 → 0</span></span>  414: 	my $now = time();
@@ -857,7 +830,7 @@ is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
 </span><span class="">  507: =cut
 </span><span class="">  508: 
 </span><span class="">  509: sub ua {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">510 → 512 → 526</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">510 → 512 → 0</span></span>  510: 	my $self = shift;
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">510 → 512 → 531</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">510 → 512 → 0</span></span>  510: 	my $self = shift;
 </span><span class="">  511: 
 </span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  512: 	if (@_) {
 </span>
@@ -866,96 +839,134 @@ is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
 					<ul>
 				<li><b>COND_INV_512_2: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
 </li></ul></details>
-<span class="">  513: 		# Reject undef explicitly before it silently corrupts $self-&gt;{ua}
-</span><span class="">  514: 		Carp::croak(&#39;ua() requires a defined value&#39;) unless defined $_[0];
-</span><span class="">  515: 		my $params = Params::Validate::Strict::validate_strict({
-</span><span class="">  516: 			args =&gt; Params::Get::get_params(&#39;ua&#39;, @_),
-</span><span class="">  517: 			schema =&gt; {
-</span><span class="">  518: 				ua =&gt; {
-</span><span class="">  519: 					type =&gt; &#39;object&#39;,
-</span><span class="">  520: 					can =&gt; &#39;get&#39;
-</span><span class="">  521: 				}
-</span><span class="">  522: 			}
-</span><span class="">  523: 		});
-</span><span class="">  524: 		$self-&gt;{ua} = $params-&gt;{ua};
-</span><span class="">  525: 	}
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">526 → 526 → 0</span></span>  526: 	return $self-&gt;{ua};
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  527: }
-</span><span class="">  528: 
-</span><span class="">  529: =head1 AUTHOR
-</span><span class="">  530: 
-</span><span class="">  531: Nigel Horne, C&lt;&lt; &lt;njh@nigelhorne.com&gt; &gt;&gt;
-</span><span class="">  532: 
-</span><span class="">  533: This library is free software; you can redistribute it and/or modify
-</span><span class="">  534: it under the same terms as Perl itself.
+<span class="">  513: 		my $params = Params::Validate::Strict::validate_strict({
+</span><span class="">  514: 			args =&gt; Params::Get::get_params(&#39;ua&#39;, \@_),
+</span><span class="">  515: 			schema =&gt; {
+</span><span class="">  516: 				ua =&gt; {
+</span><span class="">  517: 					type =&gt; &#39;object&#39;,
+</span><span class="">  518: 					can =&gt; &#39;get&#39;
+</span><span class="">  519: 				}
+</span><span class="">  520: 			}
+</span><span class="">  521: 		});
+</span><span class="">  522: 		# Reject undef explicitly before it silently corrupts $self-&gt;{ua}
+</span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  523: 		if(!defined($params-&gt;{ua})) {
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
+					<ul>
+				<li><b>COND_INV_523_3: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
+</li></ul></details>
+<span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  524: 			if(my $logger = $self-&gt;{&#39;logger&#39;}) {
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
+					<ul>
+				<li><b>COND_INV_524_4: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
+</li></ul></details>
+<span class="">  525: 				$logger-&gt;error(&#39;ua() requires a defined value&#39;)
+</span><span class="">  526: 			}
+</span><span class="">  527: 			Carp::croak(&#39;ua() requires a defined value&#39;)
+</span><span class="">  528: 		}
+</span><span class="">  529: 		$self-&gt;{ua} = $params-&gt;{ua};
+</span><span class="">  530: 	}
+</span><span class="survived-2 tooltip" data-tooltip="Return value mutation survived. Add tests asserting exact return values. Boolean logic mutation survived. Add tests covering both true and false paths."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">531 → 531 → 0</span></span>  531: 	return $self-&gt;{ua};
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 2, Killed: 0, Survived: 2)</summary>
+					<ul>
+				<li><b>BOOL_NEGATE_531_2: Negate boolean return expression</b><br>MEDIUM: Add tests asserting both true and false outcomes
+
+								<div class="suggested-test">
+								<div class="suggest-label">🧪 Suggested Test</div>
+								<pre># Boolean branch test suggestion
+ok( !func(INPUT), &#39;Verify boolean branch behaviour&#39; );
+</pre>
+								</div>
+							</li><li><b>RETURN_UNDEF_531_2: Replace return expression with undef</b><br>LOW: Mutation survived, but impact may be minor
+
+								<div class="suggested-test">
+								<div class="suggest-label">🧪 Suggested Test</div>
+								<pre># Return value assertion
+is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
+</pre>
+								</div>
+							</li></ul></details>
+<span class="">  532: }
+</span><span class="">  533: 
+</span><span class="">  534: =head1 AUTHOR
 </span><span class="">  535: 
-</span><span class="">  536: Lots of thanks to the folks at L&lt;https://open-meteo.com&gt;.
+</span><span class="">  536: Nigel Horne, C&lt;&lt; &lt;njh@nigelhorne.com&gt; &gt;&gt;
 </span><span class="">  537: 
-</span><span class="">  538: =head1 BUGS
-</span><span class="">  539: 
-</span><span class="">  540: Please report any bugs or feature requests to C&lt;bug-weather-meteo at rt.cpan.org&gt;,
-</span><span class="">  541: or through the web interface at
-</span><span class="">  542: L&lt;http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Weather-Meteo&gt;.
-</span><span class="">  543: I will be notified, and then you&#39;ll
-</span><span class="">  544: automatically be notified of progress on your bug as I make changes.
-</span><span class="">  545: 
-</span><span class="">  546: =head1 SEE ALSO
-</span><span class="">  547: 
-</span><span class="">  548: =over 4
-</span><span class="">  549: 
-</span><span class="">  550: =item * L&lt;Test Dashboard|https://nigelhorne.github.io/Weather-Meteo/coverage/&gt;
-</span><span class="">  551: 
-</span><span class="">  552: =item * Open Meteo API: L&lt;https://open-meteo.com/en/docs#api_form&gt;
-</span><span class="">  553: 
-</span><span class="">  554: =item * L&lt;Object::Configure&gt;
-</span><span class="">  555: 
-</span><span class="">  556: =back
-</span><span class="">  557: 
-</span><span class="">  558: =head1 SUPPORT
-</span><span class="">  559: 
-</span><span class="">  560: This module is provided as-is without any warranty.
-</span><span class="">  561: 
-</span><span class="">  562: You can find documentation for this module with the perldoc command.
-</span><span class="">  563: 
-</span><span class="">  564:     perldoc Weather::Meteo
-</span><span class="">  565: 
-</span><span class="">  566: You can also look for information at:
-</span><span class="">  567: 
-</span><span class="">  568: =over 4
-</span><span class="">  569: 
-</span><span class="">  570: =item * MetaCPAN
-</span><span class="">  571: 
-</span><span class="">  572: L&lt;https://metacpan.org/release/Weather-Meteo&gt;
-</span><span class="">  573: 
-</span><span class="">  574: =item * RT: CPAN&#39;s request tracker
-</span><span class="">  575: 
-</span><span class="">  576: L&lt;https://rt.cpan.org/NoAuth/Bugs.html?Dist=Weather-Meteo&gt;
-</span><span class="">  577: 
-</span><span class="">  578: =item * CPANTS
-</span><span class="">  579: 
-</span><span class="">  580: L&lt;http://cpants.cpanauthors.org/dist/Weather-Meteo&gt;
-</span><span class="">  581: 
-</span><span class="">  582: =item * CPAN Testers&#39; Matrix
-</span><span class="">  583: 
-</span><span class="">  584: L&lt;http://matrix.cpantesters.org/?dist=Weather-Meteo&gt;
-</span><span class="">  585: 
-</span><span class="">  586: =item * CPAN Testers Dependencies
-</span><span class="">  587: 
-</span><span class="">  588: L&lt;http://deps.cpantesters.org/?module=Weather-Meteo&gt;
-</span><span class="">  589: 
-</span><span class="">  590: =back
-</span><span class="">  591: 
-</span><span class="">  592: =head1 LICENSE AND COPYRIGHT
-</span><span class="">  593: 
-</span><span class="">  594: Copyright 2023-2026 Nigel Horne.
-</span><span class="">  595: 
-</span><span class="">  596: Usage is subject to the GPL2 licence terms.
-</span><span class="">  597: If you use it,
-</span><span class="">  598: please let me know.
-</span><span class="">  599: 
-</span><span class="">  600: =cut
-</span><span class="">  601: 
-</span><span class="">  602: 1;
+</span><span class="">  538: This library is free software; you can redistribute it and/or modify
+</span><span class="">  539: it under the same terms as Perl itself.
+</span><span class="">  540: 
+</span><span class="">  541: Lots of thanks to the folks at L&lt;https://open-meteo.com&gt;.
+</span><span class="">  542: 
+</span><span class="">  543: =head1 BUGS
+</span><span class="">  544: 
+</span><span class="">  545: Please report any bugs or feature requests to C&lt;bug-weather-meteo at rt.cpan.org&gt;,
+</span><span class="">  546: or through the web interface at
+</span><span class="">  547: L&lt;http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Weather-Meteo&gt;.
+</span><span class="">  548: I will be notified, and then you&#39;ll
+</span><span class="">  549: automatically be notified of progress on your bug as I make changes.
+</span><span class="">  550: 
+</span><span class="">  551: =head1 SEE ALSO
+</span><span class="">  552: 
+</span><span class="">  553: =over 4
+</span><span class="">  554: 
+</span><span class="">  555: =item * L&lt;Test Dashboard|https://nigelhorne.github.io/Weather-Meteo/coverage/&gt;
+</span><span class="">  556: 
+</span><span class="">  557: =item * Open Meteo API: L&lt;https://open-meteo.com/en/docs#api_form&gt;
+</span><span class="">  558: 
+</span><span class="">  559: =item * L&lt;Object::Configure&gt;
+</span><span class="">  560: 
+</span><span class="">  561: =back
+</span><span class="">  562: 
+</span><span class="">  563: =head1 SUPPORT
+</span><span class="">  564: 
+</span><span class="">  565: This module is provided as-is without any warranty.
+</span><span class="">  566: 
+</span><span class="">  567: You can find documentation for this module with the perldoc command.
+</span><span class="">  568: 
+</span><span class="">  569:     perldoc Weather::Meteo
+</span><span class="">  570: 
+</span><span class="">  571: You can also look for information at:
+</span><span class="">  572: 
+</span><span class="">  573: =over 4
+</span><span class="">  574: 
+</span><span class="">  575: =item * MetaCPAN
+</span><span class="">  576: 
+</span><span class="">  577: L&lt;https://metacpan.org/release/Weather-Meteo&gt;
+</span><span class="">  578: 
+</span><span class="">  579: =item * RT: CPAN&#39;s request tracker
+</span><span class="">  580: 
+</span><span class="">  581: L&lt;https://rt.cpan.org/NoAuth/Bugs.html?Dist=Weather-Meteo&gt;
+</span><span class="">  582: 
+</span><span class="">  583: =item * CPANTS
+</span><span class="">  584: 
+</span><span class="">  585: L&lt;http://cpants.cpanauthors.org/dist/Weather-Meteo&gt;
+</span><span class="">  586: 
+</span><span class="">  587: =item * CPAN Testers&#39; Matrix
+</span><span class="">  588: 
+</span><span class="">  589: L&lt;http://matrix.cpantesters.org/?dist=Weather-Meteo&gt;
+</span><span class="">  590: 
+</span><span class="">  591: =item * CPAN Testers Dependencies
+</span><span class="">  592: 
+</span><span class="">  593: L&lt;http://deps.cpantesters.org/?module=Weather-Meteo&gt;
+</span><span class="">  594: 
+</span><span class="">  595: =back
+</span><span class="">  596: 
+</span><span class="">  597: =head1 LICENSE AND COPYRIGHT
+</span><span class="">  598: 
+</span><span class="">  599: Copyright 2023-2026 Nigel Horne.
+</span><span class="">  600: 
+</span><span class="">  601: Usage is subject to the GPL2 licence terms.
+</span><span class="">  602: If you use it,
+</span><span class="">  603: please let me know.
+</span><span class="">  604: 
+</span><span class="">  605: =cut
+</span><span class="">  606: 
+</span><span class="">  607: 1;
 </span></pre>
 
 <script>

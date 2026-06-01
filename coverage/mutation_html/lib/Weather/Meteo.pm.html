@@ -244,8 +244,8 @@ pre details.mutant-details ul {
 <div class="nav"><a href="../../../index.html">Index</a>
 </div><div class='summary'>
 <strong>Structural Coverage (Approximate)</strong><p>
-TER1 (Statement): 97.97%<br>
-TER2 (Branch): 87.93%<br>
+TER1 (Statement): 99.32%<br>
+TER2 (Branch): 94.83%<br>
 TER3 (LCSAJ): 100.0% (41/41)<br>
 Approximate LCSAJ segments: 59<br>
 </div>
@@ -608,14 +608,33 @@ Approximate LCSAJ segments: 59<br>
 </span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">316 → 319 → 332</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">316 → 319 → 0</span></span>  316: 	my $self = shift;
 </span><span class="">  317: 	my $params;
 </span><span class="">  318: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  319: 	if((scalar(@_) == 2) &amp;&amp; Scalar::Util::blessed($_[0]) &amp;&amp; ($_[0]-&gt;can(&#39;latitude&#39;))) {
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  320: 		# Two arguments - a location object and a date
+</span><span class="survived-1 tooltip" data-tooltip="Boundary mutation survived. Add tests around edge values (e.g. min, max, off-by-one).">  319: 	if((scalar(@_) == 2) &amp;&amp; Scalar::Util::blessed($_[0]) &amp;&amp; ($_[0]-&gt;can(&#39;latitude&#39;))) {
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 2, Killed: 1, Survived: 1)</summary>
+					<ul>
+				<li><b>NUM_BOUNDARY_319_17_!=: Numeric boundary flip == to !=</b><br>HIGH: Likely missing edge-case test (boundary value)
+
+								<div class="suggested-test">
+								<div class="suggest-label">🧪 Suggested Test</div>
+								<pre># Boundary test suggestion
+is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
+</pre>
+								</div>
+							</li></ul></details>
+<span class="">  320: 		# Two arguments - a location object and a date
 </span><span class="">  321: 		my $location = $_[0];
 </span><span class="">  322: 		$params-&gt;{latitude} = $location-&gt;latitude();
 </span><span class="">  323: 		$params-&gt;{longitude} = $location-&gt;longitude();
 </span><span class="">  324: 		$params-&gt;{&#39;date&#39;} = $_[1];
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  325: 		if($_[0]-&gt;can(&#39;tz&#39;) &amp;&amp; $ENV{&#39;TIMEZONEDB_KEY&#39;}) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  326: 			$params-&gt;{&#39;tz&#39;} = $_[0]-&gt;tz();
+</span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  325: 		if($_[0]-&gt;can(&#39;tz&#39;) &amp;&amp; $ENV{&#39;TIMEZONEDB_KEY&#39;}) {
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
+					<ul>
+				<li><b>COND_INV_325_3: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
+</li></ul></details>
+<span class="">  326: 			$params-&gt;{&#39;tz&#39;} = $_[0]-&gt;tz();
 </span><span class="">  327: 		}
 </span><span class="">  328: 	} else {
 </span><span class="">  329: 		$params = Params::Get::get_params(undef, \@_);
@@ -661,8 +680,14 @@ Approximate LCSAJ segments: 59<br>
 </span><span class="">  363: 	}
 </span><span class="">  364: 
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">365 → 365 → 372</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">365 → 365 → 0</span></span>  365: 	if(($latitude !~ /^-?\d+(\.\d+)?$/) || ($longitude !~ /^-?\d+(\.\d+)?$/)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  366: 		if(my $logger = $self-&gt;{&#39;logger&#39;}) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  367: 			$logger-&gt;error(__PACKAGE__ . &quot;: Invalid latitude/longitude format ($latitude, $longitude)&quot;);
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  366: 		if(my $logger = $self-&gt;{&#39;logger&#39;}) {
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
+					<ul>
+				<li><b>COND_INV_366_3: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
+</li></ul></details>
+<span class="">  367: 			$logger-&gt;error(__PACKAGE__ . &quot;: Invalid latitude/longitude format ($latitude, $longitude)&quot;);
 </span><span class="">  368: 		}
 </span><span class="">  369: 		Carp::croak(__PACKAGE__, &quot;: Invalid latitude/longitude format ($latitude, $longitude)&quot;);
 </span><span class="">  370: 	}
@@ -765,7 +790,7 @@ is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
 </span><span class="">  440: 		return;
 </span><span class="">  441: 	}
 </span><span class="">  442: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">443 → 443 → 456</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">443 → 443 → 0</span></span>  443: 	if($rc &amp;&amp; ref($rc) eq &#39;HASH&#39;) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">443 → 443 → 456</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">443 → 443 → 0</span></span>  443: 	if($rc &amp;&amp; (ref($rc) eq &#39;HASH&#39;)) {
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  444: 		if($rc-&gt;{&#39;error&#39;}) {
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  445: 			# TODO: print error code
 </span><span class="">  446: 			return;
@@ -854,29 +879,8 @@ is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
 </span><span class="">  523: 		});
 </span><span class="">  524: 		$self-&gt;{ua} = $params-&gt;{ua};
 </span><span class="">  525: 	}
-</span><span class="survived-2 tooltip" data-tooltip="Boolean logic mutation survived. Add tests covering both true and false paths. Return value mutation survived. Add tests asserting exact return values."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">526 → 526 → 0</span></span>  526: 	return $self-&gt;{ua};
-</span>
-					<details class="mutant-details">
-					<summary>Mutants (Total: 2, Killed: 0, Survived: 2)</summary>
-					<ul>
-				<li><b>BOOL_NEGATE_526_2: Negate boolean return expression</b><br>MEDIUM: Add tests asserting both true and false outcomes
-
-								<div class="suggested-test">
-								<div class="suggest-label">🧪 Suggested Test</div>
-								<pre># Boolean branch test suggestion
-ok( !func(INPUT), &#39;Verify boolean branch behaviour&#39; );
-</pre>
-								</div>
-							</li><li><b>RETURN_UNDEF_526_2: Replace return expression with undef</b><br>LOW: Mutation survived, but impact may be minor
-
-								<div class="suggested-test">
-								<div class="suggest-label">🧪 Suggested Test</div>
-								<pre># Return value assertion
-is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
-</pre>
-								</div>
-							</li></ul></details>
-<span class="">  527: }
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">526 → 526 → 0</span></span>  526: 	return $self-&gt;{ua};
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  527: }
 </span><span class="">  528: 
 </span><span class="">  529: =head1 AUTHOR
 </span><span class="">  530: 

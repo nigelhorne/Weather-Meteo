@@ -176,6 +176,16 @@ sub new {
 		$class = __PACKAGE__;
 	} elsif(Scalar::Util::blessed($class)) {
 		# If $class is an object, clone it with new arguments
+		# Clone path: merge new params over the existing object's fields.
+		if(exists($params->{ua})) {
+			if(!defined($params->{ua})) {
+				# ua=>undef means "keep the original" -- silently drop it
+				delete $params->{ua};
+			} elsif(!Scalar::Util::blessed($params->{ua}) || !$params->{ua}->can('get')) {
+				# A defined ua must be a proper object with a get() method
+				Carp::croak("'ua' argument must be an object with a get() method");
+			}
+		}
 		return bless { %{$class}, %{$params} }, ref($class);
 	}
 

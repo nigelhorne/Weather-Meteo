@@ -14,15 +14,16 @@ t/carp.t
 t/comment-spelling.t
 t/critic.t
 t/edge_cases.t
-t/extended_tests.t
 t/eof.t
 t/eol.t
+t/extended_tests.t
 t/function.t
 t/fuzz.t
 t/integration.t
 t/kwalitee.t
 t/limiting.t
 t/links.t
+t/mutant_killers.t
 t/no404s.t
 t/noplan.t
 t/pod-cm.t

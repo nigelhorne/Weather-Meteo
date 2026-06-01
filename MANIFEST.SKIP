@@ -70,3 +70,4 @@ Weather-.*
 t/online.enabled
 CLAUDE.md
 mutation.json
+.claude/settings.local.json

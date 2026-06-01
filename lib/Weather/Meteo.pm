@@ -422,6 +422,11 @@ sub weather
 	# Update last_request timestamp
 	$self->{last_request} = time();
 
+	unless(defined($res) && ref($res) && $res->can('is_error')) {
+		Carp::carp(ref($self) . ': UA->get did not return a valid HTTP response');
+		return;
+	}
+
 	if($res->is_error()) {
 		Carp::carp(ref($self), ": $url API returned error: ", $res->status_line());
 		return;
@@ -435,7 +440,7 @@ sub weather
 		return;
 	}
 
-	if($rc) {
+	if($rc && ref($rc) eq 'HASH') {
 		if($rc->{'error'}) {
 			# TODO: print error code
 			return;
@@ -505,6 +510,8 @@ sub ua {
 	my $self = shift;
 
 	if (@_) {
+		# Reject undef explicitly before it silently corrupts $self->{ua}
+		Carp::croak('ua() requires a defined value') unless defined $_[0];
 		my $params = Params::Validate::Strict::validate_strict({
 			args => Params::Get::get_params('ua', @_),
 			schema => {

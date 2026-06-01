@@ -20,7 +20,7 @@ https://pjcj.net
 <h1>Branch Coverage</h1>
 <table>
 <tr><td class="h" align="right">File:</td><td align="left">blib/lib/Weather/Meteo.pm</td></tr>
-<tr><td class="h" align="right">Coverage:</td><td align="left" class="c1">85.2%</td></tr>
+<tr><td class="h" align="right">Coverage:</td><td align="left" class="c1">87.9%</td></tr>
 </table>
 <div><br/></div>
 <table>
@@ -46,12 +46,14 @@ https://pjcj.net
 <tr><td class="h"><a id="L382">382</a></td><td class="c0">50</td><td class="c3">T</td><td class="c0">F</td><td class="s">if (my $logger = $self-&gt;{&#39;logger&#39;})</td></tr>
 <tr><td class="h"><a id="L409">409</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (my $cached = $self-&gt;{&#39;cache&#39;}-&gt;get($cache_key))</td></tr>
 <tr><td class="h"><a id="L416">416</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($elapsed &lt; $self-&gt;{&#39;min_interval&#39;})</td></tr>
-<tr><td class="h"><a id="L425">425</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($res-&gt;is_error)</td></tr>
-<tr><td class="h"><a id="L433">433</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($@)</td></tr>
-<tr><td class="h"><a id="L438">438</a></td><td class="c0">50</td><td class="c3">T</td><td class="c0">F</td><td class="s">if ($rc)</td></tr>
-<tr><td class="h"><a id="L439">439</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($rc-&gt;{&#39;error&#39;})</td></tr>
-<tr><td class="h"><a id="L443">443</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (defined $rc-&gt;{&#39;hourly&#39;})</td></tr>
-<tr><td class="h"><a id="L507">507</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (@_)</td></tr>
+<tr><td class="h"><a id="L425">425</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (defined $res and ref $res and $res-&gt;can(&quot;is_error&quot;))</td></tr>
+<tr><td class="h"><a id="L430">430</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($res-&gt;is_error)</td></tr>
+<tr><td class="h"><a id="L438">438</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($@)</td></tr>
+<tr><td class="h"><a id="L443">443</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($rc and ref $rc eq &quot;HASH&quot;)</td></tr>
+<tr><td class="h"><a id="L444">444</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($rc-&gt;{&#39;error&#39;})</td></tr>
+<tr><td class="h"><a id="L448">448</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (defined $rc-&gt;{&#39;hourly&#39;})</td></tr>
+<tr><td class="h"><a id="L512">512</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (@_)</td></tr>
+<tr><td class="h"><a id="L514">514</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless defined $_[0]</td></tr>
 </table>
 </body>
 </html>

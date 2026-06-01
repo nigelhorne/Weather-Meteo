@@ -610,13 +610,14 @@ subtest 'ua(undef) croaks with descriptive message' => sub {
 	diag("err fragment: $ERR_UA_UNDEF") if $ENV{TEST_VERBOSE};
 };
 
-# Purpose: ua(0) is not a valid object -- must croak.
+# Purpose: ua(0) is not an object at all -- the type check fires before the
+# can-check, so the error says "must be an object" (not "get method").
 subtest 'ua(0) croaks (not a valid object)' => sub {
 	my $meteo = Weather::Meteo->new();
 
 	throws_ok { $meteo->ua(0) }
-		qr/\Q$ERR_UA_GETMETHOD\E/,
-		'ua(0) croak mentions "get method"';
+		qr/must be an object/,
+		'ua(0) croak says "must be an object"';
 };
 
 # Purpose: ua('') is an empty string, not a valid object -- must croak.

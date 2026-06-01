@@ -440,7 +440,7 @@ sub weather
 		return;
 	}
 
-	if($rc && ref($rc) eq 'HASH') {
+	if($rc && (ref($rc) eq 'HASH')) {
 		if($rc->{'error'}) {
 			# TODO: print error code
 			return;

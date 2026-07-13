@@ -1,21 +1,31 @@
 # NAME
 
-Weather::Meteo - Interface to [https://open-meteo.com](https://open-meteo.com) for historical weather data
+Weather::Meteo - Interface to [https://open-meteo.com](https://open-meteo.com) for historical and forecast weather data
 
 # VERSION
 
-Version 0.13
+Version 0.14
 
 # SYNOPSIS
 
-The `Weather::Meteo` module provides an interface to the Open-Meteo API for retrieving historical weather data from 1940.
+The `Weather::Meteo` module provides an interface to the Open-Meteo API for retrieving
+historical weather data from 1940 and weather forecasts up to 16 days ahead.
 It allows users to fetch weather information by specifying latitude, longitude, and a date.
 The module supports object-oriented usage and allows customization of the HTTP user agent.
 
       use Weather::Meteo;
 
       my $meteo = Weather::Meteo->new();
+
+      # Historical weather
       my $weather = $meteo->weather({ latitude => 0.1, longitude => 0.2, date => '2022-12-25' });
+
+      # Forecast (default 7 days)
+      my $forecast = $meteo->forecast({ latitude => 51.34, longitude => 1.42 });
+
+      # Sunrise and sunset for a specific date
+      my $times = $meteo->sunrise_sunset({ latitude => 51.34, longitude => 1.42, date => '2025-06-21' });
+      print "Sunrise: $times->{sunrise}\n";
 
 - Caching
 
@@ -147,19 +157,21 @@ merging any supplied parameters.
     my $dt = DateTime->new(year => 2024, month => 2, day => 1);
     $weather = $meteo->weather({ location => $ramsgate, date => $dt });
 
-The date argument can be an ISO-8601 formatted date,
-or an object that understands the strftime method.
+The date argument can be an ISO-8601 formatted string (`YYYY-MM-DD`),
+or any object that supports `strftime`.
 
-Takes an optional argument, tz, containing the time zone.
-If not given, the module tries to work it out from the given location,
-for that to work set TIMEZONEDB\_KEY to be your API key from [https://timezonedb.com](https://timezonedb.com).
-If all else fails, the module falls back to Europe/London.
+Takes an optional `tz` argument containing the time zone.
+If not given, the module tries to derive it from the location object;
+set `TIMEZONEDB_KEY` to your API key from [https://timezonedb.com](https://timezonedb.com) to enable that.
+If all else fails, the module falls back to `Europe/London`.
 
 Dates before 1940 return `undef` silently.
 Invalid date strings cause a `carp` and return `undef`.
 Missing required arguments or non-numeric coordinates cause a `croak`.
 
-On success returns a hashref containing at minimum the key `hourly`.
+On success returns a hashref with at minimum an `hourly` key.
+The `daily` key includes `sunrise` and `sunset` as ISO-8601 datetime strings
+(e.g. `2022-12-25T08:09`), as well as temperature, precipitation, and wind fields.
 Returns `undef` if the API returns an error, if the JSON cannot be
 parsed, or if the response contains no `hourly` key.
 
@@ -230,6 +242,185 @@ Three call forms are accepted.
     |                                                          |
     | POST otherwise                                           |
     |   => result! = { hourly => HOURLY, daily => DAILY }     |
+    |      cache.set(key, result!)                             |
+    |____________________________________________________________|
+
+## forecast
+
+    my $meteo    = Weather::Meteo->new();
+    my $forecast = $meteo->forecast({ latitude => 51.34, longitude => 1.42 });
+    my @temps    = @{$forecast->{'hourly'}->{'temperature_2m'}};
+
+    # Request 3 days of forecast
+    $forecast = $meteo->forecast({ latitude => 51.34, longitude => 1.42, days => 3 });
+
+    use Geo::Location::Point;
+    my $ramsgate = Geo::Location::Point->new({ latitude => 51.34, longitude => 1.42 });
+    $forecast = $meteo->forecast($ramsgate);
+    $forecast = $meteo->forecast($ramsgate, 5);
+
+Fetches weather forecast data from [https://api.open-meteo.com](https://api.open-meteo.com).
+Returns up to 16 days of hourly and daily data.
+The `daily` key of the response includes `sunrise` and `sunset` ISO-8601 datetime strings.
+
+Takes an optional `days` argument (integer 1-16, default 7).
+Takes an optional `tz` argument for the time zone; defaults to `Europe/London`.
+
+On success returns a hashref containing at minimum the key `hourly`.
+Returns `undef` if the API returns an error, if the JSON cannot be parsed,
+or if the response contains no `hourly` key.
+
+### API specification
+
+#### Input
+
+Three call forms are accepted.
+
+    # Form 1 and 2 -- hashref or flat list
+    {
+        latitude  => { type => 'scalar' },
+        longitude => { type => 'scalar' },
+        days      => { type => 'scalar',               optional => 1 },
+        tz        => { type => 'scalar',               optional => 1 },
+        location  => { type => 'object', can => 'latitude', optional => 1 },
+    }
+
+    # Form 3 -- positional: ($location_obj) or ($location_obj, $days)
+    # $location_obj must respond to latitude() and longitude()
+
+#### Output
+
+    { type => 'hashref', min => 1 }   # success -- contains 'hourly' key
+    undef                              # bad input or API error
+
+### FORMAL SPECIFICATION
+
+    ___ FORECAST ______________________________________________
+    | self?      : Weather::Meteo                            |
+    | latitude?  : REAL                                       |
+    | longitude? : REAL                                       |
+    | days?      : INTEGER [1..16]  (optional, default 7)    |
+    | tz?        : STRING  (optional, default 'Europe/London')|
+    |____________________________________________________________|
+    | result!    : HASHREF | undef                            |
+    |____________________________________________________________|
+    |                                                          |
+    | PRE (~latitude? v ~longitude?)                           |
+    |   => croak /Usage: forecast\(latitude/                  |
+    |                                                          |
+    | PRE lat? or lon? not matching /^-?\d+(\.\d+)?$/         |
+    |   => croak /Invalid latitude\/longitude format/          |
+    |                                                          |
+    | PRE days? defined ^ (days? < 1 v days? > 16)            |
+    |   => carp /days must be between 1 and 16/               |
+    |      days? := 7                                          |
+    |                                                          |
+    | POST cache hit for (lat, lon, days, tz)                 |
+    |   => result! = cached_value                              |
+    |                                                          |
+    | POST HTTP error response                                 |
+    |   => carp msg ^ result! = undef                          |
+    |                                                          |
+    | POST JSON parse failure                                  |
+    |   => carp /Failed to parse JSON response/ ^ result! = undef |
+    |                                                          |
+    | POST response.error = true                               |
+    |   => result! = undef                                     |
+    |                                                          |
+    | POST ~response.hourly                                    |
+    |   => result! = undef                                     |
+    |                                                          |
+    | POST otherwise                                           |
+    |   => result! = { hourly => HOURLY, daily => DAILY }     |
+    |      cache.set(key, result!)                             |
+    |____________________________________________________________|
+
+## sunrise\_sunset
+
+    my $meteo = Weather::Meteo->new();
+
+    # Historical date
+    my $times = $meteo->sunrise_sunset({ latitude => 51.34, longitude => 1.42, date => '2022-12-25' });
+    print "Sunrise: $times->{sunrise}\n";
+    print "Sunset:  $times->{sunset}\n";
+
+    # Today (no date given -- uses forecast endpoint)
+    $times = $meteo->sunrise_sunset({ latitude => 51.34, longitude => 1.42 });
+
+    use Geo::Location::Point;
+    my $ramsgate = Geo::Location::Point->new({ latitude => 51.34, longitude => 1.42 });
+    $times = $meteo->sunrise_sunset($ramsgate, '2022-12-25');
+
+Returns a hashref with `sunrise` and `sunset` ISO-8601 datetime strings
+(e.g. `2022-12-25T08:09`) for the given location and date.
+
+If no date is supplied, today is used and the forecast endpoint is queried.
+For historical dates (strictly before today) the archive endpoint is used.
+For today and future dates the forecast endpoint ([https://api.open-meteo.com](https://api.open-meteo.com)) is used.
+
+Takes an optional `tz` argument for the time zone; defaults to `Europe/London`.
+
+Returns `undef` if the API returns an error or if the response does not contain
+sunrise/sunset data.
+
+### API specification
+
+#### Input
+
+Three call forms are accepted.
+
+    # Form 1 and 2 -- hashref or flat list
+    {
+        latitude  => { type => 'scalar' },
+        longitude => { type => 'scalar' },
+        date      => { type => 'scalar | object', optional => 1 },
+        tz        => { type => 'scalar',           optional => 1 },
+        location  => { type => 'object', can => 'latitude', optional => 1 },
+    }
+
+    # Form 3 -- positional: ($location_obj) or ($location_obj, $date)
+    # $location_obj must respond to latitude() and longitude()
+
+#### Output
+
+    { type => 'hashref' }   # { sunrise => STRING, sunset => STRING }
+    undef                    # bad input or API error
+
+### FORMAL SPECIFICATION
+
+    ___ SUNRISE_SUNSET ________________________________________
+    | self?      : Weather::Meteo                            |
+    | latitude?  : REAL                                       |
+    | longitude? : REAL                                       |
+    | date?      : DATE_STRING  (optional, default today)     |
+    | tz?        : STRING  (optional, default 'Europe/London')|
+    |____________________________________________________________|
+    | result!    : HASHREF | undef                            |
+    |____________________________________________________________|
+    |                                                          |
+    | PRE (~latitude? v ~longitude?)                           |
+    |   => croak /Usage: sunrise_sunset\(latitude/            |
+    |                                                          |
+    | PRE lat? or lon? not matching /^-?\d+(\.\d+)?$/         |
+    |   => croak /Invalid latitude\/longitude format/          |
+    |                                                          |
+    | PRE date? defined ^ date? !~ /^\d{4}-\d{2}-\d{2}$/     |
+    |   => carp /not a valid date/ ^ result! = undef           |
+    |                                                          |
+    | POST ~date? v date? >= today                             |
+    |   => uses forecast endpoint (api.open-meteo.com)        |
+    |                                                          |
+    | POST date? < today                                       |
+    |   => uses archive endpoint (archive-api.open-meteo.com) |
+    |                                                          |
+    | POST cache hit for (lat, lon, date, tz)                 |
+    |   => result! = cached_value                              |
+    |                                                          |
+    | POST HTTP error or JSON failure or ~daily.sunrise        |
+    |   => result! = undef                                     |
+    |                                                          |
+    | POST otherwise                                           |
+    |   => result! = { sunrise => ISO8601, sunset => ISO8601 } |
     |      cache.set(key, result!)                             |
     |____________________________________________________________|
 

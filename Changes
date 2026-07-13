@@ -1,5 +1,11 @@
 Revision history for Weather::Meteo
 
+0.15
+	[ Enhancements ]
+	- Add forecast() method using api.open-meteo.com/v1/forecast (1-16 days ahead)
+	- Add sunrise_sunset() method returning { sunrise, sunset } for any date
+	- Add sunrise,sunset to weather() daily fields
+
 0.14	Mon Jun  1 08:55:15 EDT 2026
 	Use Test::Mockingbird instead of Test::MockModule in t/30-basics.t
 	Fix $self->error() calls that should be $logger->error() in weather()

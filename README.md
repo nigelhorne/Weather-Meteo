@@ -79,6 +79,13 @@ clones that object and merges the supplied parameters.
     The archive API host endpoint.
     Defaults to `archive-api.open-meteo.com`.
 
+    Must be a plain DNS hostname - letters, digits, hyphens, and dots - with an
+    optional port suffix (e.g. `mock.example.com:8080`).
+    Values containing `@`, path segments, or other special characters are rejected
+    with a `croak` to prevent Server-Side Request Forgery (SSRF) via the
+    `WEATHER__METEO__host` environment variable or configuration file.
+    Falsy values (`undef`, `""`, `0`) fall back to the default silently.
+
 - `logger`
 
     An optional logger object.
@@ -144,6 +151,8 @@ merging any supplied parameters.
     -------------------------------------------------  -----  -----------------------------------
     'ua' argument must be an object with a get()       croak  clone called with an invalid ua arg
     method
+    Invalid host '$host': must be a plain hostname     croak  host contains @, /, or other chars
+                                                              that are not safe in a DNS label
 
 ### FORMAL SPECIFICATION
 
@@ -159,8 +168,12 @@ merging any supplied parameters.
     | ~params?.ua    => result!.ua    : LWP::UserAgent         |
     | params?.cache? => result!.cache = params?.cache          |
     | ~params?.cache => result!.cache : CHI(Memory, global)    |
-    | params?.host?  => result!.host  = params?.host           |
-    | ~params?.host  => result!.host  = DEFAULT_HOST           |
+    | params?.host? ^ valid_hostname(params?.host?)             |
+    |   => result!.host = params?.host?                        |
+    | params?.host? ^ ~valid_hostname(params?.host?)           |
+    |   => croak /Invalid host/                                |
+    |   valid_hostname(h) ::= h =~ /\A[A-Za-z0-9][A-Za-z0-9.\-]*(:\d{1,5})?\z/ |
+    | ~params?.host? => result!.host  = DEFAULT_HOST           |
     | params?.min_interval? => result!.min_interval = params?.min_interval |
     | ~params?.min_interval => result!.min_interval = 0        |
     | result!.last_request  = 0                                |
@@ -250,7 +263,10 @@ Three call forms are accepted.
     Invalid date format. Expected YYYY-MM-DD             croak  strftime() returned wrong format
     UA->get did not return a valid HTTP response         carp   UA returned non-response object
     $url API returned error: $status                     carp   HTTP 4xx/5xx response
-    Failed to parse JSON response: $@                    carp   response body is not valid JSON
+    Failed to parse JSON response: $err                  carp   response body is not valid JSON
+                                                               ($err is the exception with control
+                                                               chars stripped and length capped at
+                                                               200 chars to prevent log injection)
     Weather::Meteo: API error: $reason                   carp   API returned {"error":true,...}
 
 ### PSEUDOCODE
@@ -259,7 +275,9 @@ Three call forms are accepted.
     extract lat, lon, date, tz; resolve location object if given
     croak if lat, lon, or date is missing
     normalise leading-decimal coordinates via _normalise_coord()
-    croak if coordinates are not numeric
+    validate coordinates with /\A(-?(?>\d+)(?:\.(?>\d+))?)\z/
+      (atomic groups prevent ReDoS; list-context capture also untaints for perl -T)
+    croak if either coordinate does not match
     if date is a strftime object: call strftime('%F'); croak if result not YYYY-MM-DD
     return undef silently if year < 1940
     carp and return undef if date string is not YYYY-MM-DD
@@ -286,9 +304,12 @@ Three call forms are accepted.
     | PRE (~latitude? v ~longitude? v ~date?)                 |
     |   => croak /Usage: weather\(latitude/                   |
     |                                                          |
-    | PRE lat? or lon? not matching /^-?\d+(\.\d+)?$/         |
-    |   (after leading-decimal normalisation)                  |
+    | PRE lat? or lon? not matching                            |
+    |     /\A(-?(?>\d+)(?:\.(?>\d+))?)\z/                     |
+    |   (after leading-decimal normalisation via _normalise_coord) |
     |   => croak /Invalid latitude\/longitude format/          |
+    |   NOTE: list-context capture untaints lat/lon (perl -T) |
+    |         atomic groups eliminate O(n) backtracking        |
     |                                                          |
     | PRE date? blessed ^ date?.can('strftime')               |
     |   => date? := date?.strftime('%F')                       |
@@ -389,7 +410,10 @@ Three call forms are accepted.
     days must be between 1 and 16; defaulting to 7       carp   days argument is out of range
     UA->get did not return a valid HTTP response         carp   UA returned non-response object
     $url API returned error: $status                     carp   HTTP 4xx/5xx response
-    Failed to parse JSON response: $@                    carp   response body is not valid JSON
+    Failed to parse JSON response: $err                  carp   response body is not valid JSON
+                                                               ($err is the exception with control
+                                                               chars stripped and length capped at
+                                                               200 chars to prevent log injection)
 
 ### PSEUDOCODE
 
@@ -397,7 +421,9 @@ Three call forms are accepted.
     extract lat, lon, days, tz; resolve location object if given
     croak if lat or lon is missing
     normalise leading-decimal coordinates via _normalise_coord()
-    croak if coordinates are not numeric
+    validate coordinates with /\A(-?(?>\d+)(?:\.(?>\d+))?)\z/
+      (atomic groups prevent ReDoS; list-context capture also untaints for perl -T)
+    croak if either coordinate does not match
     clamp days to 1-16: carp and default to 7 if out of range
     return cached result if available
     build URL for FORECAST_HOST/v1/forecast with forecast_days parameter
@@ -421,8 +447,12 @@ Three call forms are accepted.
     | PRE (~latitude? v ~longitude?)                           |
     |   => croak /Usage: forecast\(latitude/                  |
     |                                                          |
-    | PRE lat? or lon? not matching /^-?\d+(\.\d+)?$/         |
+    | PRE lat? or lon? not matching                            |
+    |     /\A(-?(?>\d+)(?:\.(?>\d+))?)\z/                     |
+    |   (after leading-decimal normalisation via _normalise_coord) |
     |   => croak /Invalid latitude\/longitude format/          |
+    |   NOTE: list-context capture untaints lat/lon (perl -T) |
+    |         atomic groups eliminate O(n) backtracking        |
     |                                                          |
     | PRE days? defined ^ (days? < 1 v days? > 16)            |
     |   => carp /days must be between 1 and 16/               |
@@ -527,7 +557,10 @@ Three call forms are accepted.
     '$date' is not a valid date                          carp   date string is not YYYY-MM-DD
     UA->get did not return a valid HTTP response         carp   UA returned non-response object
     $url API returned error: $status                     carp   HTTP 4xx/5xx response
-    Failed to parse JSON response: $@                    carp   response body is not valid JSON
+    Failed to parse JSON response: $err                  carp   response body is not valid JSON
+                                                               ($err is the exception with control
+                                                               chars stripped and length capped at
+                                                               200 chars to prevent log injection)
 
 ### PSEUDOCODE
 
@@ -535,7 +568,9 @@ Three call forms are accepted.
     extract lat, lon, date, tz; resolve location object if given
     croak if lat or lon is missing
     normalise leading-decimal coordinates via _normalise_coord()
-    croak if coordinates are not numeric
+    validate coordinates with /\A(-?(?>\d+)(?:\.(?>\d+))?)\z/
+      (atomic groups prevent ReDoS; list-context capture also untaints for perl -T)
+    croak if either coordinate does not match
     if date is a strftime object: call strftime('%F')
     carp and return undef if date string is not YYYY-MM-DD
     determine endpoint: archive for historical dates, forecast for today/future
@@ -563,8 +598,12 @@ Three call forms are accepted.
     | PRE (~latitude? v ~longitude?)                           |
     |   => croak /Usage: sunrise_sunset\(latitude/            |
     |                                                          |
-    | PRE lat? or lon? not matching /^-?\d+(\.\d+)?$/         |
+    | PRE lat? or lon? not matching                            |
+    |     /\A(-?(?>\d+)(?:\.(?>\d+))?)\z/                     |
+    |   (after leading-decimal normalisation via _normalise_coord) |
     |   => croak /Invalid latitude\/longitude format/          |
+    |   NOTE: list-context capture untaints lat/lon (perl -T) |
+    |         atomic groups eliminate O(n) backtracking        |
     |                                                          |
     | PRE date? defined ^ date? !~ /^\d{4}-\d{2}-\d{2}$/     |
     |   => carp /not a valid date/ ^ result! = undef           |
@@ -702,6 +741,25 @@ When called with an argument the argument must be an object that responds to `ge
     [Sub::Private](https://metacpan.org/pod/Sub%3A%3APrivate).
     Callers are expected to treat them as internal; white-box test files may
     access them directly.
+
+- Host parameter restricted to plain DNS hostnames
+
+    The `host` constructor parameter (and the `WEATHER__METEO__host` environment
+    variable) must match `/\A[A-Za-z0-9][A-Za-z0-9.\-]*(:\d{1,5})?\z/`.
+    IP addresses in CIDR notation, URLs with path components, `@`-style
+    user-info, and other special characters are rejected with a `croak` to
+    prevent Server-Side Request Forgery.
+    If you need to test against a local service on a non-standard port, use a
+    plain `hostname:port` string (e.g. `localhost:8080`).
+
+- Coordinate values limited to decimal numbers
+
+    Latitude and longitude must match `/\A-?(?`\\d+)(?:\\.(?>\\d+))?\\z/> after
+    leading-decimal normalisation.
+    Exponential notation (`1.5e2`), hex (`0x1F`), and strings with embedded
+    whitespace are rejected.
+    Pass a pre-formatted decimal string rather than a Perl numeric expression if
+    your caller might produce non-decimal representations.
 
 # AUTHOR
 

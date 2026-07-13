@@ -116,7 +116,7 @@ an in-memory cache is created with a default expiration of one hour.
 The archive API host endpoint.
 Defaults to C<archive-api.open-meteo.com>.
 
-Must be a plain DNS hostname — letters, digits, hyphens, and dots — with an
+Must be a plain DNS hostname - letters, digits, hyphens, and dots - with an
 optional port suffix (e.g. C<mock.example.com:8080>).
 Values containing C<@>, path segments, or other special characters are rejected
 with a C<croak> to prevent Server-Side Request Forgery (SSRF) via the

@@ -244,10 +244,10 @@ pre details.mutant-details ul {
 <div class="nav"><a href="../../../index.html">Index</a>
 </div><div class='summary'>
 <strong>Structural Coverage (Approximate)</strong><p>
-TER1 (Statement): 96.09%<br>
-TER2 (Branch): 73.81%<br>
-TER3 (LCSAJ): 100.0% (28/28)<br>
-Approximate LCSAJ segments: 127<br>
+TER1 (Statement): 96.36%<br>
+TER2 (Branch): 74.24%<br>
+TER3 (LCSAJ): 100.0% (30/30)<br>
+Approximate LCSAJ segments: 133<br>
 </div>
 
     <div class="legend">
@@ -408,593 +408,643 @@ Approximate LCSAJ segments: 127<br>
 </span><span class="">  116: The archive API host endpoint.
 </span><span class="">  117: Defaults to C&lt;archive-api.open-meteo.com&gt;.
 </span><span class="">  118: 
-</span><span class="">  119: =item * C&lt;logger&gt;
-</span><span class="">  120: 
-</span><span class="">  121: An optional logger object.
-</span><span class="">  122: Must respond to C&lt;error()&gt;.
-</span><span class="">  123: When supplied, API errors are reported through this logger in addition to C&lt;Carp::carp&gt;.
-</span><span class="">  124: 
-</span><span class="">  125: =item * C&lt;min_interval&gt;
-</span><span class="">  126: 
-</span><span class="">  127: Minimum number of seconds to wait between API requests.
-</span><span class="">  128: Defaults to C&lt;0&gt; (no delay).
-</span><span class="">  129: Use this option to enforce rate-limiting.
-</span><span class="">  130: 
-</span><span class="">  131: =item * C&lt;ua&gt;
-</span><span class="">  132: 
-</span><span class="">  133: An object to use for HTTP requests.
-</span><span class="">  134: If not provided, a default C&lt;LWP::UserAgent&gt; is created.
-</span><span class="">  135: Must respond to C&lt;get()&gt;.
-</span><span class="">  136: 
-</span><span class="">  137: =back
-</span><span class="">  138: 
-</span><span class="">  139: The class can be configured at runtime using environment variables and configuration files,
-</span><span class="">  140: for example,
-</span><span class="">  141: setting C&lt;$ENV{&#39;WEATHER__METEO__carp_on_warn&#39;}&gt; causes warnings to use L&lt;Carp&gt;.
-</span><span class="">  142: For more information about runtime configuration,
-</span><span class="">  143: see L&lt;Object::Configure&gt;.
-</span><span class="">  144: 
-</span><span class="">  145: =head3 EXAMPLE
-</span><span class="">  146: 
-</span><span class="">  147:     # Minimal -- use all defaults
-</span><span class="">  148:     my $meteo = Weather::Meteo-&gt;new();
-</span><span class="">  149: 
-</span><span class="">  150:     # Custom UA with throttling
-</span><span class="">  151:     use LWP::UserAgent::Throttled;
-</span><span class="">  152:     my $ua = LWP::UserAgent::Throttled-&gt;new();
-</span><span class="">  153:     $ua-&gt;throttle(&#39;open-meteo.com&#39; =&gt; 1);
-</span><span class="">  154:     my $meteo = Weather::Meteo-&gt;new(ua =&gt; $ua, min_interval =&gt; 1);
-</span><span class="">  155: 
-</span><span class="">  156:     # Clone the object but change the host for integration testing
-</span><span class="">  157:     my $test_meteo = $meteo-&gt;new(host =&gt; &#39;mock.example.com&#39;);
-</span><span class="">  158: 
-</span><span class="">  159: =head3 API SPECIFICATION
-</span><span class="">  160: 
-</span><span class="">  161: =head4 Input
+</span><span class="">  119: Must be a plain DNS hostname &acirc;&#128;&#148; letters, digits, hyphens, and dots &acirc;&#128;&#148; with an
+</span><span class="">  120: optional port suffix (e.g. C&lt;mock.example.com:8080&gt;).
+</span><span class="">  121: Values containing C&lt;@&gt;, path segments, or other special characters are rejected
+</span><span class="">  122: with a C&lt;croak&gt; to prevent Server-Side Request Forgery (SSRF) via the
+</span><span class="">  123: C&lt;WEATHER__METEO__host&gt; environment variable or configuration file.
+</span><span class="">  124: Falsy values (C&lt;undef&gt;, C&lt;&quot;&quot;&gt;, C&lt;0&gt;) fall back to the default silently.
+</span><span class="">  125: 
+</span><span class="">  126: =item * C&lt;logger&gt;
+</span><span class="">  127: 
+</span><span class="">  128: An optional logger object.
+</span><span class="">  129: Must respond to C&lt;error()&gt;.
+</span><span class="">  130: When supplied, API errors are reported through this logger in addition to C&lt;Carp::carp&gt;.
+</span><span class="">  131: 
+</span><span class="">  132: =item * C&lt;min_interval&gt;
+</span><span class="">  133: 
+</span><span class="">  134: Minimum number of seconds to wait between API requests.
+</span><span class="">  135: Defaults to C&lt;0&gt; (no delay).
+</span><span class="">  136: Use this option to enforce rate-limiting.
+</span><span class="">  137: 
+</span><span class="">  138: =item * C&lt;ua&gt;
+</span><span class="">  139: 
+</span><span class="">  140: An object to use for HTTP requests.
+</span><span class="">  141: If not provided, a default C&lt;LWP::UserAgent&gt; is created.
+</span><span class="">  142: Must respond to C&lt;get()&gt;.
+</span><span class="">  143: 
+</span><span class="">  144: =back
+</span><span class="">  145: 
+</span><span class="">  146: The class can be configured at runtime using environment variables and configuration files,
+</span><span class="">  147: for example,
+</span><span class="">  148: setting C&lt;$ENV{&#39;WEATHER__METEO__carp_on_warn&#39;}&gt; causes warnings to use L&lt;Carp&gt;.
+</span><span class="">  149: For more information about runtime configuration,
+</span><span class="">  150: see L&lt;Object::Configure&gt;.
+</span><span class="">  151: 
+</span><span class="">  152: =head3 EXAMPLE
+</span><span class="">  153: 
+</span><span class="">  154:     # Minimal -- use all defaults
+</span><span class="">  155:     my $meteo = Weather::Meteo-&gt;new();
+</span><span class="">  156: 
+</span><span class="">  157:     # Custom UA with throttling
+</span><span class="">  158:     use LWP::UserAgent::Throttled;
+</span><span class="">  159:     my $ua = LWP::UserAgent::Throttled-&gt;new();
+</span><span class="">  160:     $ua-&gt;throttle(&#39;open-meteo.com&#39; =&gt; 1);
+</span><span class="">  161:     my $meteo = Weather::Meteo-&gt;new(ua =&gt; $ua, min_interval =&gt; 1);
 </span><span class="">  162: 
-</span><span class="">  163: All parameters are optional.
-</span><span class="">  164: They may be supplied as a hashref or a flat key/value list.
-</span><span class="">  165: When C&lt;$class&gt; is an existing C&lt;Weather::Meteo&gt; object the call clones it,
-</span><span class="">  166: merging any supplied parameters.
+</span><span class="">  163:     # Clone the object but change the host for integration testing
+</span><span class="">  164:     my $test_meteo = $meteo-&gt;new(host =&gt; &#39;mock.example.com&#39;);
+</span><span class="">  165: 
+</span><span class="">  166: =head3 API SPECIFICATION
 </span><span class="">  167: 
-</span><span class="">  168:     {
-</span><span class="">  169:         ua           =&gt; { type =&gt; &#39;object&#39;, can =&gt; &#39;get&#39;,   optional =&gt; 1 },
-</span><span class="">  170:         cache        =&gt; { type =&gt; &#39;object&#39;,                  optional =&gt; 1 },
-</span><span class="">  171:         host         =&gt; { type =&gt; &#39;scalar&#39;,                  optional =&gt; 1 },
-</span><span class="">  172:         min_interval =&gt; { type =&gt; &#39;scalar&#39;,                  optional =&gt; 1 },
-</span><span class="">  173:         logger       =&gt; { type =&gt; &#39;object&#39;, can =&gt; &#39;error&#39;, optional =&gt; 1 },
-</span><span class="">  174:     }
-</span><span class="">  175: 
-</span><span class="">  176: =head4 Output
-</span><span class="">  177: 
-</span><span class="">  178:     { type =&gt; &#39;object&#39;, isa =&gt; &#39;Weather::Meteo&#39; }
-</span><span class="">  179: 
-</span><span class="">  180: =head3 MESSAGES
-</span><span class="">  181: 
-</span><span class="">  182:     Message                                            Type   Trigger
-</span><span class="">  183:     -------------------------------------------------  -----  -----------------------------------
-</span><span class="">  184:     &#39;ua&#39; argument must be an object with a get()       croak  clone called with an invalid ua arg
-</span><span class="">  185:     method
+</span><span class="">  168: =head4 Input
+</span><span class="">  169: 
+</span><span class="">  170: All parameters are optional.
+</span><span class="">  171: They may be supplied as a hashref or a flat key/value list.
+</span><span class="">  172: When C&lt;$class&gt; is an existing C&lt;Weather::Meteo&gt; object the call clones it,
+</span><span class="">  173: merging any supplied parameters.
+</span><span class="">  174: 
+</span><span class="">  175:     {
+</span><span class="">  176:         ua           =&gt; { type =&gt; &#39;object&#39;, can =&gt; &#39;get&#39;,   optional =&gt; 1 },
+</span><span class="">  177:         cache        =&gt; { type =&gt; &#39;object&#39;,                  optional =&gt; 1 },
+</span><span class="">  178:         host         =&gt; { type =&gt; &#39;scalar&#39;,                  optional =&gt; 1 },
+</span><span class="">  179:         min_interval =&gt; { type =&gt; &#39;scalar&#39;,                  optional =&gt; 1 },
+</span><span class="">  180:         logger       =&gt; { type =&gt; &#39;object&#39;, can =&gt; &#39;error&#39;, optional =&gt; 1 },
+</span><span class="">  181:     }
+</span><span class="">  182: 
+</span><span class="">  183: =head4 Output
+</span><span class="">  184: 
+</span><span class="">  185:     { type =&gt; &#39;object&#39;, isa =&gt; &#39;Weather::Meteo&#39; }
 </span><span class="">  186: 
-</span><span class="">  187: =head3 FORMAL SPECIFICATION
+</span><span class="">  187: =head3 MESSAGES
 </span><span class="">  188: 
-</span><span class="">  189:     ___ NEW ___________________________________________________
-</span><span class="">  190:     | class?        : PACKAGE | Weather::Meteo               |
-</span><span class="">  191:     | params?       : NAME |--&gt; VALUE                         |
-</span><span class="">  192:     |___________________________________________________________|
-</span><span class="">  193:     | result!       : Weather::Meteo                          |
-</span><span class="">  194:     |                                                          |
-</span><span class="">  195:     | blessed(result!) = &#39;Weather::Meteo&#39;                     |
-</span><span class="">  196:     |                                                          |
-</span><span class="">  197:     | params?.ua?    =&gt; result!.ua    = params?.ua             |
-</span><span class="">  198:     | ~params?.ua    =&gt; result!.ua    : LWP::UserAgent         |
-</span><span class="">  199:     | params?.cache? =&gt; result!.cache = params?.cache          |
-</span><span class="">  200:     | ~params?.cache =&gt; result!.cache : CHI(Memory, global)    |
-</span><span class="">  201:     | params?.host?  =&gt; result!.host  = params?.host           |
-</span><span class="">  202:     | ~params?.host  =&gt; result!.host  = DEFAULT_HOST           |
-</span><span class="">  203:     | params?.min_interval? =&gt; result!.min_interval = params?.min_interval |
-</span><span class="">  204:     | ~params?.min_interval =&gt; result!.min_interval = 0        |
-</span><span class="">  205:     | result!.last_request  = 0                                |
-</span><span class="">  206:     |___________________________________________________________|
-</span><span class="">  207:     |                                                          |
-</span><span class="">  208:     | PRE:  class? is PACKAGE name or blessed Weather::Meteo  |
-</span><span class="">  209:     | POST: blessed(result!) = &#39;Weather::Meteo&#39;               |
-</span><span class="">  210:     |       forall k in params? . result!.k = params?.k       |
-</span><span class="">  211:     |___________________________________________________________|
-</span><span class="">  212: 
-</span><span class="">  213: =cut
-</span><span class="">  214: 
-</span><span class="">  215: sub new {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">216 → 219 → 235</span></span>  216: 	my $class = shift;
-</span><span class="">  217: 	my $params = Params::Get::get_params(undef, \@_) || {};
-</span><span class="">  218: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  219: 	if(!defined($class)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  220: 		# Weather::Meteo::new() used rather than Weather::Meteo-&gt;new()
-</span><span class="">  221: 		$class = __PACKAGE__;
-</span><span class="">  222: 	} elsif(Scalar::Util::blessed($class)) {
-</span><span class="">  223: 		# Clone path: merge new params over the existing object&#39;s fields.
-</span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  224: 		if(exists($params-&gt;{ua})) {
+</span><span class="">  189:     Message                                            Type   Trigger
+</span><span class="">  190:     -------------------------------------------------  -----  -----------------------------------
+</span><span class="">  191:     &#39;ua&#39; argument must be an object with a get()       croak  clone called with an invalid ua arg
+</span><span class="">  192:     method
+</span><span class="">  193:     Invalid host &#39;$host&#39;: must be a plain hostname     croak  host contains @, /, or other chars
+</span><span class="">  194:                                                               that are not safe in a DNS label
+</span><span class="">  195: 
+</span><span class="">  196: =head3 FORMAL SPECIFICATION
+</span><span class="">  197: 
+</span><span class="">  198:     ___ NEW ___________________________________________________
+</span><span class="">  199:     | class?        : PACKAGE | Weather::Meteo               |
+</span><span class="">  200:     | params?       : NAME |--&gt; VALUE                         |
+</span><span class="">  201:     |___________________________________________________________|
+</span><span class="">  202:     | result!       : Weather::Meteo                          |
+</span><span class="">  203:     |                                                          |
+</span><span class="">  204:     | blessed(result!) = &#39;Weather::Meteo&#39;                     |
+</span><span class="">  205:     |                                                          |
+</span><span class="">  206:     | params?.ua?    =&gt; result!.ua    = params?.ua             |
+</span><span class="">  207:     | ~params?.ua    =&gt; result!.ua    : LWP::UserAgent         |
+</span><span class="">  208:     | params?.cache? =&gt; result!.cache = params?.cache          |
+</span><span class="">  209:     | ~params?.cache =&gt; result!.cache : CHI(Memory, global)    |
+</span><span class="">  210:     | params?.host? ^ valid_hostname(params?.host?)             |
+</span><span class="">  211:     |   =&gt; result!.host = params?.host?                        |
+</span><span class="">  212:     | params?.host? ^ ~valid_hostname(params?.host?)           |
+</span><span class="">  213:     |   =&gt; croak /Invalid host/                                |
+</span><span class="">  214:     |   valid_hostname(h) ::= h =~ /\A[A-Za-z0-9][A-Za-z0-9.\-]*(:\d{1,5})?\z/ |
+</span><span class="">  215:     | ~params?.host? =&gt; result!.host  = DEFAULT_HOST           |
+</span><span class="">  216:     | params?.min_interval? =&gt; result!.min_interval = params?.min_interval |
+</span><span class="">  217:     | ~params?.min_interval =&gt; result!.min_interval = 0        |
+</span><span class="">  218:     | result!.last_request  = 0                                |
+</span><span class="">  219:     |___________________________________________________________|
+</span><span class="">  220:     |                                                          |
+</span><span class="">  221:     | PRE:  class? is PACKAGE name or blessed Weather::Meteo  |
+</span><span class="">  222:     | POST: blessed(result!) = &#39;Weather::Meteo&#39;               |
+</span><span class="">  223:     |       forall k in params? . result!.k = params?.k       |
+</span><span class="">  224:     |___________________________________________________________|
+</span><span class="">  225: 
+</span><span class="">  226: =cut
+</span><span class="">  227: 
+</span><span class="">  228: sub new {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">229 → 232 → 248</span></span>  229: 	my $class = shift;
+</span><span class="">  230: 	my $params = Params::Get::get_params(undef, \@_) || {};
+</span><span class="">  231: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  232: 	if(!defined($class)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  233: 		# Weather::Meteo::new() used rather than Weather::Meteo-&gt;new()
+</span><span class="">  234: 		$class = __PACKAGE__;
+</span><span class="">  235: 	} elsif(Scalar::Util::blessed($class)) {
+</span><span class="">  236: 		# Clone path: merge new params over the existing object&#39;s fields.
+</span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  237: 		if(exists($params-&gt;{ua})) {
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
 					<ul>
-				<li><b>COND_INV_224_3: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
+				<li><b>COND_INV_237_3: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
 </li></ul></details>
-<span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  225: 			if(!defined($params-&gt;{ua})) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  226: 				# ua=&gt;undef means &quot;keep the original&quot; -- silently drop it
-</span><span class="">  227: 				delete $params-&gt;{ua};
-</span><span class="">  228: 			} elsif(!Scalar::Util::blessed($params-&gt;{ua}) || !$params-&gt;{ua}-&gt;can(&#39;get&#39;)) {
-</span><span class="">  229: 				Carp::croak(&quot;&#39;ua&#39; argument must be an object with a get() method&quot;);
-</span><span class="">  230: 			}
-</span><span class="">  231: 		}
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  232: 		return bless { %{$class}, %{$params} }, ref($class);
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  233: 	}
-</span><span class="">  234: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">235 → 238 → 243</span></span>  235: 	$params = Object::Configure::configure($class, $params);
-</span><span class="">  236: 
-</span><span class="">  237: 	my $ua = $params-&gt;{ua};
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  238: 	if(!defined($ua)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  239: 		$ua = LWP::UserAgent-&gt;new(agent =&gt; __PACKAGE__ . &quot;/$VERSION&quot;);
-</span><span class="">  240: 		$ua-&gt;default_header(accept_encoding =&gt; &#39;gzip,deflate&#39;);
-</span><span class="">  241: 	}
-</span><span class="">  242: 
-</span><span class="">  243: 	my $cache = $params-&gt;{cache} || CHI-&gt;new(
-</span><span class="">  244: 		driver     =&gt; &#39;Memory&#39;,
-</span><span class="">  245: 		global     =&gt; 1,
-</span><span class="">  246: 		expires_in =&gt; EXPIRES_IN,
-</span><span class="">  247: 	);
-</span><span class="">  248: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  249: 	return bless {
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  250: 		min_interval =&gt; $params-&gt;{min_interval} || MIN_INTERVAL,
-</span><span class="">  251: 		last_request =&gt; 0,
-</span><span class="">  252: 		%{$params},
-</span><span class="">  253: 		cache =&gt; $cache,
-</span><span class="">  254: 		host  =&gt; $params-&gt;{host} || DEFAULT_HOST,
-</span><span class="">  255: 		ua    =&gt; $ua,
-</span><span class="">  256: 	}, $class;
-</span><span class="">  257: }
-</span><span class="">  258: 
-</span><span class="">  259: =head2 weather
-</span><span class="">  260: 
-</span><span class="">  261:     use Geo::Location::Point;
-</span><span class="">  262: 
-</span><span class="">  263:     my $ramsgate = Geo::Location::Point-&gt;new({ latitude =&gt; 51.34, longitude =&gt; 1.42 });
-</span><span class="">  264:     my $weather  = $meteo-&gt;weather($ramsgate, &#39;2022-12-25&#39;);
+<span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  238: 			if(!defined($params-&gt;{ua})) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  239: 				# ua=&gt;undef means &quot;keep the original&quot; -- silently drop it
+</span><span class="">  240: 				delete $params-&gt;{ua};
+</span><span class="">  241: 			} elsif(!Scalar::Util::blessed($params-&gt;{ua}) || !$params-&gt;{ua}-&gt;can(&#39;get&#39;)) {
+</span><span class="">  242: 				Carp::croak(&quot;&#39;ua&#39; argument must be an object with a get() method&quot;);
+</span><span class="">  243: 			}
+</span><span class="">  244: 		}
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  245: 		return bless { %{$class}, %{$params} }, ref($class);
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  246: 	}
+</span><span class="">  247: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">248 → 254 → 260</span></span>  248: 	$params = Object::Configure::configure($class, $params);
+</span><span class="">  249: 
+</span><span class="">  250: 	# Validate and untaint host: only DNS labels + optional port are accepted.
+</span><span class="">  251: 	# Prevents SSRF via WEATHER__METEO__host env var or config file injection.
+</span><span class="">  252: 	# Falsy values (undef, &quot;&quot;, 0) are left as-is -- they fall back to DEFAULT_HOST
+</span><span class="">  253: 	# in the bless statement and never reach the URL constructor.
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  254: 	if($params-&gt;{host}) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  255: 		(my $safe_host) = ($params-&gt;{host} =~ /\A([A-Za-z0-9][A-Za-z0-9.\-]*(:\d{1,5})?)\z/)
+</span><span class="">  256: 			or Carp::croak(&quot;Invalid host &#39;$params-&gt;{host}&#39;: must be a plain hostname&quot;);
+</span><span class="">  257: 		$params-&gt;{host} = $safe_host;
+</span><span class="">  258: 	}
+</span><span class="">  259: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">260 → 261 → 266</span></span>  260: 	my $ua = $params-&gt;{ua};
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  261: 	if(!defined($ua)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  262: 		$ua = LWP::UserAgent-&gt;new(agent =&gt; __PACKAGE__ . &quot;/$VERSION&quot;);
+</span><span class="">  263: 		$ua-&gt;default_header(accept_encoding =&gt; &#39;gzip,deflate&#39;);
+</span><span class="">  264: 	}
 </span><span class="">  265: 
-</span><span class="">  266:     # Print snowfall at 1AM on Christmas morning in Ramsgate
-</span><span class="">  267:     my @snowfall = @{$weather-&gt;{&#39;hourly&#39;}-&gt;{&#39;snowfall&#39;}};
-</span><span class="">  268:     print &#39;Snowfall at 1AM: &#39;, $snowfall[1], &quot; cm\n&quot;;
-</span><span class="">  269: 
-</span><span class="">  270:     use DateTime;
-</span><span class="">  271:     my $dt = DateTime-&gt;new(year =&gt; 2024, month =&gt; 2, day =&gt; 1);
-</span><span class="">  272:     $weather = $meteo-&gt;weather({ location =&gt; $ramsgate, date =&gt; $dt });
-</span><span class="">  273: 
-</span><span class="">  274: The date argument can be an ISO-8601 formatted string (C&lt;YYYY-MM-DD&gt;),
-</span><span class="">  275: or any object that supports C&lt;strftime&gt;.
-</span><span class="">  276: 
-</span><span class="">  277: Takes an optional C&lt;tz&gt; argument containing the time zone.
-</span><span class="">  278: If not given, the module tries to derive it from the location object;
-</span><span class="">  279: set C&lt;TIMEZONEDB_KEY&gt; to your API key from L&lt;https://timezonedb.com&gt; to enable that.
-</span><span class="">  280: If all else fails, the module falls back to C&lt;Europe/London&gt;.
+</span><span class="">  266: 	my $cache = $params-&gt;{cache} || CHI-&gt;new(
+</span><span class="">  267: 		driver     =&gt; &#39;Memory&#39;,
+</span><span class="">  268: 		global     =&gt; 1,
+</span><span class="">  269: 		expires_in =&gt; EXPIRES_IN,
+</span><span class="">  270: 	);
+</span><span class="">  271: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  272: 	return bless {
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  273: 		min_interval =&gt; $params-&gt;{min_interval} || MIN_INTERVAL,
+</span><span class="">  274: 		last_request =&gt; 0,
+</span><span class="">  275: 		%{$params},
+</span><span class="">  276: 		cache =&gt; $cache,
+</span><span class="">  277: 		host  =&gt; $params-&gt;{host} || DEFAULT_HOST,
+</span><span class="">  278: 		ua    =&gt; $ua,
+</span><span class="">  279: 	}, $class;
+</span><span class="">  280: }
 </span><span class="">  281: 
-</span><span class="">  282: Dates before 1940 return C&lt;undef&gt; silently.
-</span><span class="">  283: Invalid date strings cause a C&lt;carp&gt; and return C&lt;undef&gt;.
-</span><span class="">  284: Missing required arguments or non-numeric coordinates cause a C&lt;croak&gt;.
+</span><span class="">  282: =head2 weather
+</span><span class="">  283: 
+</span><span class="">  284:     use Geo::Location::Point;
 </span><span class="">  285: 
-</span><span class="">  286: On success returns a hashref with at minimum an C&lt;hourly&gt; key.
-</span><span class="">  287: The C&lt;daily&gt; key includes C&lt;sunrise&gt; and C&lt;sunset&gt; as ISO-8601 datetime strings
-</span><span class="">  288: (e.g. C&lt;2022-12-25T08:09&gt;), as well as temperature, precipitation, and wind fields.
-</span><span class="">  289: Returns C&lt;undef&gt; if the API returns an error, if the JSON cannot be
-</span><span class="">  290: parsed, or if the response contains no C&lt;hourly&gt; key.
-</span><span class="">  291: 
-</span><span class="">  292: =head3 EXAMPLE
-</span><span class="">  293: 
-</span><span class="">  294:     my $meteo   = Weather::Meteo-&gt;new();
-</span><span class="">  295:     my $weather = $meteo-&gt;weather({ latitude =&gt; 51.34, longitude =&gt; 1.42, date =&gt; &#39;2022-12-25&#39; });
+</span><span class="">  286:     my $ramsgate = Geo::Location::Point-&gt;new({ latitude =&gt; 51.34, longitude =&gt; 1.42 });
+</span><span class="">  287:     my $weather  = $meteo-&gt;weather($ramsgate, &#39;2022-12-25&#39;);
+</span><span class="">  288: 
+</span><span class="">  289:     # Print snowfall at 1AM on Christmas morning in Ramsgate
+</span><span class="">  290:     my @snowfall = @{$weather-&gt;{&#39;hourly&#39;}-&gt;{&#39;snowfall&#39;}};
+</span><span class="">  291:     print &#39;Snowfall at 1AM: &#39;, $snowfall[1], &quot; cm\n&quot;;
+</span><span class="">  292: 
+</span><span class="">  293:     use DateTime;
+</span><span class="">  294:     my $dt = DateTime-&gt;new(year =&gt; 2024, month =&gt; 2, day =&gt; 1);
+</span><span class="">  295:     $weather = $meteo-&gt;weather({ location =&gt; $ramsgate, date =&gt; $dt });
 </span><span class="">  296: 
-</span><span class="">  297:     if(defined($weather)) {
-</span><span class="">  298:         my $max_temp = $weather-&gt;{&#39;daily&#39;}-&gt;{&#39;temperature_2m_max&#39;}[0];
-</span><span class="">  299:         my $sunrise  = $weather-&gt;{&#39;daily&#39;}-&gt;{&#39;sunrise&#39;}[0];
-</span><span class="">  300:         my @temps    = @{$weather-&gt;{&#39;hourly&#39;}-&gt;{&#39;temperature_2m&#39;}};
-</span><span class="">  301:         print &quot;Max temp: ${max_temp}C  Sunrise: $sunrise\n&quot;;
-</span><span class="">  302:         print &quot;Temp at noon: $temps[12]C\n&quot;;
-</span><span class="">  303:     }
+</span><span class="">  297: The date argument can be an ISO-8601 formatted string (C&lt;YYYY-MM-DD&gt;),
+</span><span class="">  298: or any object that supports C&lt;strftime&gt;.
+</span><span class="">  299: 
+</span><span class="">  300: Takes an optional C&lt;tz&gt; argument containing the time zone.
+</span><span class="">  301: If not given, the module tries to derive it from the location object;
+</span><span class="">  302: set C&lt;TIMEZONEDB_KEY&gt; to your API key from L&lt;https://timezonedb.com&gt; to enable that.
+</span><span class="">  303: If all else fails, the module falls back to C&lt;Europe/London&gt;.
 </span><span class="">  304: 
-</span><span class="">  305: =head3 API SPECIFICATION
-</span><span class="">  306: 
-</span><span class="">  307: =head4 Input
+</span><span class="">  305: Dates before 1940 return C&lt;undef&gt; silently.
+</span><span class="">  306: Invalid date strings cause a C&lt;carp&gt; and return C&lt;undef&gt;.
+</span><span class="">  307: Missing required arguments or non-numeric coordinates cause a C&lt;croak&gt;.
 </span><span class="">  308: 
-</span><span class="">  309: Three call forms are accepted.
-</span><span class="">  310: 
-</span><span class="">  311:     # Form 1 and 2 -- hashref or flat list
-</span><span class="">  312:     {
-</span><span class="">  313:         latitude  =&gt; { type =&gt; &#39;scalar&#39; },
-</span><span class="">  314:         longitude =&gt; { type =&gt; &#39;scalar&#39; },
-</span><span class="">  315:         date      =&gt; { type =&gt; &#39;scalar | object&#39; },
-</span><span class="">  316:         tz        =&gt; { type =&gt; &#39;scalar&#39;, optional =&gt; 1 },
-</span><span class="">  317:         location  =&gt; { type =&gt; &#39;object&#39;, can =&gt; &#39;latitude&#39;, optional =&gt; 1 },
-</span><span class="">  318:     }
+</span><span class="">  309: On success returns a hashref with at minimum an C&lt;hourly&gt; key.
+</span><span class="">  310: The C&lt;daily&gt; key includes C&lt;sunrise&gt; and C&lt;sunset&gt; as ISO-8601 datetime strings
+</span><span class="">  311: (e.g. C&lt;2022-12-25T08:09&gt;), as well as temperature, precipitation, and wind fields.
+</span><span class="">  312: Returns C&lt;undef&gt; if the API returns an error, if the JSON cannot be
+</span><span class="">  313: parsed, or if the response contains no C&lt;hourly&gt; key.
+</span><span class="">  314: 
+</span><span class="">  315: =head3 EXAMPLE
+</span><span class="">  316: 
+</span><span class="">  317:     my $meteo   = Weather::Meteo-&gt;new();
+</span><span class="">  318:     my $weather = $meteo-&gt;weather({ latitude =&gt; 51.34, longitude =&gt; 1.42, date =&gt; &#39;2022-12-25&#39; });
 </span><span class="">  319: 
-</span><span class="">  320:     # Form 3 -- positional: ($location_obj, $date)
-</span><span class="">  321:     # $location_obj must respond to latitude() and longitude()
-</span><span class="">  322: 
-</span><span class="">  323: =head4 Output
-</span><span class="">  324: 
-</span><span class="">  325:     { type =&gt; &#39;hashref&#39;, min =&gt; 1 }   # success -- contains &#39;hourly&#39; key
-</span><span class="">  326:     undef                              # pre-1940 date, bad input, or API error
+</span><span class="">  320:     if(defined($weather)) {
+</span><span class="">  321:         my $max_temp = $weather-&gt;{&#39;daily&#39;}-&gt;{&#39;temperature_2m_max&#39;}[0];
+</span><span class="">  322:         my $sunrise  = $weather-&gt;{&#39;daily&#39;}-&gt;{&#39;sunrise&#39;}[0];
+</span><span class="">  323:         my @temps    = @{$weather-&gt;{&#39;hourly&#39;}-&gt;{&#39;temperature_2m&#39;}};
+</span><span class="">  324:         print &quot;Max temp: ${max_temp}C  Sunrise: $sunrise\n&quot;;
+</span><span class="">  325:         print &quot;Temp at noon: $temps[12]C\n&quot;;
+</span><span class="">  326:     }
 </span><span class="">  327: 
-</span><span class="">  328: =head3 MESSAGES
+</span><span class="">  328: =head3 API SPECIFICATION
 </span><span class="">  329: 
-</span><span class="">  330:     Message                                              Type   Trigger
-</span><span class="">  331:     ---------------------------------------------------  -----  ----------------------------------
-</span><span class="">  332:     Usage: weather(latitude =&gt; ...)                      croak  lat, lon, or date is missing
-</span><span class="">  333:     Invalid latitude/longitude format ($lat, $lon)       croak  coordinate is not numeric
-</span><span class="">  334:     &#39;$date&#39; is not a valid date                          carp   date string is not YYYY-MM-DD
-</span><span class="">  335:     Invalid date format. Expected YYYY-MM-DD             croak  strftime() returned wrong format
-</span><span class="">  336:     UA-&gt;get did not return a valid HTTP response         carp   UA returned non-response object
-</span><span class="">  337:     $url API returned error: $status                     carp   HTTP 4xx/5xx response
-</span><span class="">  338:     Failed to parse JSON response: $@                    carp   response body is not valid JSON
-</span><span class="">  339:     Weather::Meteo: API error: $reason                   carp   API returned {&quot;error&quot;:true,...}
-</span><span class="">  340: 
-</span><span class="">  341: =head3 PSEUDOCODE
+</span><span class="">  330: =head4 Input
+</span><span class="">  331: 
+</span><span class="">  332: Three call forms are accepted.
+</span><span class="">  333: 
+</span><span class="">  334:     # Form 1 and 2 -- hashref or flat list
+</span><span class="">  335:     {
+</span><span class="">  336:         latitude  =&gt; { type =&gt; &#39;scalar&#39; },
+</span><span class="">  337:         longitude =&gt; { type =&gt; &#39;scalar&#39; },
+</span><span class="">  338:         date      =&gt; { type =&gt; &#39;scalar | object&#39; },
+</span><span class="">  339:         tz        =&gt; { type =&gt; &#39;scalar&#39;, optional =&gt; 1 },
+</span><span class="">  340:         location  =&gt; { type =&gt; &#39;object&#39;, can =&gt; &#39;latitude&#39;, optional =&gt; 1 },
+</span><span class="">  341:     }
 </span><span class="">  342: 
-</span><span class="">  343:     parse call form (3 variants: hashref, flat list, positional (location, date))
-</span><span class="">  344:     extract lat, lon, date, tz; resolve location object if given
-</span><span class="">  345:     croak if lat, lon, or date is missing
-</span><span class="">  346:     normalise leading-decimal coordinates via _normalise_coord()
-</span><span class="">  347:     croak if coordinates are not numeric
-</span><span class="">  348:     if date is a strftime object: call strftime(&#39;%F&#39;); croak if result not YYYY-MM-DD
-</span><span class="">  349:     return undef silently if year &lt; 1940
-</span><span class="">  350:     carp and return undef if date string is not YYYY-MM-DD
-</span><span class="">  351:     return cached result if available
-</span><span class="">  352:     build URL for /v1/archive endpoint with hourly and daily fields
-</span><span class="">  353:     fetch and decode JSON via _fetch_json()
-</span><span class="">  354:     return undef if HTTP error, JSON error, or API-level error (with carp)
-</span><span class="">  355:     return undef if response has no &#39;hourly&#39; key
-</span><span class="">  356:     store result in cache
-</span><span class="">  357:     return hashref (enforced by Return::Set)
-</span><span class="">  358: 
-</span><span class="">  359: =head3 FORMAL SPECIFICATION
-</span><span class="">  360: 
-</span><span class="">  361:     ___ WEATHER _______________________________________________
-</span><span class="">  362:     | self?      : Weather::Meteo                            |
-</span><span class="">  363:     | latitude?  : REAL                                       |
-</span><span class="">  364:     | longitude? : REAL                                       |
-</span><span class="">  365:     | date?      : DATE_STRING | strftime_OBJECT              |
-</span><span class="">  366:     | tz?        : STRING  (optional, default &#39;Europe/London&#39;)|
-</span><span class="">  367:     |____________________________________________________________|
-</span><span class="">  368:     | result!    : HASHREF | undef                            |
-</span><span class="">  369:     |____________________________________________________________|
-</span><span class="">  370:     |                                                          |
-</span><span class="">  371:     | PRE (~latitude? v ~longitude? v ~date?)                 |
-</span><span class="">  372:     |   =&gt; croak /Usage: weather\(latitude/                   |
-</span><span class="">  373:     |                                                          |
-</span><span class="">  374:     | PRE lat? or lon? not matching /^-?\d+(\.\d+)?$/         |
-</span><span class="">  375:     |   (after leading-decimal normalisation)                  |
-</span><span class="">  376:     |   =&gt; croak /Invalid latitude\/longitude format/          |
-</span><span class="">  377:     |                                                          |
-</span><span class="">  378:     | PRE date? blessed ^ date?.can(&#39;strftime&#39;)               |
-</span><span class="">  379:     |   =&gt; date? := date?.strftime(&#39;%F&#39;)                       |
-</span><span class="">  380:     |   PRE date? !~ /^\d{4}-\d{2}-\d{2}$/                   |
-</span><span class="">  381:     |     =&gt; croak /Invalid date format. Expected YYYY-MM-DD/ |
-</span><span class="">  382:     |                                                          |
-</span><span class="">  383:     | PRE year(date?) &lt; 1940                                   |
-</span><span class="">  384:     |   =&gt; result! = undef                                     |
-</span><span class="">  385:     |                                                          |
-</span><span class="">  386:     | POST cache hit for (lat, lon, date, tz)                 |
-</span><span class="">  387:     |   =&gt; result! = cached_value                              |
-</span><span class="">  388:     |                                                          |
-</span><span class="">  389:     | POST HTTP error response                                 |
-</span><span class="">  390:     |   =&gt; carp msg ^ result! = undef                          |
-</span><span class="">  391:     |                                                          |
-</span><span class="">  392:     | POST JSON parse failure                                  |
-</span><span class="">  393:     |   =&gt; carp /Failed to parse JSON response/ ^ result! = undef |
-</span><span class="">  394:     |                                                          |
-</span><span class="">  395:     | POST response.error = true                               |
-</span><span class="">  396:     |   =&gt; carp /API error: reason/ ^ result! = undef          |
-</span><span class="">  397:     |                                                          |
-</span><span class="">  398:     | POST ~response.hourly                                    |
-</span><span class="">  399:     |   =&gt; result! = undef                                     |
-</span><span class="">  400:     |                                                          |
-</span><span class="">  401:     | POST otherwise                                           |
-</span><span class="">  402:     |   =&gt; result! = { hourly =&gt; HOURLY, daily =&gt; DAILY }     |
-</span><span class="">  403:     |      cache.set(key, result!)                             |
-</span><span class="">  404:     |____________________________________________________________|
-</span><span class="">  405: 
-</span><span class="">  406: =cut
-</span><span class="">  407: 
-</span><span class="">  408: sub weather
-</span><span class="">  409: {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">410 → 413 → 427</span></span>  410: 	my $self = shift;
-</span><span class="">  411: 	my $params;
-</span><span class="">  412: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  413: 	if((scalar(@_) == 2) &amp;&amp; Scalar::Util::blessed($_[0]) &amp;&amp; ($_[0]-&gt;can(&#39;latitude&#39;))) {
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  414: 		# Two-arg positional form: (location_obj, date)
-</span><span class="">  415: 		my $location = $_[0];
-</span><span class="">  416: 		$params = {
-</span><span class="">  417: 			latitude  =&gt; $location-&gt;latitude(),
-</span><span class="">  418: 			longitude =&gt; $location-&gt;longitude(),
-</span><span class="">  419: 			date      =&gt; $_[1],
-</span><span class="">  420: 		};
-</span><span class="">  421: 		$params-&gt;{&#39;tz&#39;} = $_[0]-&gt;tz()
-</span><span class="">  422: 			if $_[0]-&gt;can(&#39;tz&#39;) &amp;&amp; $ENV{&#39;TIMEZONEDB_KEY&#39;};
-</span><span class="">  423: 	} else {
-</span><span class="">  424: 		$params = Params::Get::get_params(undef, \@_);
-</span><span class="">  425: 	}
-</span><span class="">  426: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">427 → 433 → 439</span></span>  427: 	my $latitude  = $params-&gt;{latitude};
-</span><span class="">  428: 	my $longitude = $params-&gt;{longitude};
-</span><span class="">  429: 	my $location  = $params-&gt;{&#39;location&#39;};
-</span><span class="">  430: 	my $date      = $params-&gt;{&#39;date&#39;};
-</span><span class="">  431: 	my $tz        = $params-&gt;{&#39;tz&#39;} || DEFAULT_TZ;
-</span><span class="">  432: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  433: 	if(!defined($latitude) &amp;&amp; defined($location) &amp;&amp;
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  434: 	   Scalar::Util::blessed($location) &amp;&amp; $location-&gt;can(&#39;latitude&#39;)) {
-</span><span class="">  435: 		$latitude  = $location-&gt;latitude();
-</span><span class="">  436: 		$longitude = $location-&gt;longitude();
-</span><span class="">  437: 	}
+</span><span class="">  343:     # Form 3 -- positional: ($location_obj, $date)
+</span><span class="">  344:     # $location_obj must respond to latitude() and longitude()
+</span><span class="">  345: 
+</span><span class="">  346: =head4 Output
+</span><span class="">  347: 
+</span><span class="">  348:     { type =&gt; &#39;hashref&#39;, min =&gt; 1 }   # success -- contains &#39;hourly&#39; key
+</span><span class="">  349:     undef                              # pre-1940 date, bad input, or API error
+</span><span class="">  350: 
+</span><span class="">  351: =head3 MESSAGES
+</span><span class="">  352: 
+</span><span class="">  353:     Message                                              Type   Trigger
+</span><span class="">  354:     ---------------------------------------------------  -----  ----------------------------------
+</span><span class="">  355:     Usage: weather(latitude =&gt; ...)                      croak  lat, lon, or date is missing
+</span><span class="">  356:     Invalid latitude/longitude format ($lat, $lon)       croak  coordinate is not numeric
+</span><span class="">  357:     &#39;$date&#39; is not a valid date                          carp   date string is not YYYY-MM-DD
+</span><span class="">  358:     Invalid date format. Expected YYYY-MM-DD             croak  strftime() returned wrong format
+</span><span class="">  359:     UA-&gt;get did not return a valid HTTP response         carp   UA returned non-response object
+</span><span class="">  360:     $url API returned error: $status                     carp   HTTP 4xx/5xx response
+</span><span class="">  361:     Failed to parse JSON response: $err                  carp   response body is not valid JSON
+</span><span class="">  362:                                                                ($err is the exception with control
+</span><span class="">  363:                                                                chars stripped and length capped at
+</span><span class="">  364:                                                                200 chars to prevent log injection)
+</span><span class="">  365:     Weather::Meteo: API error: $reason                   carp   API returned {&quot;error&quot;:true,...}
+</span><span class="">  366: 
+</span><span class="">  367: =head3 PSEUDOCODE
+</span><span class="">  368: 
+</span><span class="">  369:     parse call form (3 variants: hashref, flat list, positional (location, date))
+</span><span class="">  370:     extract lat, lon, date, tz; resolve location object if given
+</span><span class="">  371:     croak if lat, lon, or date is missing
+</span><span class="">  372:     normalise leading-decimal coordinates via _normalise_coord()
+</span><span class="">  373:     validate coordinates with /\A(-?(?&gt;\d+)(?:\.(?&gt;\d+))?)\z/
+</span><span class="">  374:       (atomic groups prevent ReDoS; list-context capture also untaints for perl -T)
+</span><span class="">  375:     croak if either coordinate does not match
+</span><span class="">  376:     if date is a strftime object: call strftime(&#39;%F&#39;); croak if result not YYYY-MM-DD
+</span><span class="">  377:     return undef silently if year &lt; 1940
+</span><span class="">  378:     carp and return undef if date string is not YYYY-MM-DD
+</span><span class="">  379:     return cached result if available
+</span><span class="">  380:     build URL for /v1/archive endpoint with hourly and daily fields
+</span><span class="">  381:     fetch and decode JSON via _fetch_json()
+</span><span class="">  382:     return undef if HTTP error, JSON error, or API-level error (with carp)
+</span><span class="">  383:     return undef if response has no &#39;hourly&#39; key
+</span><span class="">  384:     store result in cache
+</span><span class="">  385:     return hashref (enforced by Return::Set)
+</span><span class="">  386: 
+</span><span class="">  387: =head3 FORMAL SPECIFICATION
+</span><span class="">  388: 
+</span><span class="">  389:     ___ WEATHER _______________________________________________
+</span><span class="">  390:     | self?      : Weather::Meteo                            |
+</span><span class="">  391:     | latitude?  : REAL                                       |
+</span><span class="">  392:     | longitude? : REAL                                       |
+</span><span class="">  393:     | date?      : DATE_STRING | strftime_OBJECT              |
+</span><span class="">  394:     | tz?        : STRING  (optional, default &#39;Europe/London&#39;)|
+</span><span class="">  395:     |____________________________________________________________|
+</span><span class="">  396:     | result!    : HASHREF | undef                            |
+</span><span class="">  397:     |____________________________________________________________|
+</span><span class="">  398:     |                                                          |
+</span><span class="">  399:     | PRE (~latitude? v ~longitude? v ~date?)                 |
+</span><span class="">  400:     |   =&gt; croak /Usage: weather\(latitude/                   |
+</span><span class="">  401:     |                                                          |
+</span><span class="">  402:     | PRE lat? or lon? not matching                            |
+</span><span class="">  403:     |     /\A(-?(?&gt;\d+)(?:\.(?&gt;\d+))?)\z/                     |
+</span><span class="">  404:     |   (after leading-decimal normalisation via _normalise_coord) |
+</span><span class="">  405:     |   =&gt; croak /Invalid latitude\/longitude format/          |
+</span><span class="">  406:     |   NOTE: list-context capture untaints lat/lon (perl -T) |
+</span><span class="">  407:     |         atomic groups eliminate O(n) backtracking        |
+</span><span class="">  408:     |                                                          |
+</span><span class="">  409:     | PRE date? blessed ^ date?.can(&#39;strftime&#39;)               |
+</span><span class="">  410:     |   =&gt; date? := date?.strftime(&#39;%F&#39;)                       |
+</span><span class="">  411:     |   PRE date? !~ /^\d{4}-\d{2}-\d{2}$/                   |
+</span><span class="">  412:     |     =&gt; croak /Invalid date format. Expected YYYY-MM-DD/ |
+</span><span class="">  413:     |                                                          |
+</span><span class="">  414:     | PRE year(date?) &lt; 1940                                   |
+</span><span class="">  415:     |   =&gt; result! = undef                                     |
+</span><span class="">  416:     |                                                          |
+</span><span class="">  417:     | POST cache hit for (lat, lon, date, tz)                 |
+</span><span class="">  418:     |   =&gt; result! = cached_value                              |
+</span><span class="">  419:     |                                                          |
+</span><span class="">  420:     | POST HTTP error response                                 |
+</span><span class="">  421:     |   =&gt; carp msg ^ result! = undef                          |
+</span><span class="">  422:     |                                                          |
+</span><span class="">  423:     | POST JSON parse failure                                  |
+</span><span class="">  424:     |   =&gt; carp /Failed to parse JSON response/ ^ result! = undef |
+</span><span class="">  425:     |                                                          |
+</span><span class="">  426:     | POST response.error = true                               |
+</span><span class="">  427:     |   =&gt; carp /API error: reason/ ^ result! = undef          |
+</span><span class="">  428:     |                                                          |
+</span><span class="">  429:     | POST ~response.hourly                                    |
+</span><span class="">  430:     |   =&gt; result! = undef                                     |
+</span><span class="">  431:     |                                                          |
+</span><span class="">  432:     | POST otherwise                                           |
+</span><span class="">  433:     |   =&gt; result! = { hourly =&gt; HOURLY, daily =&gt; DAILY }     |
+</span><span class="">  434:     |      cache.set(key, result!)                             |
+</span><span class="">  435:     |____________________________________________________________|
+</span><span class="">  436: 
+</span><span class="">  437: =cut
 </span><span class="">  438: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">439 → 439 → 445</span></span>  439: 	if(!defined($latitude) || !defined($longitude) || !defined($date)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  440: 		my $msg = &#39;Usage: weather(latitude =&gt; $latitude, longitude =&gt; $longitude, date =&gt; &quot;YYYY-MM-DD&quot;)&#39;;
-</span><span class="">  441: 		$self-&gt;{&#39;logger&#39;}-&gt;error($msg) if $self-&gt;{&#39;logger&#39;};
-</span><span class="">  442: 		Carp::croak($msg);
-</span><span class="">  443: 	}
-</span><span class="">  444: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">445 → 448 → 454</span></span>  445: 	$latitude  = _normalise_coord($latitude);
-</span><span class="">  446: 	$longitude = _normalise_coord($longitude);
-</span><span class="">  447: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  448: 	if($latitude !~ /^-?\d+(\.\d+)?$/ || $longitude !~ /^-?\d+(\.\d+)?$/) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  449: 		my $msg = __PACKAGE__ . &quot;: Invalid latitude/longitude format ($latitude, $longitude)&quot;;
-</span><span class="">  450: 		$self-&gt;{&#39;logger&#39;}-&gt;error($msg) if $self-&gt;{&#39;logger&#39;};
-</span><span class="">  451: 		Carp::croak($msg);
-</span><span class="">  452: 	}
-</span><span class="">  453: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">454 → 454 → 463</span></span>  454: 	if(Scalar::Util::blessed($date) &amp;&amp; $date-&gt;can(&#39;strftime&#39;)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  455: 		$date = $date-&gt;strftime(&#39;%F&#39;);
-</span><span class="">  456: 	} elsif($date =~ /^(\d{4})-/) {
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  457: 		return if $1 &lt; FIRST_YEAR;
-</span><p> <b> Mutants (Total: 3, Killed: 3, Survived: 0)</b><p><span class="">  458: 	} else {
-</span><span class="">  459: 		Carp::carp(&quot;&#39;$date&#39; is not a valid date&quot;);
-</span><span class="">  460: 		return;
-</span><span class="">  461: 	}
-</span><span class="">  462: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">463 → 463 → 469</span></span>  463: 	unless($date =~ /^\d{4}-\d{2}-\d{2}$/) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  464: 		my $msg = &#39;Invalid date format. Expected YYYY-MM-DD&#39;;
-</span><span class="">  465: 		$self-&gt;{&#39;logger&#39;}-&gt;error($msg) if $self-&gt;{&#39;logger&#39;};
-</span><span class="">  466: 		Carp::croak($msg);
-</span><span class="">  467: 	}
-</span><span class="">  468: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">469 → 470 → 474</span></span>  469: 	my $cache_key = &quot;weather:$latitude:$longitude:$date:$tz&quot;;
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  470: 	if(my $cached = $self-&gt;{&#39;cache&#39;}-&gt;get($cache_key)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  471: 		return $cached;
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  472: 	}
-</span><span class="">  473: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">474 → 493 → 503</span></span>  474: 	my $uri = URI-&gt;new(&quot;https://$self-&gt;{host}/v1/archive&quot;);
-</span><span class="">  475: 	$uri-&gt;query_form(
-</span><span class="">  476: 		latitude           =&gt; $latitude,
-</span><span class="">  477: 		longitude          =&gt; $longitude,
-</span><span class="">  478: 		start_date         =&gt; $date,
-</span><span class="">  479: 		end_date           =&gt; $date,
-</span><span class="">  480: 		hourly             =&gt; &#39;temperature_2m,rain,snowfall,weathercode&#39;,
-</span><span class="">  481: 		daily              =&gt; &#39;weathercode,temperature_2m_max,temperature_2m_min,rain_sum,snowfall_sum,precipitation_hours,windspeed_10m_max,windgusts_10m_max,sunrise,sunset&#39;,
-</span><span class="">  482: 		timezone           =&gt; $tz,
-</span><span class="">  483: 		# https://stackoverflow.com/questions/16086962/how-to-get-a-time-zone-from-a-location-using-latitude-and-longitude-coordinates
-</span><span class="">  484: 		windspeed_unit     =&gt; &#39;mph&#39;,
-</span><span class="">  485: 		precipitation_unit =&gt; &#39;inch&#39;,
-</span><span class="">  486: 	);
-</span><span class="">  487: 	my $url = $uri-&gt;as_string();
-</span><span class="">  488: 	$url =~ s/%2C/,/g;
-</span><span class="">  489: 
-</span><span class="">  490: 	my $rc = $self-&gt;_fetch_json($url);
-</span><span class="">  491: 	return unless defined($rc) &amp;&amp; ref($rc) eq &#39;HASH&#39;;
-</span><span class="">  492: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  493: 	if($rc-&gt;{&#39;error&#39;}) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  494: 		# Surface the API-provided reason so callers can diagnose failures
-</span><span class="">  495: 		my $reason = $rc-&gt;{&#39;reason&#39;} // &#39;unknown&#39;;
-</span><span class="">  496: 		# eval guard: logger-&gt;error() may be fatal (e.g. Log::Abstraction), but
-</span><span class="">  497: 		# the documented contract is to return undef, so we must not propagate the die
-</span><span class="">  498: 		eval { $self-&gt;{&#39;logger&#39;}-&gt;error(__PACKAGE__ . &quot;: API error: $reason&quot;) } if $self-&gt;{&#39;logger&#39;};
-</span><span class="">  499: 		Carp::carp(__PACKAGE__ . &quot;: API error: $reason&quot;);
-</span><span class="">  500: 		return;
-</span><span class="">  501: 	}
-</span><span class="">  502: 
-</span><span class="">  503: 	return unless defined($rc-&gt;{&#39;hourly&#39;});
-</span><span class="">  504: 
-</span><span class="">  505: 	$self-&gt;{&#39;cache&#39;}-&gt;set($cache_key, $rc);
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  506: 	return Return::Set::set_return($rc, { type =&gt; &#39;hashref&#39;, min =&gt; 1 });
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  507: }
-</span><span class="">  508: 
-</span><span class="">  509: =head2 forecast
+</span><span class="">  439: sub weather
+</span><span class="">  440: {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">441 → 444 → 458</span></span>  441: 	my $self = shift;
+</span><span class="">  442: 	my $params;
+</span><span class="">  443: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  444: 	if((scalar(@_) == 2) &amp;&amp; Scalar::Util::blessed($_[0]) &amp;&amp; ($_[0]-&gt;can(&#39;latitude&#39;))) {
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  445: 		# Two-arg positional form: (location_obj, date)
+</span><span class="">  446: 		my $location = $_[0];
+</span><span class="">  447: 		$params = {
+</span><span class="">  448: 			latitude  =&gt; $location-&gt;latitude(),
+</span><span class="">  449: 			longitude =&gt; $location-&gt;longitude(),
+</span><span class="">  450: 			date      =&gt; $_[1],
+</span><span class="">  451: 		};
+</span><span class="">  452: 		$params-&gt;{&#39;tz&#39;} = $_[0]-&gt;tz()
+</span><span class="">  453: 			if $_[0]-&gt;can(&#39;tz&#39;) &amp;&amp; $ENV{&#39;TIMEZONEDB_KEY&#39;};
+</span><span class="">  454: 	} else {
+</span><span class="">  455: 		$params = Params::Get::get_params(undef, \@_);
+</span><span class="">  456: 	}
+</span><span class="">  457: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">458 → 464 → 470</span></span>  458: 	my $latitude  = $params-&gt;{latitude};
+</span><span class="">  459: 	my $longitude = $params-&gt;{longitude};
+</span><span class="">  460: 	my $location  = $params-&gt;{&#39;location&#39;};
+</span><span class="">  461: 	my $date      = $params-&gt;{&#39;date&#39;};
+</span><span class="">  462: 	my $tz        = $params-&gt;{&#39;tz&#39;} || DEFAULT_TZ;
+</span><span class="">  463: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  464: 	if(!defined($latitude) &amp;&amp; defined($location) &amp;&amp;
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  465: 	   Scalar::Util::blessed($location) &amp;&amp; $location-&gt;can(&#39;latitude&#39;)) {
+</span><span class="">  466: 		$latitude  = $location-&gt;latitude();
+</span><span class="">  467: 		$longitude = $location-&gt;longitude();
+</span><span class="">  468: 	}
+</span><span class="">  469: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">470 → 470 → 476</span></span>  470: 	if(!defined($latitude) || !defined($longitude) || !defined($date)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  471: 		my $msg = &#39;Usage: weather(latitude =&gt; $latitude, longitude =&gt; $longitude, date =&gt; &quot;YYYY-MM-DD&quot;)&#39;;
+</span><span class="">  472: 		$self-&gt;{&#39;logger&#39;}-&gt;error($msg) if $self-&gt;{&#39;logger&#39;};
+</span><span class="">  473: 		Carp::croak($msg);
+</span><span class="">  474: 	}
+</span><span class="">  475: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">476 → 483 → 488</span></span>  476: 	$latitude  = _normalise_coord($latitude);
+</span><span class="">  477: 	$longitude = _normalise_coord($longitude);
+</span><span class="">  478: 
+</span><span class="">  479: 	# Atomic groups prevent O(n) backtracking on adversarial input; list-context
+</span><span class="">  480: 	# capture also untaints the values for taint-mode compliance.
+</span><span class="">  481: 	my ($lat_clean) = ($latitude  =~ /\A(-?(?&gt;\d+)(?:\.(?&gt;\d+))?)\z/);
+</span><span class="">  482: 	my ($lon_clean) = ($longitude =~ /\A(-?(?&gt;\d+)(?:\.(?&gt;\d+))?)\z/);
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  483: 	if(!defined($lat_clean) || !defined($lon_clean)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  484: 		my $msg = __PACKAGE__ . &quot;: Invalid latitude/longitude format ($latitude, $longitude)&quot;;
+</span><span class="">  485: 		$self-&gt;{&#39;logger&#39;}-&gt;error($msg) if $self-&gt;{&#39;logger&#39;};
+</span><span class="">  486: 		Carp::croak($msg);
+</span><span class="">  487: 	}
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">488 → 491 → 500</span></span>  488: 	$latitude  = $lat_clean;
+</span><span class="">  489: 	$longitude = $lon_clean;
+</span><span class="">  490: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  491: 	if(Scalar::Util::blessed($date) &amp;&amp; $date-&gt;can(&#39;strftime&#39;)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  492: 		$date = $date-&gt;strftime(&#39;%F&#39;);
+</span><span class="">  493: 	} elsif($date =~ /^(\d{4})-/) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  494: 		return if $1 &lt; FIRST_YEAR;
+</span><p> <b> Mutants (Total: 3, Killed: 3, Survived: 0)</b><p><span class="">  495: 	} else {
+</span><span class="">  496: 		Carp::carp(&quot;&#39;$date&#39; is not a valid date&quot;);
+</span><span class="">  497: 		return;
+</span><span class="">  498: 	}
+</span><span class="">  499: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">500 → 500 → 506</span></span>  500: 	unless($date =~ /^\d{4}-\d{2}-\d{2}$/) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  501: 		my $msg = &#39;Invalid date format. Expected YYYY-MM-DD&#39;;
+</span><span class="">  502: 		$self-&gt;{&#39;logger&#39;}-&gt;error($msg) if $self-&gt;{&#39;logger&#39;};
+</span><span class="">  503: 		Carp::croak($msg);
+</span><span class="">  504: 	}
+</span><span class="">  505: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">506 → 507 → 511</span></span>  506: 	my $cache_key = &quot;weather:$latitude:$longitude:$date:$tz&quot;;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  507: 	if(my $cached = $self-&gt;{&#39;cache&#39;}-&gt;get($cache_key)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  508: 		return $cached;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  509: 	}
 </span><span class="">  510: 
-</span><span class="">  511:     my $meteo    = Weather::Meteo-&gt;new();
-</span><span class="">  512:     my $forecast = $meteo-&gt;forecast({ latitude =&gt; 51.34, longitude =&gt; 1.42 });
-</span><span class="">  513:     my @temps    = @{$forecast-&gt;{&#39;hourly&#39;}-&gt;{&#39;temperature_2m&#39;}};
-</span><span class="">  514: 
-</span><span class="">  515:     # Request 3 days of forecast
-</span><span class="">  516:     $forecast = $meteo-&gt;forecast({ latitude =&gt; 51.34, longitude =&gt; 1.42, days =&gt; 3 });
-</span><span class="">  517: 
-</span><span class="">  518:     use Geo::Location::Point;
-</span><span class="">  519:     my $ramsgate = Geo::Location::Point-&gt;new({ latitude =&gt; 51.34, longitude =&gt; 1.42 });
-</span><span class="">  520:     $forecast = $meteo-&gt;forecast($ramsgate);
-</span><span class="">  521:     $forecast = $meteo-&gt;forecast($ramsgate, 5);
-</span><span class="">  522: 
-</span><span class="">  523: Fetches weather forecast data from L&lt;https://api.open-meteo.com&gt;.
-</span><span class="">  524: Returns up to 16 days of hourly and daily data.
-</span><span class="">  525: The C&lt;daily&gt; key of the response includes C&lt;sunrise&gt; and C&lt;sunset&gt; ISO-8601 datetime strings.
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">511 → 530 → 540</span></span>  511: 	my $uri = URI-&gt;new(&quot;https://$self-&gt;{host}/v1/archive&quot;);
+</span><span class="">  512: 	$uri-&gt;query_form(
+</span><span class="">  513: 		latitude           =&gt; $latitude,
+</span><span class="">  514: 		longitude          =&gt; $longitude,
+</span><span class="">  515: 		start_date         =&gt; $date,
+</span><span class="">  516: 		end_date           =&gt; $date,
+</span><span class="">  517: 		hourly             =&gt; &#39;temperature_2m,rain,snowfall,weathercode&#39;,
+</span><span class="">  518: 		daily              =&gt; &#39;weathercode,temperature_2m_max,temperature_2m_min,rain_sum,snowfall_sum,precipitation_hours,windspeed_10m_max,windgusts_10m_max,sunrise,sunset&#39;,
+</span><span class="">  519: 		timezone           =&gt; $tz,
+</span><span class="">  520: 		# https://stackoverflow.com/questions/16086962/how-to-get-a-time-zone-from-a-location-using-latitude-and-longitude-coordinates
+</span><span class="">  521: 		windspeed_unit     =&gt; &#39;mph&#39;,
+</span><span class="">  522: 		precipitation_unit =&gt; &#39;inch&#39;,
+</span><span class="">  523: 	);
+</span><span class="">  524: 	my $url = $uri-&gt;as_string();
+</span><span class="">  525: 	$url =~ s/%2C/,/g;
 </span><span class="">  526: 
-</span><span class="">  527: Takes an optional C&lt;days&gt; argument (integer 1-16, default 7).
-</span><span class="">  528: Takes an optional C&lt;tz&gt; argument for the time zone; defaults to C&lt;Europe/London&gt;.
+</span><span class="">  527: 	my $rc = $self-&gt;_fetch_json($url);
+</span><span class="">  528: 	return unless defined($rc) &amp;&amp; ref($rc) eq &#39;HASH&#39;;
 </span><span class="">  529: 
-</span><span class="">  530: On success returns a hashref containing at minimum the key C&lt;hourly&gt;.
-</span><span class="">  531: Returns C&lt;undef&gt; if the API returns an error, if the JSON cannot be parsed,
-</span><span class="">  532: or if the response contains no C&lt;hourly&gt; key.
-</span><span class="">  533: 
-</span><span class="">  534: =head3 EXAMPLE
-</span><span class="">  535: 
-</span><span class="">  536:     my $meteo    = Weather::Meteo-&gt;new();
-</span><span class="">  537:     my $forecast = $meteo-&gt;forecast({ latitude =&gt; 51.34, longitude =&gt; 1.42, days =&gt; 5 });
-</span><span class="">  538: 
-</span><span class="">  539:     if(defined($forecast)) {
-</span><span class="">  540:         my $daily   = $forecast-&gt;{&#39;daily&#39;};
-</span><span class="">  541:         my @sunrises = @{$daily-&gt;{&#39;sunrise&#39;}};
-</span><span class="">  542:         my @max_temps = @{$daily-&gt;{&#39;temperature_2m_max&#39;}};
-</span><span class="">  543:         for my $i (0 .. $#sunrises) {
-</span><span class="">  544:             print &quot;Day $i: sunrise $sunrises[$i], max $max_temps[$i]C\n&quot;;
-</span><span class="">  545:         }
-</span><span class="">  546:     }
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  530: 	if($rc-&gt;{&#39;error&#39;}) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  531: 		# Surface the API-provided reason so callers can diagnose failures
+</span><span class="">  532: 		my $reason = $rc-&gt;{&#39;reason&#39;} // &#39;unknown&#39;;
+</span><span class="">  533: 		# eval guard: logger-&gt;error() may be fatal (e.g. Log::Abstraction), but
+</span><span class="">  534: 		# the documented contract is to return undef, so we must not propagate the die
+</span><span class="">  535: 		eval { $self-&gt;{&#39;logger&#39;}-&gt;error(__PACKAGE__ . &quot;: API error: $reason&quot;) } if $self-&gt;{&#39;logger&#39;};
+</span><span class="">  536: 		Carp::carp(__PACKAGE__ . &quot;: API error: $reason&quot;);
+</span><span class="">  537: 		return;
+</span><span class="">  538: 	}
+</span><span class="">  539: 
+</span><span class="">  540: 	return unless defined($rc-&gt;{&#39;hourly&#39;});
+</span><span class="">  541: 
+</span><span class="">  542: 	$self-&gt;{&#39;cache&#39;}-&gt;set($cache_key, $rc);
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  543: 	return Return::Set::set_return($rc, { type =&gt; &#39;hashref&#39;, min =&gt; 1 });
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  544: }
+</span><span class="">  545: 
+</span><span class="">  546: =head2 forecast
 </span><span class="">  547: 
-</span><span class="">  548: =head3 API SPECIFICATION
-</span><span class="">  549: 
-</span><span class="">  550: =head4 Input
+</span><span class="">  548:     my $meteo    = Weather::Meteo-&gt;new();
+</span><span class="">  549:     my $forecast = $meteo-&gt;forecast({ latitude =&gt; 51.34, longitude =&gt; 1.42 });
+</span><span class="">  550:     my @temps    = @{$forecast-&gt;{&#39;hourly&#39;}-&gt;{&#39;temperature_2m&#39;}};
 </span><span class="">  551: 
-</span><span class="">  552: Three call forms are accepted.
-</span><span class="">  553: 
-</span><span class="">  554:     # Form 1 and 2 -- hashref or flat list
-</span><span class="">  555:     {
-</span><span class="">  556:         latitude  =&gt; { type =&gt; &#39;scalar&#39; },
-</span><span class="">  557:         longitude =&gt; { type =&gt; &#39;scalar&#39; },
-</span><span class="">  558:         days      =&gt; { type =&gt; &#39;scalar&#39;,                optional =&gt; 1 },
-</span><span class="">  559:         tz        =&gt; { type =&gt; &#39;scalar&#39;,                optional =&gt; 1 },
-</span><span class="">  560:         location  =&gt; { type =&gt; &#39;object&#39;, can =&gt; &#39;latitude&#39;, optional =&gt; 1 },
-</span><span class="">  561:     }
-</span><span class="">  562: 
-</span><span class="">  563:     # Form 3 -- positional: ($location_obj) or ($location_obj, $days)
-</span><span class="">  564:     # $location_obj must respond to latitude() and longitude()
-</span><span class="">  565: 
-</span><span class="">  566: =head4 Output
-</span><span class="">  567: 
-</span><span class="">  568:     { type =&gt; &#39;hashref&#39;, min =&gt; 1 }   # success -- contains &#39;hourly&#39; key
-</span><span class="">  569:     undef                              # bad input or API error
+</span><span class="">  552:     # Request 3 days of forecast
+</span><span class="">  553:     $forecast = $meteo-&gt;forecast({ latitude =&gt; 51.34, longitude =&gt; 1.42, days =&gt; 3 });
+</span><span class="">  554: 
+</span><span class="">  555:     use Geo::Location::Point;
+</span><span class="">  556:     my $ramsgate = Geo::Location::Point-&gt;new({ latitude =&gt; 51.34, longitude =&gt; 1.42 });
+</span><span class="">  557:     $forecast = $meteo-&gt;forecast($ramsgate);
+</span><span class="">  558:     $forecast = $meteo-&gt;forecast($ramsgate, 5);
+</span><span class="">  559: 
+</span><span class="">  560: Fetches weather forecast data from L&lt;https://api.open-meteo.com&gt;.
+</span><span class="">  561: Returns up to 16 days of hourly and daily data.
+</span><span class="">  562: The C&lt;daily&gt; key of the response includes C&lt;sunrise&gt; and C&lt;sunset&gt; ISO-8601 datetime strings.
+</span><span class="">  563: 
+</span><span class="">  564: Takes an optional C&lt;days&gt; argument (integer 1-16, default 7).
+</span><span class="">  565: Takes an optional C&lt;tz&gt; argument for the time zone; defaults to C&lt;Europe/London&gt;.
+</span><span class="">  566: 
+</span><span class="">  567: On success returns a hashref containing at minimum the key C&lt;hourly&gt;.
+</span><span class="">  568: Returns C&lt;undef&gt; if the API returns an error, if the JSON cannot be parsed,
+</span><span class="">  569: or if the response contains no C&lt;hourly&gt; key.
 </span><span class="">  570: 
-</span><span class="">  571: =head3 MESSAGES
+</span><span class="">  571: =head3 EXAMPLE
 </span><span class="">  572: 
-</span><span class="">  573:     Message                                              Type   Trigger
-</span><span class="">  574:     ---------------------------------------------------  -----  ----------------------------------
-</span><span class="">  575:     Usage: forecast(latitude =&gt; ...)                     croak  lat or lon is missing
-</span><span class="">  576:     Invalid latitude/longitude format ($lat, $lon)       croak  coordinate is not numeric
-</span><span class="">  577:     days must be between 1 and 16; defaulting to 7       carp   days argument is out of range
-</span><span class="">  578:     UA-&gt;get did not return a valid HTTP response         carp   UA returned non-response object
-</span><span class="">  579:     $url API returned error: $status                     carp   HTTP 4xx/5xx response
-</span><span class="">  580:     Failed to parse JSON response: $@                    carp   response body is not valid JSON
-</span><span class="">  581: 
-</span><span class="">  582: =head3 PSEUDOCODE
-</span><span class="">  583: 
-</span><span class="">  584:     parse call form (3 variants: hashref, flat list, positional (location) or (location, days))
-</span><span class="">  585:     extract lat, lon, days, tz; resolve location object if given
-</span><span class="">  586:     croak if lat or lon is missing
-</span><span class="">  587:     normalise leading-decimal coordinates via _normalise_coord()
-</span><span class="">  588:     croak if coordinates are not numeric
-</span><span class="">  589:     clamp days to 1-16: carp and default to 7 if out of range
-</span><span class="">  590:     return cached result if available
-</span><span class="">  591:     build URL for FORECAST_HOST/v1/forecast with forecast_days parameter
-</span><span class="">  592:     fetch and decode JSON via _fetch_json()
-</span><span class="">  593:     return undef on error or if response has no &#39;hourly&#39; key
-</span><span class="">  594:     store result in cache
-</span><span class="">  595:     return hashref (enforced by Return::Set)
-</span><span class="">  596: 
-</span><span class="">  597: =head3 FORMAL SPECIFICATION
-</span><span class="">  598: 
-</span><span class="">  599:     ___ FORECAST ______________________________________________
-</span><span class="">  600:     | self?      : Weather::Meteo                            |
-</span><span class="">  601:     | latitude?  : REAL                                       |
-</span><span class="">  602:     | longitude? : REAL                                       |
-</span><span class="">  603:     | days?      : INTEGER [1..16]  (optional, default 7)    |
-</span><span class="">  604:     | tz?        : STRING  (optional, default &#39;Europe/London&#39;)|
-</span><span class="">  605:     |____________________________________________________________|
-</span><span class="">  606:     | result!    : HASHREF | undef                            |
-</span><span class="">  607:     |____________________________________________________________|
-</span><span class="">  608:     |                                                          |
-</span><span class="">  609:     | PRE (~latitude? v ~longitude?)                           |
-</span><span class="">  610:     |   =&gt; croak /Usage: forecast\(latitude/                  |
-</span><span class="">  611:     |                                                          |
-</span><span class="">  612:     | PRE lat? or lon? not matching /^-?\d+(\.\d+)?$/         |
-</span><span class="">  613:     |   =&gt; croak /Invalid latitude\/longitude format/          |
-</span><span class="">  614:     |                                                          |
-</span><span class="">  615:     | PRE days? defined ^ (days? &lt; 1 v days? &gt; 16)            |
-</span><span class="">  616:     |   =&gt; carp /days must be between 1 and 16/               |
-</span><span class="">  617:     |      days? := 7                                          |
-</span><span class="">  618:     |                                                          |
-</span><span class="">  619:     | POST cache hit for (lat, lon, days, tz)                 |
-</span><span class="">  620:     |   =&gt; result! = cached_value                              |
-</span><span class="">  621:     |                                                          |
-</span><span class="">  622:     | POST HTTP error response                                 |
-</span><span class="">  623:     |   =&gt; carp msg ^ result! = undef                          |
-</span><span class="">  624:     |                                                          |
-</span><span class="">  625:     | POST JSON parse failure                                  |
-</span><span class="">  626:     |   =&gt; carp /Failed to parse JSON response/ ^ result! = undef |
-</span><span class="">  627:     |                                                          |
-</span><span class="">  628:     | POST response.error = true                               |
-</span><span class="">  629:     |   =&gt; result! = undef                                     |
-</span><span class="">  630:     |                                                          |
-</span><span class="">  631:     | POST ~response.hourly                                    |
-</span><span class="">  632:     |   =&gt; result! = undef                                     |
-</span><span class="">  633:     |                                                          |
-</span><span class="">  634:     | POST otherwise                                           |
-</span><span class="">  635:     |   =&gt; result! = { hourly =&gt; HOURLY, daily =&gt; DAILY }     |
-</span><span class="">  636:     |      cache.set(key, result!)                             |
-</span><span class="">  637:     |____________________________________________________________|
+</span><span class="">  573:     my $meteo    = Weather::Meteo-&gt;new();
+</span><span class="">  574:     my $forecast = $meteo-&gt;forecast({ latitude =&gt; 51.34, longitude =&gt; 1.42, days =&gt; 5 });
+</span><span class="">  575: 
+</span><span class="">  576:     if(defined($forecast)) {
+</span><span class="">  577:         my $daily   = $forecast-&gt;{&#39;daily&#39;};
+</span><span class="">  578:         my @sunrises = @{$daily-&gt;{&#39;sunrise&#39;}};
+</span><span class="">  579:         my @max_temps = @{$daily-&gt;{&#39;temperature_2m_max&#39;}};
+</span><span class="">  580:         for my $i (0 .. $#sunrises) {
+</span><span class="">  581:             print &quot;Day $i: sunrise $sunrises[$i], max $max_temps[$i]C\n&quot;;
+</span><span class="">  582:         }
+</span><span class="">  583:     }
+</span><span class="">  584: 
+</span><span class="">  585: =head3 API SPECIFICATION
+</span><span class="">  586: 
+</span><span class="">  587: =head4 Input
+</span><span class="">  588: 
+</span><span class="">  589: Three call forms are accepted.
+</span><span class="">  590: 
+</span><span class="">  591:     # Form 1 and 2 -- hashref or flat list
+</span><span class="">  592:     {
+</span><span class="">  593:         latitude  =&gt; { type =&gt; &#39;scalar&#39; },
+</span><span class="">  594:         longitude =&gt; { type =&gt; &#39;scalar&#39; },
+</span><span class="">  595:         days      =&gt; { type =&gt; &#39;scalar&#39;,                optional =&gt; 1 },
+</span><span class="">  596:         tz        =&gt; { type =&gt; &#39;scalar&#39;,                optional =&gt; 1 },
+</span><span class="">  597:         location  =&gt; { type =&gt; &#39;object&#39;, can =&gt; &#39;latitude&#39;, optional =&gt; 1 },
+</span><span class="">  598:     }
+</span><span class="">  599: 
+</span><span class="">  600:     # Form 3 -- positional: ($location_obj) or ($location_obj, $days)
+</span><span class="">  601:     # $location_obj must respond to latitude() and longitude()
+</span><span class="">  602: 
+</span><span class="">  603: =head4 Output
+</span><span class="">  604: 
+</span><span class="">  605:     { type =&gt; &#39;hashref&#39;, min =&gt; 1 }   # success -- contains &#39;hourly&#39; key
+</span><span class="">  606:     undef                              # bad input or API error
+</span><span class="">  607: 
+</span><span class="">  608: =head3 MESSAGES
+</span><span class="">  609: 
+</span><span class="">  610:     Message                                              Type   Trigger
+</span><span class="">  611:     ---------------------------------------------------  -----  ----------------------------------
+</span><span class="">  612:     Usage: forecast(latitude =&gt; ...)                     croak  lat or lon is missing
+</span><span class="">  613:     Invalid latitude/longitude format ($lat, $lon)       croak  coordinate is not numeric
+</span><span class="">  614:     days must be between 1 and 16; defaulting to 7       carp   days argument is out of range
+</span><span class="">  615:     UA-&gt;get did not return a valid HTTP response         carp   UA returned non-response object
+</span><span class="">  616:     $url API returned error: $status                     carp   HTTP 4xx/5xx response
+</span><span class="">  617:     Failed to parse JSON response: $err                  carp   response body is not valid JSON
+</span><span class="">  618:                                                                ($err is the exception with control
+</span><span class="">  619:                                                                chars stripped and length capped at
+</span><span class="">  620:                                                                200 chars to prevent log injection)
+</span><span class="">  621: 
+</span><span class="">  622: =head3 PSEUDOCODE
+</span><span class="">  623: 
+</span><span class="">  624:     parse call form (3 variants: hashref, flat list, positional (location) or (location, days))
+</span><span class="">  625:     extract lat, lon, days, tz; resolve location object if given
+</span><span class="">  626:     croak if lat or lon is missing
+</span><span class="">  627:     normalise leading-decimal coordinates via _normalise_coord()
+</span><span class="">  628:     validate coordinates with /\A(-?(?&gt;\d+)(?:\.(?&gt;\d+))?)\z/
+</span><span class="">  629:       (atomic groups prevent ReDoS; list-context capture also untaints for perl -T)
+</span><span class="">  630:     croak if either coordinate does not match
+</span><span class="">  631:     clamp days to 1-16: carp and default to 7 if out of range
+</span><span class="">  632:     return cached result if available
+</span><span class="">  633:     build URL for FORECAST_HOST/v1/forecast with forecast_days parameter
+</span><span class="">  634:     fetch and decode JSON via _fetch_json()
+</span><span class="">  635:     return undef on error or if response has no &#39;hourly&#39; key
+</span><span class="">  636:     store result in cache
+</span><span class="">  637:     return hashref (enforced by Return::Set)
 </span><span class="">  638: 
-</span><span class="">  639: =cut
+</span><span class="">  639: =head3 FORMAL SPECIFICATION
 </span><span class="">  640: 
-</span><span class="">  641: sub forecast
-</span><span class="">  642: {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">643 → 646 → 660</span></span>  643: 	my $self = shift;
-</span><span class="">  644: 	my $params;
-</span><span class="">  645: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  646: 	if(scalar(@_) &gt;= 1 &amp;&amp; Scalar::Util::blessed($_[0]) &amp;&amp; $_[0]-&gt;can(&#39;latitude&#39;)) {
-</span><p> <b> Mutants (Total: 4, Killed: 4, Survived: 0)</b><p><span class="">  647: 		# Positional form: (location_obj) or (location_obj, days)
-</span><span class="">  648: 		my $location = $_[0];
-</span><span class="">  649: 		$params = {
-</span><span class="">  650: 			latitude  =&gt; $location-&gt;latitude(),
-</span><span class="">  651: 			longitude =&gt; $location-&gt;longitude(),
-</span><span class="">  652: 		};
-</span><span class="">  653: 		$params-&gt;{days} = $_[1] if defined($_[1]);
-</span><span class="">  654: 		$params-&gt;{tz}   = $location-&gt;tz()
-</span><span class="">  655: 			if $location-&gt;can(&#39;tz&#39;) &amp;&amp; $ENV{&#39;TIMEZONEDB_KEY&#39;};
-</span><span class="">  656: 	} else {
-</span><span class="">  657: 		$params = Params::Get::get_params(undef, \@_);
-</span><span class="">  658: 	}
-</span><span class="">  659: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">660 → 666 → 672</span></span>  660: 	my $latitude  = $params-&gt;{latitude};
-</span><span class="">  661: 	my $longitude = $params-&gt;{longitude};
-</span><span class="">  662: 	my $location  = $params-&gt;{location};
-</span><span class="">  663: 	my $days      = $params-&gt;{days} // 7;
-</span><span class="">  664: 	my $tz        = $params-&gt;{tz} || DEFAULT_TZ;
-</span><span class="">  665: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  666: 	if(!defined($latitude) &amp;&amp; defined($location) &amp;&amp;
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  667: 	   Scalar::Util::blessed($location) &amp;&amp; $location-&gt;can(&#39;latitude&#39;)) {
-</span><span class="">  668: 		$latitude  = $location-&gt;latitude();
-</span><span class="">  669: 		$longitude = $location-&gt;longitude();
-</span><span class="">  670: 	}
-</span><span class="">  671: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">672 → 672 → 678</span></span>  672: 	if(!defined($latitude) || !defined($longitude)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  673: 		my $msg = &#39;Usage: forecast(latitude =&gt; $latitude, longitude =&gt; $longitude)&#39;;
-</span><span class="">  674: 		$self-&gt;{&#39;logger&#39;}-&gt;error($msg) if $self-&gt;{&#39;logger&#39;};
-</span><span class="">  675: 		Carp::croak($msg);
-</span><span class="">  676: 	}
-</span><span class="">  677: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">678 → 681 → 687</span></span>  678: 	$latitude  = _normalise_coord($latitude);
-</span><span class="">  679: 	$longitude = _normalise_coord($longitude);
-</span><span class="">  680: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  681: 	if($latitude !~ /^-?\d+(\.\d+)?$/ || $longitude !~ /^-?\d+(\.\d+)?$/) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  682: 		my $msg = __PACKAGE__ . &quot;: Invalid latitude/longitude format ($latitude, $longitude)&quot;;
-</span><span class="">  683: 		$self-&gt;{&#39;logger&#39;}-&gt;error($msg) if $self-&gt;{&#39;logger&#39;};
-</span><span class="">  684: 		Carp::croak($msg);
-</span><span class="">  685: 	}
+</span><span class="">  641:     ___ FORECAST ______________________________________________
+</span><span class="">  642:     | self?      : Weather::Meteo                            |
+</span><span class="">  643:     | latitude?  : REAL                                       |
+</span><span class="">  644:     | longitude? : REAL                                       |
+</span><span class="">  645:     | days?      : INTEGER [1..16]  (optional, default 7)    |
+</span><span class="">  646:     | tz?        : STRING  (optional, default &#39;Europe/London&#39;)|
+</span><span class="">  647:     |____________________________________________________________|
+</span><span class="">  648:     | result!    : HASHREF | undef                            |
+</span><span class="">  649:     |____________________________________________________________|
+</span><span class="">  650:     |                                                          |
+</span><span class="">  651:     | PRE (~latitude? v ~longitude?)                           |
+</span><span class="">  652:     |   =&gt; croak /Usage: forecast\(latitude/                  |
+</span><span class="">  653:     |                                                          |
+</span><span class="">  654:     | PRE lat? or lon? not matching                            |
+</span><span class="">  655:     |     /\A(-?(?&gt;\d+)(?:\.(?&gt;\d+))?)\z/                     |
+</span><span class="">  656:     |   (after leading-decimal normalisation via _normalise_coord) |
+</span><span class="">  657:     |   =&gt; croak /Invalid latitude\/longitude format/          |
+</span><span class="">  658:     |   NOTE: list-context capture untaints lat/lon (perl -T) |
+</span><span class="">  659:     |         atomic groups eliminate O(n) backtracking        |
+</span><span class="">  660:     |                                                          |
+</span><span class="">  661:     | PRE days? defined ^ (days? &lt; 1 v days? &gt; 16)            |
+</span><span class="">  662:     |   =&gt; carp /days must be between 1 and 16/               |
+</span><span class="">  663:     |      days? := 7                                          |
+</span><span class="">  664:     |                                                          |
+</span><span class="">  665:     | POST cache hit for (lat, lon, days, tz)                 |
+</span><span class="">  666:     |   =&gt; result! = cached_value                              |
+</span><span class="">  667:     |                                                          |
+</span><span class="">  668:     | POST HTTP error response                                 |
+</span><span class="">  669:     |   =&gt; carp msg ^ result! = undef                          |
+</span><span class="">  670:     |                                                          |
+</span><span class="">  671:     | POST JSON parse failure                                  |
+</span><span class="">  672:     |   =&gt; carp /Failed to parse JSON response/ ^ result! = undef |
+</span><span class="">  673:     |                                                          |
+</span><span class="">  674:     | POST response.error = true                               |
+</span><span class="">  675:     |   =&gt; result! = undef                                     |
+</span><span class="">  676:     |                                                          |
+</span><span class="">  677:     | POST ~response.hourly                                    |
+</span><span class="">  678:     |   =&gt; result! = undef                                     |
+</span><span class="">  679:     |                                                          |
+</span><span class="">  680:     | POST otherwise                                           |
+</span><span class="">  681:     |   =&gt; result! = { hourly =&gt; HOURLY, daily =&gt; DAILY }     |
+</span><span class="">  682:     |      cache.set(key, result!)                             |
+</span><span class="">  683:     |____________________________________________________________|
+</span><span class="">  684: 
+</span><span class="">  685: =cut
 </span><span class="">  686: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">687 → 687 → 692</span></span>  687: 	if($days !~ /^\d+$/ || $days &lt; 1 || $days &gt; 16) {
-</span><p> <b> Mutants (Total: 7, Killed: 7, Survived: 0)</b><p><span class="">  688: 		Carp::carp(&#39;days must be between 1 and 16; defaulting to 7&#39;);
-</span><span class="">  689: 		$days = 7;
-</span><span class="">  690: 	}
+</span><span class="">  687: sub forecast
+</span><span class="">  688: {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">689 → 692 → 706</span></span>  689: 	my $self = shift;
+</span><span class="">  690: 	my $params;
 </span><span class="">  691: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">692 → 693 → 697</span></span>  692: 	my $cache_key = &quot;forecast:$latitude:$longitude:$days:$tz&quot;;
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  693: 	if(my $cached = $self-&gt;{&#39;cache&#39;}-&gt;get($cache_key)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-2 tooltip" data-tooltip="Boolean logic mutation survived. Add tests covering both true and false paths. Return value mutation survived. Add tests asserting exact return values.">  694: 		return $cached;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  692: 	if(scalar(@_) &gt;= 1 &amp;&amp; Scalar::Util::blessed($_[0]) &amp;&amp; $_[0]-&gt;can(&#39;latitude&#39;)) {
+</span><p> <b> Mutants (Total: 4, Killed: 4, Survived: 0)</b><p><span class="">  693: 		# Positional form: (location_obj) or (location_obj, days)
+</span><span class="">  694: 		my $location = $_[0];
+</span><span class="">  695: 		$params = {
+</span><span class="">  696: 			latitude  =&gt; $location-&gt;latitude(),
+</span><span class="">  697: 			longitude =&gt; $location-&gt;longitude(),
+</span><span class="">  698: 		};
+</span><span class="">  699: 		$params-&gt;{days} = $_[1] if defined($_[1]);
+</span><span class="">  700: 		$params-&gt;{tz}   = $location-&gt;tz()
+</span><span class="">  701: 			if $location-&gt;can(&#39;tz&#39;) &amp;&amp; $ENV{&#39;TIMEZONEDB_KEY&#39;};
+</span><span class="">  702: 	} else {
+</span><span class="">  703: 		$params = Params::Get::get_params(undef, \@_);
+</span><span class="">  704: 	}
+</span><span class="">  705: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">706 → 712 → 718</span></span>  706: 	my $latitude  = $params-&gt;{latitude};
+</span><span class="">  707: 	my $longitude = $params-&gt;{longitude};
+</span><span class="">  708: 	my $location  = $params-&gt;{location};
+</span><span class="">  709: 	my $days      = $params-&gt;{days} // 7;
+</span><span class="">  710: 	my $tz        = $params-&gt;{tz} || DEFAULT_TZ;
+</span><span class="">  711: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  712: 	if(!defined($latitude) &amp;&amp; defined($location) &amp;&amp;
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  713: 	   Scalar::Util::blessed($location) &amp;&amp; $location-&gt;can(&#39;latitude&#39;)) {
+</span><span class="">  714: 		$latitude  = $location-&gt;latitude();
+</span><span class="">  715: 		$longitude = $location-&gt;longitude();
+</span><span class="">  716: 	}
+</span><span class="">  717: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">718 → 718 → 724</span></span>  718: 	if(!defined($latitude) || !defined($longitude)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  719: 		my $msg = &#39;Usage: forecast(latitude =&gt; $latitude, longitude =&gt; $longitude)&#39;;
+</span><span class="">  720: 		$self-&gt;{&#39;logger&#39;}-&gt;error($msg) if $self-&gt;{&#39;logger&#39;};
+</span><span class="">  721: 		Carp::croak($msg);
+</span><span class="">  722: 	}
+</span><span class="">  723: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">724 → 729 → 734</span></span>  724: 	$latitude  = _normalise_coord($latitude);
+</span><span class="">  725: 	$longitude = _normalise_coord($longitude);
+</span><span class="">  726: 
+</span><span class="">  727: 	my ($lat_clean) = ($latitude  =~ /\A(-?(?&gt;\d+)(?:\.(?&gt;\d+))?)\z/);
+</span><span class="">  728: 	my ($lon_clean) = ($longitude =~ /\A(-?(?&gt;\d+)(?:\.(?&gt;\d+))?)\z/);
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  729: 	if(!defined($lat_clean) || !defined($lon_clean)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  730: 		my $msg = __PACKAGE__ . &quot;: Invalid latitude/longitude format ($latitude, $longitude)&quot;;
+</span><span class="">  731: 		$self-&gt;{&#39;logger&#39;}-&gt;error($msg) if $self-&gt;{&#39;logger&#39;};
+</span><span class="">  732: 		Carp::croak($msg);
+</span><span class="">  733: 	}
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">734 → 737 → 742</span></span>  734: 	$latitude  = $lat_clean;
+</span><span class="">  735: 	$longitude = $lon_clean;
+</span><span class="">  736: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  737: 	if($days !~ /^\d+$/ || $days &lt; 1 || $days &gt; 16) {
+</span><p> <b> Mutants (Total: 7, Killed: 7, Survived: 0)</b><p><span class="">  738: 		Carp::carp(&#39;days must be between 1 and 16; defaulting to 7&#39;);
+</span><span class="">  739: 		$days = 7;
+</span><span class="">  740: 	}
+</span><span class="">  741: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">742 → 743 → 747</span></span>  742: 	my $cache_key = &quot;forecast:$latitude:$longitude:$days:$tz&quot;;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  743: 	if(my $cached = $self-&gt;{&#39;cache&#39;}-&gt;get($cache_key)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-2 tooltip" data-tooltip="Return value mutation survived. Add tests asserting exact return values. Boolean logic mutation survived. Add tests covering both true and false paths.">  744: 		return $cached;
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 2, Killed: 0, Survived: 2)</summary>
 					<ul>
-				<li><b>BOOL_NEGATE_694_3: Negate boolean return expression</b><br>MEDIUM: Add tests asserting both true and false outcomes
+				<li><b>BOOL_NEGATE_744_3: Negate boolean return expression</b><br>MEDIUM: Add tests asserting both true and false outcomes
 
 								<div class="suggested-test">
 								<div class="suggest-label">🧪 Suggested Test</div>
@@ -1002,7 +1052,7 @@ Approximate LCSAJ segments: 127<br>
 ok( !func(INPUT), &#39;Verify boolean branch behaviour&#39; );
 </pre>
 								</div>
-							</li><li><b>RETURN_UNDEF_694_3: Replace return expression with undef</b><br>LOW: Mutation survived, but impact may be minor
+							</li><li><b>RETURN_UNDEF_744_3: Replace return expression with undef</b><br>LOW: Mutation survived, but impact may be minor
 
 								<div class="suggested-test">
 								<div class="suggest-label">🧪 Suggested Test</div>
@@ -1011,182 +1061,191 @@ is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
 </pre>
 								</div>
 							</li></ul></details>
-<span class="">  695: 	}
-</span><span class="">  696: 
-</span><span class="">  697: 	my $uri = URI-&gt;new(&#39;https://&#39; . FORECAST_HOST . &#39;/v1/forecast&#39;);
-</span><span class="">  698: 	$uri-&gt;query_form(
-</span><span class="">  699: 		latitude           =&gt; $latitude,
-</span><span class="">  700: 		longitude          =&gt; $longitude,
-</span><span class="">  701: 		forecast_days      =&gt; $days,
-</span><span class="">  702: 		hourly             =&gt; &#39;temperature_2m,rain,snowfall,weathercode&#39;,
-</span><span class="">  703: 		daily              =&gt; &#39;weathercode,temperature_2m_max,temperature_2m_min,rain_sum,snowfall_sum,precipitation_hours,windspeed_10m_max,windgusts_10m_max,sunrise,sunset&#39;,
-</span><span class="">  704: 		timezone           =&gt; $tz,
-</span><span class="">  705: 		windspeed_unit     =&gt; &#39;mph&#39;,
-</span><span class="">  706: 		precipitation_unit =&gt; &#39;inch&#39;,
-</span><span class="">  707: 	);
-</span><span class="">  708: 	my $url = $uri-&gt;as_string();
-</span><span class="">  709: 	$url =~ s/%2C/,/g;
-</span><span class="">  710: 
-</span><span class="">  711: 	my $rc = $self-&gt;_fetch_json($url);
-</span><span class="">  712: 	return unless defined($rc) &amp;&amp; ref($rc) eq &#39;HASH&#39;;
-</span><span class="">  713: 	return if $rc-&gt;{&#39;error&#39;};
-</span><span class="">  714: 	return unless defined($rc-&gt;{&#39;hourly&#39;});
-</span><span class="">  715: 
-</span><span class="">  716: 	$self-&gt;{&#39;cache&#39;}-&gt;set($cache_key, $rc);
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  717: 	return Return::Set::set_return($rc, { type =&gt; &#39;hashref&#39;, min =&gt; 1 });
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  718: }
-</span><span class="">  719: 
-</span><span class="">  720: =head2 sunrise_sunset
-</span><span class="">  721: 
-</span><span class="">  722:     my $meteo = Weather::Meteo-&gt;new();
-</span><span class="">  723: 
-</span><span class="">  724:     # Historical date -- uses the archive endpoint
-</span><span class="">  725:     my $times = $meteo-&gt;sunrise_sunset({ latitude =&gt; 51.34, longitude =&gt; 1.42, date =&gt; &#39;2022-12-25&#39; });
-</span><span class="">  726:     print &quot;Sunrise: $times-&gt;{sunrise}\n&quot;;
-</span><span class="">  727:     print &quot;Sunset:  $times-&gt;{sunset}\n&quot;;
-</span><span class="">  728: 
-</span><span class="">  729:     # Today (no date given -- uses the forecast endpoint)
-</span><span class="">  730:     $times = $meteo-&gt;sunrise_sunset({ latitude =&gt; 51.34, longitude =&gt; 1.42 });
-</span><span class="">  731: 
-</span><span class="">  732:     use Geo::Location::Point;
-</span><span class="">  733:     my $ramsgate = Geo::Location::Point-&gt;new({ latitude =&gt; 51.34, longitude =&gt; 1.42 });
-</span><span class="">  734:     $times = $meteo-&gt;sunrise_sunset($ramsgate, &#39;2022-12-25&#39;);
-</span><span class="">  735: 
-</span><span class="">  736: Returns a hashref with C&lt;sunrise&gt; and C&lt;sunset&gt; ISO-8601 datetime strings
-</span><span class="">  737: (e.g. C&lt;2022-12-25T08:09&gt;) for the given location and date.
-</span><span class="">  738: 
-</span><span class="">  739: If no date is supplied, today is used and the forecast endpoint is queried.
-</span><span class="">  740: For historical dates (strictly before today) the archive endpoint is used.
-</span><span class="">  741: For today and future dates the forecast endpoint (L&lt;https://api.open-meteo.com&gt;) is used.
-</span><span class="">  742: 
-</span><span class="">  743: Takes an optional C&lt;tz&gt; argument for the time zone; defaults to C&lt;Europe/London&gt;.
-</span><span class="">  744: 
-</span><span class="">  745: Returns C&lt;undef&gt; if the API returns an error or if the response does not contain
-</span><span class="">  746: sunrise/sunset data.
-</span><span class="">  747: 
-</span><span class="">  748: =head3 EXAMPLE
-</span><span class="">  749: 
-</span><span class="">  750:     my $meteo = Weather::Meteo-&gt;new();
-</span><span class="">  751:     my $times = $meteo-&gt;sunrise_sunset({ latitude =&gt; 48.8566, longitude =&gt; 2.3522 });
-</span><span class="">  752: 
-</span><span class="">  753:     if(defined($times)) {
-</span><span class="">  754:         print &quot;Paris sunrise today: $times-&gt;{sunrise}\n&quot;;
-</span><span class="">  755:         print &quot;Paris sunset today:  $times-&gt;{sunset}\n&quot;;
-</span><span class="">  756:     }
-</span><span class="">  757: 
-</span><span class="">  758:     # Historical query
-</span><span class="">  759:     my $solstice = $meteo-&gt;sunrise_sunset({
-</span><span class="">  760:         latitude  =&gt; 51.4779,
-</span><span class="">  761:         longitude =&gt; -0.0015,
-</span><span class="">  762:         date      =&gt; &#39;2024-06-21&#39;,
-</span><span class="">  763:         tz        =&gt; &#39;Europe/London&#39;,
-</span><span class="">  764:     });
-</span><span class="">  765:     print &quot;Greenwich sunrise on summer solstice 2024: $solstice-&gt;{sunrise}\n&quot;;
-</span><span class="">  766: 
-</span><span class="">  767: =head3 API SPECIFICATION
-</span><span class="">  768: 
-</span><span class="">  769: =head4 Input
-</span><span class="">  770: 
-</span><span class="">  771: Three call forms are accepted.
-</span><span class="">  772: 
-</span><span class="">  773:     # Form 1 and 2 -- hashref or flat list
-</span><span class="">  774:     {
-</span><span class="">  775:         latitude  =&gt; { type =&gt; &#39;scalar&#39; },
-</span><span class="">  776:         longitude =&gt; { type =&gt; &#39;scalar&#39; },
-</span><span class="">  777:         date      =&gt; { type =&gt; [&#39;scalar&#39;, &#39;object&#39;], optional =&gt; 1 },
-</span><span class="">  778:         tz        =&gt; { type =&gt; &#39;scalar&#39;,           optional =&gt; 1 },
-</span><span class="">  779:         location  =&gt; { type =&gt; &#39;object&#39;, can =&gt; &#39;latitude&#39;, optional =&gt; 1 },
-</span><span class="">  780:     }
+<span class="">  745: 	}
+</span><span class="">  746: 
+</span><span class="">  747: 	my $uri = URI-&gt;new(&#39;https://&#39; . FORECAST_HOST . &#39;/v1/forecast&#39;);
+</span><span class="">  748: 	$uri-&gt;query_form(
+</span><span class="">  749: 		latitude           =&gt; $latitude,
+</span><span class="">  750: 		longitude          =&gt; $longitude,
+</span><span class="">  751: 		forecast_days      =&gt; $days,
+</span><span class="">  752: 		hourly             =&gt; &#39;temperature_2m,rain,snowfall,weathercode&#39;,
+</span><span class="">  753: 		daily              =&gt; &#39;weathercode,temperature_2m_max,temperature_2m_min,rain_sum,snowfall_sum,precipitation_hours,windspeed_10m_max,windgusts_10m_max,sunrise,sunset&#39;,
+</span><span class="">  754: 		timezone           =&gt; $tz,
+</span><span class="">  755: 		windspeed_unit     =&gt; &#39;mph&#39;,
+</span><span class="">  756: 		precipitation_unit =&gt; &#39;inch&#39;,
+</span><span class="">  757: 	);
+</span><span class="">  758: 	my $url = $uri-&gt;as_string();
+</span><span class="">  759: 	$url =~ s/%2C/,/g;
+</span><span class="">  760: 
+</span><span class="">  761: 	my $rc = $self-&gt;_fetch_json($url);
+</span><span class="">  762: 	return unless defined($rc) &amp;&amp; ref($rc) eq &#39;HASH&#39;;
+</span><span class="">  763: 	return if $rc-&gt;{&#39;error&#39;};
+</span><span class="">  764: 	return unless defined($rc-&gt;{&#39;hourly&#39;});
+</span><span class="">  765: 
+</span><span class="">  766: 	$self-&gt;{&#39;cache&#39;}-&gt;set($cache_key, $rc);
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  767: 	return Return::Set::set_return($rc, { type =&gt; &#39;hashref&#39;, min =&gt; 1 });
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  768: }
+</span><span class="">  769: 
+</span><span class="">  770: =head2 sunrise_sunset
+</span><span class="">  771: 
+</span><span class="">  772:     my $meteo = Weather::Meteo-&gt;new();
+</span><span class="">  773: 
+</span><span class="">  774:     # Historical date -- uses the archive endpoint
+</span><span class="">  775:     my $times = $meteo-&gt;sunrise_sunset({ latitude =&gt; 51.34, longitude =&gt; 1.42, date =&gt; &#39;2022-12-25&#39; });
+</span><span class="">  776:     print &quot;Sunrise: $times-&gt;{sunrise}\n&quot;;
+</span><span class="">  777:     print &quot;Sunset:  $times-&gt;{sunset}\n&quot;;
+</span><span class="">  778: 
+</span><span class="">  779:     # Today (no date given -- uses the forecast endpoint)
+</span><span class="">  780:     $times = $meteo-&gt;sunrise_sunset({ latitude =&gt; 51.34, longitude =&gt; 1.42 });
 </span><span class="">  781: 
-</span><span class="">  782:     # Form 3 -- positional: ($location_obj) or ($location_obj, $date)
-</span><span class="">  783:     # $location_obj must respond to latitude() and longitude()
-</span><span class="">  784: 
-</span><span class="">  785: =head4 Output
-</span><span class="">  786: 
-</span><span class="">  787:     { type =&gt; &#39;hashref&#39; }   # { sunrise =&gt; STRING, sunset =&gt; STRING }
-</span><span class="">  788:     undef                    # bad input or API error
-</span><span class="">  789: 
-</span><span class="">  790: =head3 MESSAGES
-</span><span class="">  791: 
-</span><span class="">  792:     Message                                              Type   Trigger
-</span><span class="">  793:     ---------------------------------------------------  -----  ----------------------------------
-</span><span class="">  794:     Usage: sunrise_sunset(latitude =&gt; ...)               croak  lat or lon is missing
-</span><span class="">  795:     Invalid latitude/longitude format ($lat, $lon)       croak  coordinate is not numeric
-</span><span class="">  796:     &#39;$date&#39; is not a valid date                          carp   date string is not YYYY-MM-DD
-</span><span class="">  797:     UA-&gt;get did not return a valid HTTP response         carp   UA returned non-response object
-</span><span class="">  798:     $url API returned error: $status                     carp   HTTP 4xx/5xx response
-</span><span class="">  799:     Failed to parse JSON response: $@                    carp   response body is not valid JSON
-</span><span class="">  800: 
-</span><span class="">  801: =head3 PSEUDOCODE
+</span><span class="">  782:     use Geo::Location::Point;
+</span><span class="">  783:     my $ramsgate = Geo::Location::Point-&gt;new({ latitude =&gt; 51.34, longitude =&gt; 1.42 });
+</span><span class="">  784:     $times = $meteo-&gt;sunrise_sunset($ramsgate, &#39;2022-12-25&#39;);
+</span><span class="">  785: 
+</span><span class="">  786: Returns a hashref with C&lt;sunrise&gt; and C&lt;sunset&gt; ISO-8601 datetime strings
+</span><span class="">  787: (e.g. C&lt;2022-12-25T08:09&gt;) for the given location and date.
+</span><span class="">  788: 
+</span><span class="">  789: If no date is supplied, today is used and the forecast endpoint is queried.
+</span><span class="">  790: For historical dates (strictly before today) the archive endpoint is used.
+</span><span class="">  791: For today and future dates the forecast endpoint (L&lt;https://api.open-meteo.com&gt;) is used.
+</span><span class="">  792: 
+</span><span class="">  793: Takes an optional C&lt;tz&gt; argument for the time zone; defaults to C&lt;Europe/London&gt;.
+</span><span class="">  794: 
+</span><span class="">  795: Returns C&lt;undef&gt; if the API returns an error or if the response does not contain
+</span><span class="">  796: sunrise/sunset data.
+</span><span class="">  797: 
+</span><span class="">  798: =head3 EXAMPLE
+</span><span class="">  799: 
+</span><span class="">  800:     my $meteo = Weather::Meteo-&gt;new();
+</span><span class="">  801:     my $times = $meteo-&gt;sunrise_sunset({ latitude =&gt; 48.8566, longitude =&gt; 2.3522 });
 </span><span class="">  802: 
-</span><span class="">  803:     parse call form (3 variants: hashref, flat list, positional (location) or (location, date))
-</span><span class="">  804:     extract lat, lon, date, tz; resolve location object if given
-</span><span class="">  805:     croak if lat or lon is missing
-</span><span class="">  806:     normalise leading-decimal coordinates via _normalise_coord()
-</span><span class="">  807:     croak if coordinates are not numeric
-</span><span class="">  808:     if date is a strftime object: call strftime(&#39;%F&#39;)
-</span><span class="">  809:     carp and return undef if date string is not YYYY-MM-DD
-</span><span class="">  810:     determine endpoint: archive for historical dates, forecast for today/future
-</span><span class="">  811:     default date to today if omitted
-</span><span class="">  812:     return cached result if available
-</span><span class="">  813:     build URL with daily=sunrise,sunset only (no hourly fields)
-</span><span class="">  814:     fetch and decode JSON via _fetch_json()
-</span><span class="">  815:     return undef on error or if daily sunrise/sunset arrays are absent
-</span><span class="">  816:     extract sunrise[0] and sunset[0]
-</span><span class="">  817:     store { sunrise, sunset } in cache
-</span><span class="">  818:     return hashref
-</span><span class="">  819: 
-</span><span class="">  820: =head3 FORMAL SPECIFICATION
-</span><span class="">  821: 
-</span><span class="">  822:     ___ SUNRISE_SUNSET ________________________________________
-</span><span class="">  823:     | self?      : Weather::Meteo                            |
-</span><span class="">  824:     | latitude?  : REAL                                       |
-</span><span class="">  825:     | longitude? : REAL                                       |
-</span><span class="">  826:     | date?      : DATE_STRING  (optional, default today)     |
-</span><span class="">  827:     | tz?        : STRING  (optional, default &#39;Europe/London&#39;)|
-</span><span class="">  828:     |____________________________________________________________|
-</span><span class="">  829:     | result!    : HASHREF | undef                            |
-</span><span class="">  830:     |____________________________________________________________|
-</span><span class="">  831:     |                                                          |
-</span><span class="">  832:     | PRE (~latitude? v ~longitude?)                           |
-</span><span class="">  833:     |   =&gt; croak /Usage: sunrise_sunset\(latitude/            |
-</span><span class="">  834:     |                                                          |
-</span><span class="">  835:     | PRE lat? or lon? not matching /^-?\d+(\.\d+)?$/         |
-</span><span class="">  836:     |   =&gt; croak /Invalid latitude\/longitude format/          |
-</span><span class="">  837:     |                                                          |
-</span><span class="">  838:     | PRE date? defined ^ date? !~ /^\d{4}-\d{2}-\d{2}$/     |
-</span><span class="">  839:     |   =&gt; carp /not a valid date/ ^ result! = undef           |
-</span><span class="">  840:     |                                                          |
-</span><span class="">  841:     | POST ~date? v date? &gt;= today                             |
-</span><span class="">  842:     |   =&gt; uses forecast endpoint (api.open-meteo.com)        |
-</span><span class="">  843:     |                                                          |
-</span><span class="">  844:     | POST date? &lt; today                                       |
-</span><span class="">  845:     |   =&gt; uses archive endpoint (archive-api.open-meteo.com) |
-</span><span class="">  846:     |                                                          |
-</span><span class="">  847:     | POST cache hit for (lat, lon, date, tz)                 |
-</span><span class="">  848:     |   =&gt; result! = cached_value                              |
-</span><span class="">  849:     |                                                          |
-</span><span class="">  850:     | POST HTTP error or JSON failure or ~daily.sunrise        |
-</span><span class="">  851:     |   =&gt; result! = undef                                     |
-</span><span class="">  852:     |                                                          |
-</span><span class="">  853:     | POST otherwise                                           |
-</span><span class="">  854:     |   =&gt; result! = { sunrise =&gt; ISO8601, sunset =&gt; ISO8601 } |
-</span><span class="">  855:     |      cache.set(key, result!)                             |
-</span><span class="">  856:     |____________________________________________________________|
-</span><span class="">  857: 
-</span><span class="">  858: =cut
-</span><span class="">  859: 
-</span><span class="">  860: sub sunrise_sunset
-</span><span class="">  861: {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">862 → 865 → 879</span></span>  862: 	my $self = shift;
-</span><span class="">  863: 	my $params;
-</span><span class="">  864: 
-</span><span class="survived-3 tooltip" data-tooltip="Boundary mutation survived. Add tests around edge values (e.g. min, max, off-by-one).">  865: 	if(scalar(@_) &gt;= 1 &amp;&amp; Scalar::Util::blessed($_[0]) &amp;&amp; $_[0]-&gt;can(&#39;latitude&#39;)) {
+</span><span class="">  803:     if(defined($times)) {
+</span><span class="">  804:         print &quot;Paris sunrise today: $times-&gt;{sunrise}\n&quot;;
+</span><span class="">  805:         print &quot;Paris sunset today:  $times-&gt;{sunset}\n&quot;;
+</span><span class="">  806:     }
+</span><span class="">  807: 
+</span><span class="">  808:     # Historical query
+</span><span class="">  809:     my $solstice = $meteo-&gt;sunrise_sunset({
+</span><span class="">  810:         latitude  =&gt; 51.4779,
+</span><span class="">  811:         longitude =&gt; -0.0015,
+</span><span class="">  812:         date      =&gt; &#39;2024-06-21&#39;,
+</span><span class="">  813:         tz        =&gt; &#39;Europe/London&#39;,
+</span><span class="">  814:     });
+</span><span class="">  815:     print &quot;Greenwich sunrise on summer solstice 2024: $solstice-&gt;{sunrise}\n&quot;;
+</span><span class="">  816: 
+</span><span class="">  817: =head3 API SPECIFICATION
+</span><span class="">  818: 
+</span><span class="">  819: =head4 Input
+</span><span class="">  820: 
+</span><span class="">  821: Three call forms are accepted.
+</span><span class="">  822: 
+</span><span class="">  823:     # Form 1 and 2 -- hashref or flat list
+</span><span class="">  824:     {
+</span><span class="">  825:         latitude  =&gt; { type =&gt; &#39;scalar&#39; },
+</span><span class="">  826:         longitude =&gt; { type =&gt; &#39;scalar&#39; },
+</span><span class="">  827:         date      =&gt; { type =&gt; [&#39;scalar&#39;, &#39;object&#39;], optional =&gt; 1 },
+</span><span class="">  828:         tz        =&gt; { type =&gt; &#39;scalar&#39;,           optional =&gt; 1 },
+</span><span class="">  829:         location  =&gt; { type =&gt; &#39;object&#39;, can =&gt; &#39;latitude&#39;, optional =&gt; 1 },
+</span><span class="">  830:     }
+</span><span class="">  831: 
+</span><span class="">  832:     # Form 3 -- positional: ($location_obj) or ($location_obj, $date)
+</span><span class="">  833:     # $location_obj must respond to latitude() and longitude()
+</span><span class="">  834: 
+</span><span class="">  835: =head4 Output
+</span><span class="">  836: 
+</span><span class="">  837:     { type =&gt; &#39;hashref&#39; }   # { sunrise =&gt; STRING, sunset =&gt; STRING }
+</span><span class="">  838:     undef                    # bad input or API error
+</span><span class="">  839: 
+</span><span class="">  840: =head3 MESSAGES
+</span><span class="">  841: 
+</span><span class="">  842:     Message                                              Type   Trigger
+</span><span class="">  843:     ---------------------------------------------------  -----  ----------------------------------
+</span><span class="">  844:     Usage: sunrise_sunset(latitude =&gt; ...)               croak  lat or lon is missing
+</span><span class="">  845:     Invalid latitude/longitude format ($lat, $lon)       croak  coordinate is not numeric
+</span><span class="">  846:     &#39;$date&#39; is not a valid date                          carp   date string is not YYYY-MM-DD
+</span><span class="">  847:     UA-&gt;get did not return a valid HTTP response         carp   UA returned non-response object
+</span><span class="">  848:     $url API returned error: $status                     carp   HTTP 4xx/5xx response
+</span><span class="">  849:     Failed to parse JSON response: $err                  carp   response body is not valid JSON
+</span><span class="">  850:                                                                ($err is the exception with control
+</span><span class="">  851:                                                                chars stripped and length capped at
+</span><span class="">  852:                                                                200 chars to prevent log injection)
+</span><span class="">  853: 
+</span><span class="">  854: =head3 PSEUDOCODE
+</span><span class="">  855: 
+</span><span class="">  856:     parse call form (3 variants: hashref, flat list, positional (location) or (location, date))
+</span><span class="">  857:     extract lat, lon, date, tz; resolve location object if given
+</span><span class="">  858:     croak if lat or lon is missing
+</span><span class="">  859:     normalise leading-decimal coordinates via _normalise_coord()
+</span><span class="">  860:     validate coordinates with /\A(-?(?&gt;\d+)(?:\.(?&gt;\d+))?)\z/
+</span><span class="">  861:       (atomic groups prevent ReDoS; list-context capture also untaints for perl -T)
+</span><span class="">  862:     croak if either coordinate does not match
+</span><span class="">  863:     if date is a strftime object: call strftime(&#39;%F&#39;)
+</span><span class="">  864:     carp and return undef if date string is not YYYY-MM-DD
+</span><span class="">  865:     determine endpoint: archive for historical dates, forecast for today/future
+</span><span class="">  866:     default date to today if omitted
+</span><span class="">  867:     return cached result if available
+</span><span class="">  868:     build URL with daily=sunrise,sunset only (no hourly fields)
+</span><span class="">  869:     fetch and decode JSON via _fetch_json()
+</span><span class="">  870:     return undef on error or if daily sunrise/sunset arrays are absent
+</span><span class="">  871:     extract sunrise[0] and sunset[0]
+</span><span class="">  872:     store { sunrise, sunset } in cache
+</span><span class="">  873:     return hashref
+</span><span class="">  874: 
+</span><span class="">  875: =head3 FORMAL SPECIFICATION
+</span><span class="">  876: 
+</span><span class="">  877:     ___ SUNRISE_SUNSET ________________________________________
+</span><span class="">  878:     | self?      : Weather::Meteo                            |
+</span><span class="">  879:     | latitude?  : REAL                                       |
+</span><span class="">  880:     | longitude? : REAL                                       |
+</span><span class="">  881:     | date?      : DATE_STRING  (optional, default today)     |
+</span><span class="">  882:     | tz?        : STRING  (optional, default &#39;Europe/London&#39;)|
+</span><span class="">  883:     |____________________________________________________________|
+</span><span class="">  884:     | result!    : HASHREF | undef                            |
+</span><span class="">  885:     |____________________________________________________________|
+</span><span class="">  886:     |                                                          |
+</span><span class="">  887:     | PRE (~latitude? v ~longitude?)                           |
+</span><span class="">  888:     |   =&gt; croak /Usage: sunrise_sunset\(latitude/            |
+</span><span class="">  889:     |                                                          |
+</span><span class="">  890:     | PRE lat? or lon? not matching                            |
+</span><span class="">  891:     |     /\A(-?(?&gt;\d+)(?:\.(?&gt;\d+))?)\z/                     |
+</span><span class="">  892:     |   (after leading-decimal normalisation via _normalise_coord) |
+</span><span class="">  893:     |   =&gt; croak /Invalid latitude\/longitude format/          |
+</span><span class="">  894:     |   NOTE: list-context capture untaints lat/lon (perl -T) |
+</span><span class="">  895:     |         atomic groups eliminate O(n) backtracking        |
+</span><span class="">  896:     |                                                          |
+</span><span class="">  897:     | PRE date? defined ^ date? !~ /^\d{4}-\d{2}-\d{2}$/     |
+</span><span class="">  898:     |   =&gt; carp /not a valid date/ ^ result! = undef           |
+</span><span class="">  899:     |                                                          |
+</span><span class="">  900:     | POST ~date? v date? &gt;= today                             |
+</span><span class="">  901:     |   =&gt; uses forecast endpoint (api.open-meteo.com)        |
+</span><span class="">  902:     |                                                          |
+</span><span class="">  903:     | POST date? &lt; today                                       |
+</span><span class="">  904:     |   =&gt; uses archive endpoint (archive-api.open-meteo.com) |
+</span><span class="">  905:     |                                                          |
+</span><span class="">  906:     | POST cache hit for (lat, lon, date, tz)                 |
+</span><span class="">  907:     |   =&gt; result! = cached_value                              |
+</span><span class="">  908:     |                                                          |
+</span><span class="">  909:     | POST HTTP error or JSON failure or ~daily.sunrise        |
+</span><span class="">  910:     |   =&gt; result! = undef                                     |
+</span><span class="">  911:     |                                                          |
+</span><span class="">  912:     | POST otherwise                                           |
+</span><span class="">  913:     |   =&gt; result! = { sunrise =&gt; ISO8601, sunset =&gt; ISO8601 } |
+</span><span class="">  914:     |      cache.set(key, result!)                             |
+</span><span class="">  915:     |____________________________________________________________|
+</span><span class="">  916: 
+</span><span class="">  917: =cut
+</span><span class="">  918: 
+</span><span class="">  919: sub sunrise_sunset
+</span><span class="">  920: {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">921 → 924 → 938</span></span>  921: 	my $self = shift;
+</span><span class="">  922: 	my $params;
+</span><span class="">  923: 
+</span><span class="survived-3 tooltip" data-tooltip="Boundary mutation survived. Add tests around edge values (e.g. min, max, off-by-one).">  924: 	if(scalar(@_) &gt;= 1 &amp;&amp; Scalar::Util::blessed($_[0]) &amp;&amp; $_[0]-&gt;can(&#39;latitude&#39;)) {
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 4, Killed: 1, Survived: 3)</summary>
 					<ul>
-				<li><b>NUM_BOUNDARY_865_16_>: Numeric boundary flip >= to ></b><br>HIGH: Likely missing edge-case test (boundary value)
+				<li><b>NUM_BOUNDARY_924_16_>: Numeric boundary flip >= to ></b><br>HIGH: Likely missing edge-case test (boundary value)
 
 								<div class="suggested-test">
 								<div class="suggest-label">🧪 Suggested Test</div>
@@ -1194,7 +1253,7 @@ is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
 is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </pre>
 								</div>
-							</li><li><b>NUM_BOUNDARY_865_16_<: Numeric boundary flip >= to <</b><br>HIGH: Likely missing edge-case test (boundary value)
+							</li><li><b>NUM_BOUNDARY_924_16_<: Numeric boundary flip >= to <</b><br>HIGH: Likely missing edge-case test (boundary value)
 
 								<div class="suggested-test">
 								<div class="suggest-label">🧪 Suggested Test</div>
@@ -1202,7 +1261,7 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </pre>
 								</div>
-							</li><li><b>NUM_BOUNDARY_865_16_<=: Numeric boundary flip >= to <=</b><br>HIGH: Likely missing edge-case test (boundary value)
+							</li><li><b>NUM_BOUNDARY_924_16_<=: Numeric boundary flip >= to <=</b><br>HIGH: Likely missing edge-case test (boundary value)
 
 								<div class="suggested-test">
 								<div class="suggest-label">🧪 Suggested Test</div>
@@ -1211,389 +1270,447 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </pre>
 								</div>
 							</li></ul></details>
-<span class="">  866: 		# Positional form: (location_obj) or (location_obj, date)
-</span><span class="">  867: 		my $location = $_[0];
-</span><span class="">  868: 		$params = {
-</span><span class="">  869: 			latitude  =&gt; $location-&gt;latitude(),
-</span><span class="">  870: 			longitude =&gt; $location-&gt;longitude(),
-</span><span class="">  871: 		};
-</span><span class="">  872: 		$params-&gt;{date} = $_[1] if defined($_[1]);
-</span><span class="">  873: 		$params-&gt;{tz}   = $location-&gt;tz()
-</span><span class="">  874: 			if $location-&gt;can(&#39;tz&#39;) &amp;&amp; $ENV{&#39;TIMEZONEDB_KEY&#39;};
-</span><span class="">  875: 	} else {
-</span><span class="">  876: 		$params = Params::Get::get_params(undef, \@_);
-</span><span class="">  877: 	}
-</span><span class="">  878: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">879 → 884 → 890</span></span>  879: 	my $latitude  = $params-&gt;{latitude};
-</span><span class="">  880: 	my $longitude = $params-&gt;{longitude};
-</span><span class="">  881: 	my $location  = $params-&gt;{location};
-</span><span class="">  882: 	my $tz        = $params-&gt;{&#39;tz&#39;} || DEFAULT_TZ;
-</span><span class="">  883: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  884: 	if(!defined($latitude) &amp;&amp; defined($location) &amp;&amp;
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  885: 	   Scalar::Util::blessed($location) &amp;&amp; $location-&gt;can(&#39;latitude&#39;)) {
-</span><span class="">  886: 		$latitude  = $location-&gt;latitude();
-</span><span class="">  887: 		$longitude = $location-&gt;longitude();
-</span><span class="">  888: 	}
-</span><span class="">  889: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">890 → 890 → 896</span></span>  890: 	if(!defined($latitude) || !defined($longitude)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  891: 		my $msg = &#39;Usage: sunrise_sunset(latitude =&gt; $latitude, longitude =&gt; $longitude)&#39;;
-</span><span class="">  892: 		$self-&gt;{&#39;logger&#39;}-&gt;error($msg) if $self-&gt;{&#39;logger&#39;};
-</span><span class="">  893: 		Carp::croak($msg);
-</span><span class="">  894: 	}
-</span><span class="">  895: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">896 → 899 → 905</span></span>  896: 	$latitude  = _normalise_coord($latitude);
-</span><span class="">  897: 	$longitude = _normalise_coord($longitude);
-</span><span class="">  898: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  899: 	if($latitude !~ /^-?\d+(\.\d+)?$/ || $longitude !~ /^-?\d+(\.\d+)?$/) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  900: 		my $msg = __PACKAGE__ . &quot;: Invalid latitude/longitude format ($latitude, $longitude)&quot;;
-</span><span class="">  901: 		$self-&gt;{&#39;logger&#39;}-&gt;error($msg) if $self-&gt;{&#39;logger&#39;};
-</span><span class="">  902: 		Carp::croak($msg);
-</span><span class="">  903: 	}
-</span><span class="">  904: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">905 → 909 → 913</span></span>  905: 	my @t     = localtime(time());
-</span><span class="">  906: 	my $today = sprintf(&#39;%04d-%02d-%02d&#39;, $t[5] + 1900, $t[4] + 1, $t[3]);
-</span><span class="">  907: 	my $date  = $params-&gt;{date};
-</span><span class="">  908: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  909: 	if(defined($date) &amp;&amp; Scalar::Util::blessed($date) &amp;&amp; $date-&gt;can(&#39;strftime&#39;)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  910: 		$date = $date-&gt;strftime(&#39;%F&#39;);
-</span><span class="">  911: 	}
-</span><span class="">  912: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">913 → 913 → 919</span></span>  913: 	if(defined($date) &amp;&amp; $date !~ /^\d{4}-\d{2}-\d{2}$/) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  914: 		Carp::carp(&quot;&#39;$date&#39; is not a valid date&quot;);
-</span><span class="">  915: 		return;
-</span><span class="">  916: 	}
-</span><span class="">  917: 
-</span><span class="">  918: 	# No date means use forecast endpoint (more reliable for today than the archive)
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">919 → 923 → 927</span></span>  919: 	my $use_forecast = !defined($date) || ($date ge $today);
-</span><span class="">  920: 	$date //= $today;
-</span><span class="">  921: 
-</span><span class="">  922: 	my $cache_key = &quot;sunrise_sunset:$latitude:$longitude:$date:$tz&quot;;
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  923: 	if(my $cached = $self-&gt;{&#39;cache&#39;}-&gt;get($cache_key)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  924: 		return $cached;
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  925: 	}
-</span><span class="">  926: 
-</span><span class="">  927: 	my $endpoint_host = $use_forecast ? FORECAST_HOST  : $self-&gt;{host};
-</span><span class="">  928: 	my $endpoint_path = $use_forecast ? &#39;/v1/forecast&#39; : &#39;/v1/archive&#39;;
-</span><span class="">  929: 
-</span><span class="">  930: 	my $uri = URI-&gt;new(&quot;https://$endpoint_host$endpoint_path&quot;);
-</span><span class="">  931: 	$uri-&gt;query_form(
-</span><span class="">  932: 		latitude   =&gt; $latitude,
-</span><span class="">  933: 		longitude  =&gt; $longitude,
-</span><span class="">  934: 		start_date =&gt; $date,
-</span><span class="">  935: 		end_date   =&gt; $date,
-</span><span class="">  936: 		daily      =&gt; &#39;sunrise,sunset&#39;,
-</span><span class="">  937: 		timezone   =&gt; $tz,
-</span><span class="">  938: 	);
-</span><span class="">  939: 
-</span><span class="">  940: 	my $rc = $self-&gt;_fetch_json($uri-&gt;as_string());
-</span><span class="">  941: 	return unless defined($rc) &amp;&amp; ref($rc) eq &#39;HASH&#39; &amp;&amp; !$rc-&gt;{&#39;error&#39;};
+<span class="">  925: 		# Positional form: (location_obj) or (location_obj, date)
+</span><span class="">  926: 		my $location = $_[0];
+</span><span class="">  927: 		$params = {
+</span><span class="">  928: 			latitude  =&gt; $location-&gt;latitude(),
+</span><span class="">  929: 			longitude =&gt; $location-&gt;longitude(),
+</span><span class="">  930: 		};
+</span><span class="">  931: 		$params-&gt;{date} = $_[1] if defined($_[1]);
+</span><span class="">  932: 		$params-&gt;{tz}   = $location-&gt;tz()
+</span><span class="">  933: 			if $location-&gt;can(&#39;tz&#39;) &amp;&amp; $ENV{&#39;TIMEZONEDB_KEY&#39;};
+</span><span class="">  934: 	} else {
+</span><span class="">  935: 		$params = Params::Get::get_params(undef, \@_);
+</span><span class="">  936: 	}
+</span><span class="">  937: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">938 → 943 → 949</span></span>  938: 	my $latitude  = $params-&gt;{latitude};
+</span><span class="">  939: 	my $longitude = $params-&gt;{longitude};
+</span><span class="">  940: 	my $location  = $params-&gt;{location};
+</span><span class="">  941: 	my $tz        = $params-&gt;{&#39;tz&#39;} || DEFAULT_TZ;
 </span><span class="">  942: 
-</span><span class="">  943: 	my $daily = $rc-&gt;{&#39;daily&#39;};
-</span><span class="">  944: 	return unless ref($daily) eq &#39;HASH&#39;;
-</span><span class="">  945: 
-</span><span class="">  946: 	my $sr = ref($daily-&gt;{&#39;sunrise&#39;}) eq &#39;ARRAY&#39; ? $daily-&gt;{&#39;sunrise&#39;}[0] : undef;
-</span><span class="">  947: 	my $ss = ref($daily-&gt;{&#39;sunset&#39;})  eq &#39;ARRAY&#39; ? $daily-&gt;{&#39;sunset&#39;}[0]  : undef;
-</span><span class="">  948: 	return unless defined($sr) &amp;&amp; defined($ss);
-</span><span class="">  949: 
-</span><span class="">  950: 	my $result = { sunrise =&gt; $sr, sunset =&gt; $ss };
-</span><span class="">  951: 	$self-&gt;{&#39;cache&#39;}-&gt;set($cache_key, $result);
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  952: 	return $result;
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  953: }
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  943: 	if(!defined($latitude) &amp;&amp; defined($location) &amp;&amp;
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  944: 	   Scalar::Util::blessed($location) &amp;&amp; $location-&gt;can(&#39;latitude&#39;)) {
+</span><span class="">  945: 		$latitude  = $location-&gt;latitude();
+</span><span class="">  946: 		$longitude = $location-&gt;longitude();
+</span><span class="">  947: 	}
+</span><span class="">  948: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">949 → 949 → 955</span></span>  949: 	if(!defined($latitude) || !defined($longitude)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  950: 		my $msg = &#39;Usage: sunrise_sunset(latitude =&gt; $latitude, longitude =&gt; $longitude)&#39;;
+</span><span class="">  951: 		$self-&gt;{&#39;logger&#39;}-&gt;error($msg) if $self-&gt;{&#39;logger&#39;};
+</span><span class="">  952: 		Carp::croak($msg);
+</span><span class="">  953: 	}
 </span><span class="">  954: 
-</span><span class="">  955: =head2 ua
-</span><span class="">  956: 
-</span><span class="">  957: Accessor method to get and set the C&lt;UserAgent&gt; object used internally.
-</span><span class="">  958: You can call C&lt;env_proxy&gt; for example, to get proxy information from
-</span><span class="">  959: environment variables:
-</span><span class="">  960: 
-</span><span class="">  961:     $meteo-&gt;ua()-&gt;env_proxy(1);
-</span><span class="">  962: 
-</span><span class="">  963: You can also replace the user agent entirely:
-</span><span class="">  964: 
-</span><span class="">  965:     use LWP::UserAgent::Throttled;
-</span><span class="">  966: 
-</span><span class="">  967:     my $ua = LWP::UserAgent::Throttled-&gt;new();
-</span><span class="">  968:     $ua-&gt;throttle(&#39;open-meteo.com&#39; =&gt; 1);
-</span><span class="">  969:     $meteo-&gt;ua($ua);
-</span><span class="">  970: 
-</span><span class="">  971: =head3 EXAMPLE
-</span><span class="">  972: 
-</span><span class="">  973:     my $meteo = Weather::Meteo-&gt;new();
-</span><span class="">  974: 
-</span><span class="">  975:     # Getter: inspect the current UA
-</span><span class="">  976:     my $ua = $meteo-&gt;ua();
-</span><span class="">  977:     $ua-&gt;env_proxy(1);
-</span><span class="">  978: 
-</span><span class="">  979:     # Setter: replace with a throttled UA
-</span><span class="">  980:     use LWP::UserAgent::Throttled;
-</span><span class="">  981:     $meteo-&gt;ua(LWP::UserAgent::Throttled-&gt;new());
-</span><span class="">  982: 
-</span><span class="">  983: =head3 API SPECIFICATION
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">955 → 960 → 965</span></span>  955: 	$latitude  = _normalise_coord($latitude);
+</span><span class="">  956: 	$longitude = _normalise_coord($longitude);
+</span><span class="">  957: 
+</span><span class="">  958: 	my ($lat_clean) = ($latitude  =~ /\A(-?(?&gt;\d+)(?:\.(?&gt;\d+))?)\z/);
+</span><span class="">  959: 	my ($lon_clean) = ($longitude =~ /\A(-?(?&gt;\d+)(?:\.(?&gt;\d+))?)\z/);
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  960: 	if(!defined($lat_clean) || !defined($lon_clean)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  961: 		my $msg = __PACKAGE__ . &quot;: Invalid latitude/longitude format ($latitude, $longitude)&quot;;
+</span><span class="">  962: 		$self-&gt;{&#39;logger&#39;}-&gt;error($msg) if $self-&gt;{&#39;logger&#39;};
+</span><span class="">  963: 		Carp::croak($msg);
+</span><span class="">  964: 	}
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">965 → 972 → 976</span></span>  965: 	$latitude  = $lat_clean;
+</span><span class="">  966: 	$longitude = $lon_clean;
+</span><span class="">  967: 
+</span><span class="">  968: 	my @t     = localtime(time());
+</span><span class="">  969: 	my $today = sprintf(&#39;%04d-%02d-%02d&#39;, $t[5] + 1900, $t[4] + 1, $t[3]);
+</span><span class="">  970: 	my $date  = $params-&gt;{date};
+</span><span class="">  971: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  972: 	if(defined($date) &amp;&amp; Scalar::Util::blessed($date) &amp;&amp; $date-&gt;can(&#39;strftime&#39;)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  973: 		$date = $date-&gt;strftime(&#39;%F&#39;);
+</span><span class="">  974: 	}
+</span><span class="">  975: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">976 → 976 → 982</span></span>  976: 	if(defined($date) &amp;&amp; $date !~ /^\d{4}-\d{2}-\d{2}$/) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  977: 		Carp::carp(&quot;&#39;$date&#39; is not a valid date&quot;);
+</span><span class="">  978: 		return;
+</span><span class="">  979: 	}
+</span><span class="">  980: 
+</span><span class="">  981: 	# No date means use forecast endpoint (more reliable for today than the archive)
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">982 → 986 → 990</span></span>  982: 	my $use_forecast = !defined($date) || ($date ge $today);
+</span><span class="">  983: 	$date //= $today;
 </span><span class="">  984: 
-</span><span class="">  985: =head4 Input
-</span><span class="">  986: 
-</span><span class="">  987: When called with no arguments acts as a getter; the input schema is empty.
-</span><span class="">  988: When called with an argument the argument must be an object that responds to C&lt;get&gt;:
+</span><span class="">  985: 	my $cache_key = &quot;sunrise_sunset:$latitude:$longitude:$date:$tz&quot;;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  986: 	if(my $cached = $self-&gt;{&#39;cache&#39;}-&gt;get($cache_key)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  987: 		return $cached;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  988: 	}
 </span><span class="">  989: 
-</span><span class="">  990:     { ua =&gt; { type =&gt; &#39;object&#39;, can =&gt; &#39;get&#39; } }
-</span><span class="">  991: 
-</span><span class="">  992: =head4 Output
-</span><span class="">  993: 
-</span><span class="">  994:     { type =&gt; &#39;object&#39;, can =&gt; &#39;get&#39; }
-</span><span class="">  995: 
-</span><span class="">  996: =head3 MESSAGES
-</span><span class="">  997: 
-</span><span class="">  998:     Message                                              Type   Trigger
-</span><span class="">  999:     ---------------------------------------------------  -----  ----------------------------------
-</span><span class=""> 1000:     ua() requires a defined value                        croak  ua(undef) called
-</span><span class=""> 1001:     must be an object that understands the get method    croak  ua arg lacks get() method
+</span><span class="">  990: 	my $endpoint_host = $use_forecast ? FORECAST_HOST  : $self-&gt;{host};
+</span><span class="">  991: 	my $endpoint_path = $use_forecast ? &#39;/v1/forecast&#39; : &#39;/v1/archive&#39;;
+</span><span class="">  992: 
+</span><span class="">  993: 	my $uri = URI-&gt;new(&quot;https://$endpoint_host$endpoint_path&quot;);
+</span><span class="">  994: 	$uri-&gt;query_form(
+</span><span class="">  995: 		latitude   =&gt; $latitude,
+</span><span class="">  996: 		longitude  =&gt; $longitude,
+</span><span class="">  997: 		start_date =&gt; $date,
+</span><span class="">  998: 		end_date   =&gt; $date,
+</span><span class="">  999: 		daily      =&gt; &#39;sunrise,sunset&#39;,
+</span><span class=""> 1000: 		timezone   =&gt; $tz,
+</span><span class=""> 1001: 	);
 </span><span class=""> 1002: 
-</span><span class=""> 1003: =head3 FORMAL SPECIFICATION
-</span><span class=""> 1004: 
-</span><span class=""> 1005:     ___ UA ____________________________________________________
-</span><span class=""> 1006:     | self?   : Weather::Meteo                               |
-</span><span class=""> 1007:     | ua?     : OBJECT [can &#39;get&#39;]   (optional)              |
-</span><span class=""> 1008:     |____________________________________________________________|
-</span><span class=""> 1009:     | result! : OBJECT [can &#39;get&#39;]                            |
-</span><span class=""> 1010:     |____________________________________________________________|
-</span><span class=""> 1011:     |                                                          |
-</span><span class=""> 1012:     | PRE ua? defined ^ ~ua?.can(&#39;get&#39;)                       |
-</span><span class=""> 1013:     |   =&gt; croak /must be an object that understands the get method/ |
-</span><span class=""> 1014:     |                                                          |
-</span><span class=""> 1015:     | POST ua? defined                                         |
-</span><span class=""> 1016:     |   =&gt; self?.ua = ua? ^ result! = ua?                     |
-</span><span class=""> 1017:     |                                                          |
-</span><span class=""> 1018:     | POST ~ua?                                                |
-</span><span class=""> 1019:     |   =&gt; result! = self?.ua  (no state change)              |
-</span><span class=""> 1020:     |____________________________________________________________|
-</span><span class=""> 1021: 
-</span><span class=""> 1022: =cut
+</span><span class=""> 1003: 	my $rc = $self-&gt;_fetch_json($uri-&gt;as_string());
+</span><span class=""> 1004: 	return unless defined($rc) &amp;&amp; ref($rc) eq &#39;HASH&#39; &amp;&amp; !$rc-&gt;{&#39;error&#39;};
+</span><span class=""> 1005: 
+</span><span class=""> 1006: 	my $daily = $rc-&gt;{&#39;daily&#39;};
+</span><span class=""> 1007: 	return unless ref($daily) eq &#39;HASH&#39;;
+</span><span class=""> 1008: 
+</span><span class=""> 1009: 	my $sr = ref($daily-&gt;{&#39;sunrise&#39;}) eq &#39;ARRAY&#39; ? $daily-&gt;{&#39;sunrise&#39;}[0] : undef;
+</span><span class=""> 1010: 	my $ss = ref($daily-&gt;{&#39;sunset&#39;})  eq &#39;ARRAY&#39; ? $daily-&gt;{&#39;sunset&#39;}[0]  : undef;
+</span><span class=""> 1011: 	return unless defined($sr) &amp;&amp; defined($ss);
+</span><span class=""> 1012: 
+</span><span class=""> 1013: 	my $result = { sunrise =&gt; $sr, sunset =&gt; $ss };
+</span><span class=""> 1014: 	$self-&gt;{&#39;cache&#39;}-&gt;set($cache_key, $result);
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1015: 	return $result;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class=""> 1016: }
+</span><span class=""> 1017: 
+</span><span class=""> 1018: =head2 ua
+</span><span class=""> 1019: 
+</span><span class=""> 1020: Accessor method to get and set the C&lt;UserAgent&gt; object used internally.
+</span><span class=""> 1021: You can call C&lt;env_proxy&gt; for example, to get proxy information from
+</span><span class=""> 1022: environment variables:
 </span><span class=""> 1023: 
-</span><span class=""> 1024: sub ua {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">1025 → 1027 → 1044</span></span> 1025: 	my $self = shift;
-</span><span class=""> 1026: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1027: 	if(@_) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""> 1028: 		my $params = Params::Validate::Strict::validate_strict({
-</span><span class=""> 1029: 			args =&gt; Params::Get::get_params(&#39;ua&#39;, \@_),
-</span><span class=""> 1030: 			schema =&gt; {
-</span><span class=""> 1031: 				ua =&gt; {
-</span><span class=""> 1032: 					type =&gt; &#39;object&#39;,
-</span><span class=""> 1033: 					can  =&gt; &#39;get&#39;
-</span><span class=""> 1034: 				}
-</span><span class=""> 1035: 			}
-</span><span class=""> 1036: 		});
-</span><span class=""> 1037: 		# Reject undef explicitly before it silently corrupts $self-&gt;{ua}
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1038: 		if(!defined($params-&gt;{ua})) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""> 1039: 			$self-&gt;{&#39;logger&#39;}-&gt;error(&#39;ua() requires a defined value&#39;) if $self-&gt;{&#39;logger&#39;};
-</span><span class=""> 1040: 			Carp::croak(&#39;ua() requires a defined value&#39;);
-</span><span class=""> 1041: 		}
-</span><span class=""> 1042: 		$self-&gt;{ua} = $params-&gt;{ua};
-</span><span class=""> 1043: 	}
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1044: 	return $self-&gt;{ua};
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class=""> 1045: }
-</span><span class=""> 1046: 
-</span><span class=""> 1047: # ---------------------------------------------------------------------------
-</span><span class=""> 1048: # _normalise_coord -- fix a coordinate that leads with a bare decimal point
-</span><span class=""> 1049: #
-</span><span class=""> 1050: # Purpose:     Perl and many user inputs write &quot;.5&quot; where &quot;0.5&quot; is required.
-</span><span class=""> 1051: #              The regex /^-?\d+(\.\d+)?$/ rejects the bare-dot form, so we
-</span><span class=""> 1052: #              normalise before validating.
-</span><span class=""> 1053: # Entry:       $coord -- a coordinate string, possibly with a leading &quot;.&quot;
-</span><span class=""> 1054: # Exit:        normalised string: &quot;.5&quot; -&gt; &quot;0.5&quot;, &quot;-.5&quot; -&gt; &quot;-0.5&quot;, others unchanged
-</span><span class=""> 1055: # Side effects: none
-</span><span class=""> 1056: # ---------------------------------------------------------------------------
-</span><span class=""> 1057: sub _normalise_coord {
-</span><span class=""> 1058: 	my ($coord) = @_;
-</span><span class=""> 1059: 	my $result = $coord;
-</span><span class=""> 1060: 	$result = &quot;-0.$1&quot;  if $result =~ /^\-\.(\d+)$/;
-</span><span class=""> 1061: 	$result = &quot;0$result&quot; if $result =~ /^\./;
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1062: 	return $result;
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class=""> 1063: }
-</span><span class=""> 1064: 
-</span><span class=""> 1065: # ---------------------------------------------------------------------------
-</span><span class=""> 1066: # _enforce_rate_limit -- sleep until enough time has passed since the last call
-</span><span class=""> 1067: #
-</span><span class=""> 1068: # Purpose:     Prevent hammering the API when min_interval &gt; 0.
-</span><span class=""> 1069: # Entry:       $self -- Weather::Meteo instance with last_request and min_interval
-</span><span class=""> 1070: # Exit:        (nothing returned)
-</span><span class=""> 1071: # Side effects: may block for up to min_interval seconds via Time::HiRes::sleep
-</span><span class=""> 1072: # ---------------------------------------------------------------------------
-</span><span class=""> 1073: sub _enforce_rate_limit {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">1074 → 1076 → 0</span></span> 1074: 	my ($self) = @_;
-</span><span class=""> 1075: 	my $elapsed = time() - $self-&gt;{last_request};
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1076: 	if($elapsed &lt; $self-&gt;{min_interval}) {
-</span><p> <b> Mutants (Total: 4, Killed: 4, Survived: 0)</b><p><span class=""> 1077: 		Time::HiRes::sleep($self-&gt;{min_interval} - $elapsed);
-</span><span class=""> 1078: 	}
-</span><span class=""> 1079: }
-</span><span class=""> 1080: 
-</span><span class=""> 1081: # ---------------------------------------------------------------------------
-</span><span class=""> 1082: # _fetch_json -- HTTP GET a URL and decode the response body as JSON
-</span><span class=""> 1083: #
-</span><span class=""> 1084: # Purpose:     Centralise the HTTP dispatch and JSON parsing steps that are
-</span><span class=""> 1085: #              common to all three public data methods, giving one place to
-</span><span class=""> 1086: #              maintain error-handling and rate-limiting logic.
-</span><span class=""> 1087: # Entry:       $self -- Weather::Meteo instance
-</span><span class=""> 1088: #              $url  -- fully-formed request URL string
-</span><span class=""> 1089: # Exit:        decoded hashref (or other JSON value) on success; undef on error
-</span><span class=""> 1090: # Side effects: enforces rate limit (may sleep); updates last_request timestamp;
-</span><span class=""> 1091: #              carps on HTTP errors and JSON parse failures
-</span><span class=""> 1092: # ---------------------------------------------------------------------------
-</span><span class=""> 1093: sub _fetch_json {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">1094 → 1101 → 1106</span></span> 1094: 	my ($self, $url) = @_;
-</span><span class=""> 1095: 
-</span><span class=""> 1096: 	$self-&gt;_enforce_rate_limit();
-</span><span class=""> 1097: 
-</span><span class=""> 1098: 	my $res = $self-&gt;{ua}-&gt;get($url);
-</span><span class=""> 1099: 	$self-&gt;{last_request} = time();
-</span><span class=""> 1100: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1101: 	unless(defined($res) &amp;&amp; ref($res) &amp;&amp; $res-&gt;can(&#39;is_error&#39;)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""> 1102: 		Carp::carp(ref($self) . &#39;: UA-&gt;get did not return a valid HTTP response&#39;);
-</span><span class=""> 1103: 		return;
-</span><span class=""> 1104: 	}
-</span><span class=""> 1105: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">1106 → 1106 → 1111</span></span> 1106: 	if($res-&gt;is_error()) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""> 1107: 		Carp::carp(ref($self) . &quot;: $url API returned error: &quot; . $res-&gt;status_line());
-</span><span class=""> 1108: 		return;
-</span><span class=""> 1109: 	}
-</span><span class=""> 1110: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">1111 → 1113 → 1118</span></span> 1111: 	my $rc;
-</span><span class=""> 1112: 	eval { $rc = JSON::MaybeXS-&gt;new()-&gt;utf8()-&gt;decode($res-&gt;decoded_content()) };
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1113: 	if($@) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""> 1114: 		Carp::carp(&quot;Failed to parse JSON response: $@&quot;);
-</span><span class=""> 1115: 		return;
-</span><span class=""> 1116: 	}
-</span><span class=""> 1117: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1118: 	return $rc;
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class=""> 1119: }
-</span><span class=""> 1120: 
-</span><span class=""> 1121: =head1 LIMITATIONS
-</span><span class=""> 1122: 
-</span><span class=""> 1123: =over 4
-</span><span class=""> 1124: 
-</span><span class=""> 1125: =item * Archive data lag
-</span><span class=""> 1126: 
-</span><span class=""> 1127: The Open-Meteo archive endpoint has a lag of approximately five days before
-</span><span class=""> 1128: recent historical data becomes available.
-</span><span class=""> 1129: For dates within the past five days,
-</span><span class=""> 1130: C&lt;weather()&gt; may return C&lt;undef&gt; even when no error occurs.
-</span><span class=""> 1131: Use C&lt;forecast()&gt; or C&lt;sunrise_sunset()&gt; (without a date) to obtain data for
-</span><span class=""> 1132: today or recent days.
-</span><span class=""> 1133: 
-</span><span class=""> 1134: =item * Coordinate range
-</span><span class=""> 1135: 
-</span><span class=""> 1136: The module normalises coordinates with a bare leading decimal point (e.g.
-</span><span class=""> 1137: C&lt;&quot;.5&quot;&gt; to C&lt;&quot;0.5&quot;&gt;) but does not validate that latitude is within C&lt;-90..90&gt;
-</span><span class=""> 1138: or longitude within C&lt;-180..180&gt;.
-</span><span class=""> 1139: Out-of-range values are passed to the API, which may return an error.
-</span><span class=""> 1140: 
-</span><span class=""> 1141: =item * No sub-hourly resolution
-</span><span class=""> 1142: 
-</span><span class=""> 1143: The hourly data arrays always contain exactly 24 entries per day (one per hour).
-</span><span class=""> 1144: Sub-hourly resolution is not supported by this interface.
-</span><span class=""> 1145: 
-</span><span class=""> 1146: =item * Per-process rate limiting
-</span><span class=""> 1147: 
-</span><span class=""> 1148: The C&lt;min_interval&gt; rate limiter tracks the last request timestamp within a
-</span><span class=""> 1149: single process instance.
-</span><span class=""> 1150: Multiple concurrent processes or threads are not coordinated and may collectively
-</span><span class=""> 1151: exceed the desired request rate.
-</span><span class=""> 1152: 
-</span><span class=""> 1153: =item * Timezone resolution requires an API key
-</span><span class=""> 1154: 
-</span><span class=""> 1155: Automatic per-location timezone resolution requires setting the
-</span><span class=""> 1156: C&lt;TIMEZONEDB_KEY&gt; environment variable to a valid key from
-</span><span class=""> 1157: L&lt;https://timezonedb.com&gt;.
-</span><span class=""> 1158: Without it the module defaults to C&lt;Europe/London&gt; for all locations.
+</span><span class=""> 1024:     $meteo-&gt;ua()-&gt;env_proxy(1);
+</span><span class=""> 1025: 
+</span><span class=""> 1026: You can also replace the user agent entirely:
+</span><span class=""> 1027: 
+</span><span class=""> 1028:     use LWP::UserAgent::Throttled;
+</span><span class=""> 1029: 
+</span><span class=""> 1030:     my $ua = LWP::UserAgent::Throttled-&gt;new();
+</span><span class=""> 1031:     $ua-&gt;throttle(&#39;open-meteo.com&#39; =&gt; 1);
+</span><span class=""> 1032:     $meteo-&gt;ua($ua);
+</span><span class=""> 1033: 
+</span><span class=""> 1034: =head3 EXAMPLE
+</span><span class=""> 1035: 
+</span><span class=""> 1036:     my $meteo = Weather::Meteo-&gt;new();
+</span><span class=""> 1037: 
+</span><span class=""> 1038:     # Getter: inspect the current UA
+</span><span class=""> 1039:     my $ua = $meteo-&gt;ua();
+</span><span class=""> 1040:     $ua-&gt;env_proxy(1);
+</span><span class=""> 1041: 
+</span><span class=""> 1042:     # Setter: replace with a throttled UA
+</span><span class=""> 1043:     use LWP::UserAgent::Throttled;
+</span><span class=""> 1044:     $meteo-&gt;ua(LWP::UserAgent::Throttled-&gt;new());
+</span><span class=""> 1045: 
+</span><span class=""> 1046: =head3 API SPECIFICATION
+</span><span class=""> 1047: 
+</span><span class=""> 1048: =head4 Input
+</span><span class=""> 1049: 
+</span><span class=""> 1050: When called with no arguments acts as a getter; the input schema is empty.
+</span><span class=""> 1051: When called with an argument the argument must be an object that responds to C&lt;get&gt;:
+</span><span class=""> 1052: 
+</span><span class=""> 1053:     { ua =&gt; { type =&gt; &#39;object&#39;, can =&gt; &#39;get&#39; } }
+</span><span class=""> 1054: 
+</span><span class=""> 1055: =head4 Output
+</span><span class=""> 1056: 
+</span><span class=""> 1057:     { type =&gt; &#39;object&#39;, can =&gt; &#39;get&#39; }
+</span><span class=""> 1058: 
+</span><span class=""> 1059: =head3 MESSAGES
+</span><span class=""> 1060: 
+</span><span class=""> 1061:     Message                                              Type   Trigger
+</span><span class=""> 1062:     ---------------------------------------------------  -----  ----------------------------------
+</span><span class=""> 1063:     ua() requires a defined value                        croak  ua(undef) called
+</span><span class=""> 1064:     must be an object that understands the get method    croak  ua arg lacks get() method
+</span><span class=""> 1065: 
+</span><span class=""> 1066: =head3 FORMAL SPECIFICATION
+</span><span class=""> 1067: 
+</span><span class=""> 1068:     ___ UA ____________________________________________________
+</span><span class=""> 1069:     | self?   : Weather::Meteo                               |
+</span><span class=""> 1070:     | ua?     : OBJECT [can &#39;get&#39;]   (optional)              |
+</span><span class=""> 1071:     |____________________________________________________________|
+</span><span class=""> 1072:     | result! : OBJECT [can &#39;get&#39;]                            |
+</span><span class=""> 1073:     |____________________________________________________________|
+</span><span class=""> 1074:     |                                                          |
+</span><span class=""> 1075:     | PRE ua? defined ^ ~ua?.can(&#39;get&#39;)                       |
+</span><span class=""> 1076:     |   =&gt; croak /must be an object that understands the get method/ |
+</span><span class=""> 1077:     |                                                          |
+</span><span class=""> 1078:     | POST ua? defined                                         |
+</span><span class=""> 1079:     |   =&gt; self?.ua = ua? ^ result! = ua?                     |
+</span><span class=""> 1080:     |                                                          |
+</span><span class=""> 1081:     | POST ~ua?                                                |
+</span><span class=""> 1082:     |   =&gt; result! = self?.ua  (no state change)              |
+</span><span class=""> 1083:     |____________________________________________________________|
+</span><span class=""> 1084: 
+</span><span class=""> 1085: =cut
+</span><span class=""> 1086: 
+</span><span class=""> 1087: sub ua {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">1088 → 1090 → 1107</span></span> 1088: 	my $self = shift;
+</span><span class=""> 1089: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1090: 	if(@_) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""> 1091: 		my $params = Params::Validate::Strict::validate_strict({
+</span><span class=""> 1092: 			args =&gt; Params::Get::get_params(&#39;ua&#39;, \@_),
+</span><span class=""> 1093: 			schema =&gt; {
+</span><span class=""> 1094: 				ua =&gt; {
+</span><span class=""> 1095: 					type =&gt; &#39;object&#39;,
+</span><span class=""> 1096: 					can  =&gt; &#39;get&#39;
+</span><span class=""> 1097: 				}
+</span><span class=""> 1098: 			}
+</span><span class=""> 1099: 		});
+</span><span class=""> 1100: 		# Reject undef explicitly before it silently corrupts $self-&gt;{ua}
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1101: 		if(!defined($params-&gt;{ua})) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""> 1102: 			$self-&gt;{&#39;logger&#39;}-&gt;error(&#39;ua() requires a defined value&#39;) if $self-&gt;{&#39;logger&#39;};
+</span><span class=""> 1103: 			Carp::croak(&#39;ua() requires a defined value&#39;);
+</span><span class=""> 1104: 		}
+</span><span class=""> 1105: 		$self-&gt;{ua} = $params-&gt;{ua};
+</span><span class=""> 1106: 	}
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1107: 	return $self-&gt;{ua};
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class=""> 1108: }
+</span><span class=""> 1109: 
+</span><span class=""> 1110: # ---------------------------------------------------------------------------
+</span><span class=""> 1111: # _normalise_coord -- fix a coordinate that leads with a bare decimal point
+</span><span class=""> 1112: #
+</span><span class=""> 1113: # Purpose:     Perl and many user inputs write &quot;.5&quot; where &quot;0.5&quot; is required.
+</span><span class=""> 1114: #              The regex /^-?\d+(\.\d+)?$/ rejects the bare-dot form, so we
+</span><span class=""> 1115: #              normalise before validating.
+</span><span class=""> 1116: # Entry:       $coord -- a coordinate string, possibly with a leading &quot;.&quot;
+</span><span class=""> 1117: # Exit:        normalised string: &quot;.5&quot; -&gt; &quot;0.5&quot;, &quot;-.5&quot; -&gt; &quot;-0.5&quot;, others unchanged
+</span><span class=""> 1118: # Side effects: none
+</span><span class=""> 1119: # ---------------------------------------------------------------------------
+</span><span class=""> 1120: sub _normalise_coord {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">1121 → 1124 → 1126</span></span> 1121: 	my ($coord) = @_;
+</span><span class=""> 1122: 	my $result = $coord;
+</span><span class=""> 1123: 	# Anchored with \z; atomic group on \d+ prevents O(n) backtracking
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1124: 	if(my ($frac) = $result =~ /\A-\.((?&gt;\d+))\z/) { $result = &quot;-0.$frac&quot; }
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""> 1125: 	elsif($result =~ /\A\./)                         { $result = &quot;0$result&quot; }
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1126: 	return $result;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class=""> 1127: }
+</span><span class=""> 1128: 
+</span><span class=""> 1129: # ---------------------------------------------------------------------------
+</span><span class=""> 1130: # _enforce_rate_limit -- sleep until enough time has passed since the last call
+</span><span class=""> 1131: #
+</span><span class=""> 1132: # Purpose:     Prevent hammering the API when min_interval &gt; 0.
+</span><span class=""> 1133: # Entry:       $self -- Weather::Meteo instance with last_request and min_interval
+</span><span class=""> 1134: # Exit:        (nothing returned)
+</span><span class=""> 1135: # Side effects: may block for up to min_interval seconds via Time::HiRes::sleep
+</span><span class=""> 1136: # ---------------------------------------------------------------------------
+</span><span class=""> 1137: sub _enforce_rate_limit {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">1138 → 1140 → 0</span></span> 1138: 	my ($self) = @_;
+</span><span class=""> 1139: 	my $elapsed = time() - $self-&gt;{last_request};
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1140: 	if($elapsed &lt; $self-&gt;{min_interval}) {
+</span><p> <b> Mutants (Total: 4, Killed: 4, Survived: 0)</b><p><span class=""> 1141: 		Time::HiRes::sleep($self-&gt;{min_interval} - $elapsed);
+</span><span class=""> 1142: 	}
+</span><span class=""> 1143: }
+</span><span class=""> 1144: 
+</span><span class=""> 1145: # ---------------------------------------------------------------------------
+</span><span class=""> 1146: # _fetch_json -- HTTP GET a URL and decode the response body as JSON
+</span><span class=""> 1147: #
+</span><span class=""> 1148: # Purpose:     Centralise the HTTP dispatch and JSON parsing steps that are
+</span><span class=""> 1149: #              common to all three public data methods, giving one place to
+</span><span class=""> 1150: #              maintain error-handling and rate-limiting logic.
+</span><span class=""> 1151: # Entry:       $self -- Weather::Meteo instance
+</span><span class=""> 1152: #              $url  -- fully-formed request URL string
+</span><span class=""> 1153: # Exit:        decoded hashref (or other JSON value) on success; undef on error
+</span><span class=""> 1154: # Side effects: enforces rate limit (may sleep); updates last_request timestamp;
+</span><span class=""> 1155: #              carps on HTTP errors and JSON parse failures
+</span><span class=""> 1156: # ---------------------------------------------------------------------------
+</span><span class=""> 1157: sub _fetch_json {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">1158 → 1165 → 1170</span></span> 1158: 	my ($self, $url) = @_;
 </span><span class=""> 1159: 
-</span><span class=""> 1160: =item * No list-context support
+</span><span class=""> 1160: 	$self-&gt;_enforce_rate_limit();
 </span><span class=""> 1161: 
-</span><span class=""> 1162: C&lt;weather()&gt; and C&lt;forecast()&gt; enforce scalar/hashref context via
-</span><span class=""> 1163: L&lt;Return::Set&gt;.
-</span><span class=""> 1164: List context is not currently supported.
-</span><span class=""> 1165: 
-</span><span class=""> 1166: =item * Access control by convention only
-</span><span class=""> 1167: 
-</span><span class=""> 1168: Private methods (prefixed with C&lt;_&gt;) are not enforced by a module such as
-</span><span class=""> 1169: L&lt;Sub::Private&gt;.
-</span><span class=""> 1170: Callers are expected to treat them as internal; white-box test files may
-</span><span class=""> 1171: access them directly.
-</span><span class=""> 1172: 
-</span><span class=""> 1173: =back
+</span><span class=""> 1162: 	my $res = $self-&gt;{ua}-&gt;get($url);
+</span><span class=""> 1163: 	$self-&gt;{last_request} = time();
+</span><span class=""> 1164: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1165: 	unless(defined($res) &amp;&amp; ref($res) &amp;&amp; $res-&gt;can(&#39;is_error&#39;)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""> 1166: 		Carp::carp(ref($self) . &#39;: UA-&gt;get did not return a valid HTTP response&#39;);
+</span><span class=""> 1167: 		return;
+</span><span class=""> 1168: 	}
+</span><span class=""> 1169: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">1170 → 1170 → 1175</span></span> 1170: 	if($res-&gt;is_error()) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""> 1171: 		Carp::carp(ref($self) . &quot;: $url API returned error: &quot; . $res-&gt;status_line());
+</span><span class=""> 1172: 		return;
+</span><span class=""> 1173: 	}
 </span><span class=""> 1174: 
-</span><span class=""> 1175: =head1 AUTHOR
-</span><span class=""> 1176: 
-</span><span class=""> 1177: Nigel Horne, C&lt;&lt; &lt;njh@nigelhorne.com&gt; &gt;&gt;
-</span><span class=""> 1178: 
-</span><span class=""> 1179: This library is free software; you can redistribute it and/or modify
-</span><span class=""> 1180: it under the same terms as Perl itself.
-</span><span class=""> 1181: 
-</span><span class=""> 1182: Lots of thanks to the folks at L&lt;https://open-meteo.com&gt;.
-</span><span class=""> 1183: 
-</span><span class=""> 1184: =head1 BUGS
-</span><span class=""> 1185: 
-</span><span class=""> 1186: Please report any bugs or feature requests to C&lt;bug-weather-meteo at rt.cpan.org&gt;,
-</span><span class=""> 1187: or through the web interface at
-</span><span class=""> 1188: L&lt;http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Weather-Meteo&gt;.
-</span><span class=""> 1189: I will be notified, and then you&#39;ll
-</span><span class=""> 1190: automatically be notified of progress on your bug as I make changes.
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">1175 → 1177 → 1187</span></span> 1175: 	my $rc;
+</span><span class=""> 1176: 	eval { $rc = JSON::MaybeXS-&gt;new()-&gt;utf8()-&gt;decode($res-&gt;decoded_content()) };
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1177: 	if($@) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""> 1178: 		# Sanitise the exception: strip control chars and cap length to prevent
+</span><span class=""> 1179: 		# log injection or flooding from a malicious API response body
+</span><span class=""> 1180: 		my $err = &quot;$@&quot;;
+</span><span class=""> 1181: 		$err =~ s/[[:cntrl:]]/ /g;
+</span><span class="survived-3 tooltip" data-tooltip="Boundary mutation survived. Add tests around edge values (e.g. min, max, off-by-one)."> 1182: 		$err = substr($err, 0, 200) . &#39;...&#39; if length($err) &gt; 200;
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 3, Killed: 0, Survived: 3)</summary>
+					<ul>
+				<li><b>NUM_BOUNDARY_1182_55_<: Numeric boundary flip > to <</b><br>HIGH: Likely missing edge-case test (boundary value)
+
+								<div class="suggested-test">
+								<div class="suggest-label">🧪 Suggested Test</div>
+								<pre># Boundary test suggestion
+is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
+</pre>
+								</div>
+							</li><li><b>NUM_BOUNDARY_1182_55_>=: Numeric boundary flip > to >=</b><br>HIGH: Likely missing edge-case test (boundary value)
+
+								<div class="suggested-test">
+								<div class="suggest-label">🧪 Suggested Test</div>
+								<pre># Boundary test suggestion
+is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
+</pre>
+								</div>
+							</li><li><b>NUM_BOUNDARY_1182_55_<=: Numeric boundary flip > to <=</b><br>HIGH: Likely missing edge-case test (boundary value)
+
+								<div class="suggested-test">
+								<div class="suggest-label">🧪 Suggested Test</div>
+								<pre># Boundary test suggestion
+is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
+</pre>
+								</div>
+							</li></ul></details>
+<span class=""> 1183: 		Carp::carp(&quot;Failed to parse JSON response: $err&quot;);
+</span><span class=""> 1184: 		return;
+</span><span class=""> 1185: 	}
+</span><span class=""> 1186: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."> 1187: 	return $rc;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class=""> 1188: }
+</span><span class=""> 1189: 
+</span><span class=""> 1190: =head1 LIMITATIONS
 </span><span class=""> 1191: 
-</span><span class=""> 1192: =head1 SEE ALSO
+</span><span class=""> 1192: =over 4
 </span><span class=""> 1193: 
-</span><span class=""> 1194: =over 4
+</span><span class=""> 1194: =item * Archive data lag
 </span><span class=""> 1195: 
-</span><span class=""> 1196: =item * Open Meteo API: L&lt;https://open-meteo.com/en/docs#api_form&gt;
-</span><span class=""> 1197: 
-</span><span class=""> 1198: =item * L&lt;Configure an Object at Runtime|Object::Configure&gt;
-</span><span class=""> 1199: 
-</span><span class=""> 1200: =item * L&lt;Test Dashboard|https://nigelhorne.github.io/Weather-Meteo/coverage/&gt;
-</span><span class=""> 1201: 
-</span><span class=""> 1202: =back
-</span><span class=""> 1203: 
-</span><span class=""> 1204: =head1 SUPPORT
-</span><span class=""> 1205: 
-</span><span class=""> 1206: This module is provided as-is without any warranty.
-</span><span class=""> 1207: 
-</span><span class=""> 1208: You can find documentation for this module with the perldoc command.
+</span><span class=""> 1196: The Open-Meteo archive endpoint has a lag of approximately five days before
+</span><span class=""> 1197: recent historical data becomes available.
+</span><span class=""> 1198: For dates within the past five days,
+</span><span class=""> 1199: C&lt;weather()&gt; may return C&lt;undef&gt; even when no error occurs.
+</span><span class=""> 1200: Use C&lt;forecast()&gt; or C&lt;sunrise_sunset()&gt; (without a date) to obtain data for
+</span><span class=""> 1201: today or recent days.
+</span><span class=""> 1202: 
+</span><span class=""> 1203: =item * Coordinate range
+</span><span class=""> 1204: 
+</span><span class=""> 1205: The module normalises coordinates with a bare leading decimal point (e.g.
+</span><span class=""> 1206: C&lt;&quot;.5&quot;&gt; to C&lt;&quot;0.5&quot;&gt;) but does not validate that latitude is within C&lt;-90..90&gt;
+</span><span class=""> 1207: or longitude within C&lt;-180..180&gt;.
+</span><span class=""> 1208: Out-of-range values are passed to the API, which may return an error.
 </span><span class=""> 1209: 
-</span><span class=""> 1210:     perldoc Weather::Meteo
+</span><span class=""> 1210: =item * No sub-hourly resolution
 </span><span class=""> 1211: 
-</span><span class=""> 1212: You can also look for information at:
-</span><span class=""> 1213: 
-</span><span class=""> 1214: =over 4
-</span><span class=""> 1215: 
-</span><span class=""> 1216: =item * MetaCPAN
-</span><span class=""> 1217: 
-</span><span class=""> 1218: L&lt;https://metacpan.org/release/Weather-Meteo&gt;
-</span><span class=""> 1219: 
-</span><span class=""> 1220: =item * RT: CPAN&#39;s request tracker
+</span><span class=""> 1212: The hourly data arrays always contain exactly 24 entries per day (one per hour).
+</span><span class=""> 1213: Sub-hourly resolution is not supported by this interface.
+</span><span class=""> 1214: 
+</span><span class=""> 1215: =item * Per-process rate limiting
+</span><span class=""> 1216: 
+</span><span class=""> 1217: The C&lt;min_interval&gt; rate limiter tracks the last request timestamp within a
+</span><span class=""> 1218: single process instance.
+</span><span class=""> 1219: Multiple concurrent processes or threads are not coordinated and may collectively
+</span><span class=""> 1220: exceed the desired request rate.
 </span><span class=""> 1221: 
-</span><span class=""> 1222: L&lt;https://rt.cpan.org/NoAuth/Bugs.html?Dist=Weather-Meteo&gt;
+</span><span class=""> 1222: =item * Timezone resolution requires an API key
 </span><span class=""> 1223: 
-</span><span class=""> 1224: =item * CPANTS
-</span><span class=""> 1225: 
-</span><span class=""> 1226: L&lt;http://cpants.cpanauthors.org/dist/Weather-Meteo&gt;
-</span><span class=""> 1227: 
-</span><span class=""> 1228: =item * CPAN Testers&#39; Matrix
-</span><span class=""> 1229: 
-</span><span class=""> 1230: L&lt;http://matrix.cpantesters.org/?dist=Weather-Meteo&gt;
-</span><span class=""> 1231: 
-</span><span class=""> 1232: =item * CPAN Testers Dependencies
-</span><span class=""> 1233: 
-</span><span class=""> 1234: L&lt;http://deps.cpantesters.org/?module=Weather-Meteo&gt;
-</span><span class=""> 1235: 
-</span><span class=""> 1236: =back
-</span><span class=""> 1237: 
-</span><span class=""> 1238: =head1 LICENSE AND COPYRIGHT
-</span><span class=""> 1239: 
-</span><span class=""> 1240: Copyright 2023-2026 Nigel Horne.
+</span><span class=""> 1224: Automatic per-location timezone resolution requires setting the
+</span><span class=""> 1225: C&lt;TIMEZONEDB_KEY&gt; environment variable to a valid key from
+</span><span class=""> 1226: L&lt;https://timezonedb.com&gt;.
+</span><span class=""> 1227: Without it the module defaults to C&lt;Europe/London&gt; for all locations.
+</span><span class=""> 1228: 
+</span><span class=""> 1229: =item * No list-context support
+</span><span class=""> 1230: 
+</span><span class=""> 1231: C&lt;weather()&gt; and C&lt;forecast()&gt; enforce scalar/hashref context via
+</span><span class=""> 1232: L&lt;Return::Set&gt;.
+</span><span class=""> 1233: List context is not currently supported.
+</span><span class=""> 1234: 
+</span><span class=""> 1235: =item * Access control by convention only
+</span><span class=""> 1236: 
+</span><span class=""> 1237: Private methods (prefixed with C&lt;_&gt;) are not enforced by a module such as
+</span><span class=""> 1238: L&lt;Sub::Private&gt;.
+</span><span class=""> 1239: Callers are expected to treat them as internal; white-box test files may
+</span><span class=""> 1240: access them directly.
 </span><span class=""> 1241: 
-</span><span class=""> 1242: Usage is subject to the GPL2 licence terms.
-</span><span class=""> 1243: If you use it,
-</span><span class=""> 1244: please let me know.
-</span><span class=""> 1245: 
-</span><span class=""> 1246: =cut
-</span><span class=""> 1247: 
-</span><span class=""> 1248: 1;
+</span><span class=""> 1242: =item * Host parameter restricted to plain DNS hostnames
+</span><span class=""> 1243: 
+</span><span class=""> 1244: The C&lt;host&gt; constructor parameter (and the C&lt;WEATHER__METEO__host&gt; environment
+</span><span class=""> 1245: variable) must match C&lt;/\A[A-Za-z0-9][A-Za-z0-9.\-]*(:\d{1,5})?\z/&gt;.
+</span><span class=""> 1246: IP addresses in CIDR notation, URLs with path components, C&lt;@&gt;-style
+</span><span class=""> 1247: user-info, and other special characters are rejected with a C&lt;croak&gt; to
+</span><span class=""> 1248: prevent Server-Side Request Forgery.
+</span><span class=""> 1249: If you need to test against a local service on a non-standard port, use a
+</span><span class=""> 1250: plain C&lt;hostname:port&gt; string (e.g. C&lt;localhost:8080&gt;).
+</span><span class=""> 1251: 
+</span><span class=""> 1252: =item * Coordinate values limited to decimal numbers
+</span><span class=""> 1253: 
+</span><span class=""> 1254: Latitude and longitude must match C&lt;/\A-?(?&gt;\d+)(?:\.(?&gt;\d+))?\z/&gt; after
+</span><span class=""> 1255: leading-decimal normalisation.
+</span><span class=""> 1256: Exponential notation (C&lt;1.5e2&gt;), hex (C&lt;0x1F&gt;), and strings with embedded
+</span><span class=""> 1257: whitespace are rejected.
+</span><span class=""> 1258: Pass a pre-formatted decimal string rather than a Perl numeric expression if
+</span><span class=""> 1259: your caller might produce non-decimal representations.
+</span><span class=""> 1260: 
+</span><span class=""> 1261: =back
+</span><span class=""> 1262: 
+</span><span class=""> 1263: =head1 AUTHOR
+</span><span class=""> 1264: 
+</span><span class=""> 1265: Nigel Horne, C&lt;&lt; &lt;njh@nigelhorne.com&gt; &gt;&gt;
+</span><span class=""> 1266: 
+</span><span class=""> 1267: This library is free software; you can redistribute it and/or modify
+</span><span class=""> 1268: it under the same terms as Perl itself.
+</span><span class=""> 1269: 
+</span><span class=""> 1270: Lots of thanks to the folks at L&lt;https://open-meteo.com&gt;.
+</span><span class=""> 1271: 
+</span><span class=""> 1272: =head1 BUGS
+</span><span class=""> 1273: 
+</span><span class=""> 1274: Please report any bugs or feature requests to C&lt;bug-weather-meteo at rt.cpan.org&gt;,
+</span><span class=""> 1275: or through the web interface at
+</span><span class=""> 1276: L&lt;http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Weather-Meteo&gt;.
+</span><span class=""> 1277: I will be notified, and then you&#39;ll
+</span><span class=""> 1278: automatically be notified of progress on your bug as I make changes.
+</span><span class=""> 1279: 
+</span><span class=""> 1280: =head1 SEE ALSO
+</span><span class=""> 1281: 
+</span><span class=""> 1282: =over 4
+</span><span class=""> 1283: 
+</span><span class=""> 1284: =item * Open Meteo API: L&lt;https://open-meteo.com/en/docs#api_form&gt;
+</span><span class=""> 1285: 
+</span><span class=""> 1286: =item * L&lt;Configure an Object at Runtime|Object::Configure&gt;
+</span><span class=""> 1287: 
+</span><span class=""> 1288: =item * L&lt;Test Dashboard|https://nigelhorne.github.io/Weather-Meteo/coverage/&gt;
+</span><span class=""> 1289: 
+</span><span class=""> 1290: =back
+</span><span class=""> 1291: 
+</span><span class=""> 1292: =head1 SUPPORT
+</span><span class=""> 1293: 
+</span><span class=""> 1294: This module is provided as-is without any warranty.
+</span><span class=""> 1295: 
+</span><span class=""> 1296: You can find documentation for this module with the perldoc command.
+</span><span class=""> 1297: 
+</span><span class=""> 1298:     perldoc Weather::Meteo
+</span><span class=""> 1299: 
+</span><span class=""> 1300: You can also look for information at:
+</span><span class=""> 1301: 
+</span><span class=""> 1302: =over 4
+</span><span class=""> 1303: 
+</span><span class=""> 1304: =item * MetaCPAN
+</span><span class=""> 1305: 
+</span><span class=""> 1306: L&lt;https://metacpan.org/release/Weather-Meteo&gt;
+</span><span class=""> 1307: 
+</span><span class=""> 1308: =item * RT: CPAN&#39;s request tracker
+</span><span class=""> 1309: 
+</span><span class=""> 1310: L&lt;https://rt.cpan.org/NoAuth/Bugs.html?Dist=Weather-Meteo&gt;
+</span><span class=""> 1311: 
+</span><span class=""> 1312: =item * CPANTS
+</span><span class=""> 1313: 
+</span><span class=""> 1314: L&lt;http://cpants.cpanauthors.org/dist/Weather-Meteo&gt;
+</span><span class=""> 1315: 
+</span><span class=""> 1316: =item * CPAN Testers&#39; Matrix
+</span><span class=""> 1317: 
+</span><span class=""> 1318: L&lt;http://matrix.cpantesters.org/?dist=Weather-Meteo&gt;
+</span><span class=""> 1319: 
+</span><span class=""> 1320: =item * CPAN Testers Dependencies
+</span><span class=""> 1321: 
+</span><span class=""> 1322: L&lt;http://deps.cpantesters.org/?module=Weather-Meteo&gt;
+</span><span class=""> 1323: 
+</span><span class=""> 1324: =back
+</span><span class=""> 1325: 
+</span><span class=""> 1326: =head1 LICENSE AND COPYRIGHT
+</span><span class=""> 1327: 
+</span><span class=""> 1328: Copyright 2023-2026 Nigel Horne.
+</span><span class=""> 1329: 
+</span><span class=""> 1330: Usage is subject to the GPL2 licence terms.
+</span><span class=""> 1331: If you use it,
+</span><span class=""> 1332: please let me know.
+</span><span class=""> 1333: 
+</span><span class=""> 1334: =cut
+</span><span class=""> 1335: 
+</span><span class=""> 1336: 1;
 </span></pre>
 
 <script>

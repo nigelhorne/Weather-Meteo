@@ -116,32 +116,6 @@ merging any supplied parameters.
 
     { type => 'object', isa => 'Weather::Meteo' }
 
-### FORMAL SPECIFICATION
-
-    ___ NEW ___________________________________________________
-    | class?        : PACKAGE | Weather::Meteo               |
-    | params?       : NAME |--> VALUE                         |
-    |___________________________________________________________|
-    | result!       : Weather::Meteo                          |
-    |                                                          |
-    | blessed(result!) = 'Weather::Meteo'                     |
-    |                                                          |
-    | params?.ua?    => result!.ua    = params?.ua             |
-    | ~params?.ua    => result!.ua    : LWP::UserAgent         |
-    | params?.cache? => result!.cache = params?.cache          |
-    | ~params?.cache => result!.cache : CHI(Memory, global)    |
-    | params?.host?  => result!.host  = params?.host           |
-    | ~params?.host  => result!.host  = 'archive-api.open-meteo.com' |
-    | params?.min_interval? => result!.min_interval = params?.min_interval |
-    | ~params?.min_interval => result!.min_interval = 0        |
-    | result!.last_request  = 0                                |
-    |___________________________________________________________|
-    |                                                          |
-    | PRE:  class? is PACKAGE name or blessed Weather::Meteo  |
-    | POST: blessed(result!) = 'Weather::Meteo'               |
-    |       forall k in params? . result!.k = params?.k       |
-    |___________________________________________________________|
-
 ## weather
 
     use Geo::Location::Point;
@@ -198,53 +172,6 @@ Three call forms are accepted.
     { type => 'hashref', min => 1 }   # success -- contains 'hourly' key
     undef                              # pre-1940 date, bad input, or API error
 
-### FORMAL SPECIFICATION
-
-    ___ WEATHER _______________________________________________
-    | self?      : Weather::Meteo                            |
-    | latitude?  : REAL                                       |
-    | longitude? : REAL                                       |
-    | date?      : DATE_STRING | strftime_OBJECT              |
-    | tz?        : STRING  (optional, default 'Europe/London')|
-    |____________________________________________________________|
-    | result!    : HASHREF | undef                            |
-    |____________________________________________________________|
-    |                                                          |
-    | PRE (~latitude? v ~longitude? v ~date?)                 |
-    |   => croak /Usage: weather\(latitude/                   |
-    |                                                          |
-    | PRE lat? or lon? not matching /^-?\d+(\.\d+)?$/         |
-    |   (after leading-decimal normalisation)                  |
-    |   => croak /Invalid latitude\/longitude format/          |
-    |                                                          |
-    | PRE date? blessed ^ date?.can('strftime')               |
-    |   => date? := date?.strftime('%F')                       |
-    |   PRE date? !~ /^\d{4}-\d{2}-\d{2}$/                   |
-    |     => croak /Invalid date format. Expected YYYY-MM-DD/ |
-    |                                                          |
-    | PRE year(date?) < 1940                                   |
-    |   => result! = undef                                     |
-    |                                                          |
-    | POST cache hit for (lat, lon, date, tz)                 |
-    |   => result! = cached_value                              |
-    |                                                          |
-    | POST HTTP error response                                 |
-    |   => carp msg ^ result! = undef                          |
-    |                                                          |
-    | POST JSON parse failure                                  |
-    |   => carp /Failed to parse JSON response/ ^ result! = undef |
-    |                                                          |
-    | POST response.error = true                               |
-    |   => result! = undef                                     |
-    |                                                          |
-    | POST ~response.hourly                                    |
-    |   => result! = undef                                     |
-    |                                                          |
-    | POST otherwise                                           |
-    |   => result! = { hourly => HOURLY, daily => DAILY }     |
-    |      cache.set(key, result!)                             |
-    |____________________________________________________________|
-
 ## forecast
 
     my $meteo    = Weather::Meteo->new();
@@ -292,48 +219,6 @@ Three call forms are accepted.
 
     { type => 'hashref', min => 1 }   # success -- contains 'hourly' key
     undef                              # bad input or API error
-
-### FORMAL SPECIFICATION
-
-    ___ FORECAST ______________________________________________
-    | self?      : Weather::Meteo                            |
-    | latitude?  : REAL                                       |
-    | longitude? : REAL                                       |
-    | days?      : INTEGER [1..16]  (optional, default 7)    |
-    | tz?        : STRING  (optional, default 'Europe/London')|
-    |____________________________________________________________|
-    | result!    : HASHREF | undef                            |
-    |____________________________________________________________|
-    |                                                          |
-    | PRE (~latitude? v ~longitude?)                           |
-    |   => croak /Usage: forecast\(latitude/                  |
-    |                                                          |
-    | PRE lat? or lon? not matching /^-?\d+(\.\d+)?$/         |
-    |   => croak /Invalid latitude\/longitude format/          |
-    |                                                          |
-    | PRE days? defined ^ (days? < 1 v days? > 16)            |
-    |   => carp /days must be between 1 and 16/               |
-    |      days? := 7                                          |
-    |                                                          |
-    | POST cache hit for (lat, lon, days, tz)                 |
-    |   => result! = cached_value                              |
-    |                                                          |
-    | POST HTTP error response                                 |
-    |   => carp msg ^ result! = undef                          |
-    |                                                          |
-    | POST JSON parse failure                                  |
-    |   => carp /Failed to parse JSON response/ ^ result! = undef |
-    |                                                          |
-    | POST response.error = true                               |
-    |   => result! = undef                                     |
-    |                                                          |
-    | POST ~response.hourly                                    |
-    |   => result! = undef                                     |
-    |                                                          |
-    | POST otherwise                                           |
-    |   => result! = { hourly => HOURLY, daily => DAILY }     |
-    |      cache.set(key, result!)                             |
-    |____________________________________________________________|
 
 ## sunrise\_sunset
 
@@ -386,44 +271,6 @@ Three call forms are accepted.
     { type => 'hashref' }   # { sunrise => STRING, sunset => STRING }
     undef                    # bad input or API error
 
-### FORMAL SPECIFICATION
-
-    ___ SUNRISE_SUNSET ________________________________________
-    | self?      : Weather::Meteo                            |
-    | latitude?  : REAL                                       |
-    | longitude? : REAL                                       |
-    | date?      : DATE_STRING  (optional, default today)     |
-    | tz?        : STRING  (optional, default 'Europe/London')|
-    |____________________________________________________________|
-    | result!    : HASHREF | undef                            |
-    |____________________________________________________________|
-    |                                                          |
-    | PRE (~latitude? v ~longitude?)                           |
-    |   => croak /Usage: sunrise_sunset\(latitude/            |
-    |                                                          |
-    | PRE lat? or lon? not matching /^-?\d+(\.\d+)?$/         |
-    |   => croak /Invalid latitude\/longitude format/          |
-    |                                                          |
-    | PRE date? defined ^ date? !~ /^\d{4}-\d{2}-\d{2}$/     |
-    |   => carp /not a valid date/ ^ result! = undef           |
-    |                                                          |
-    | POST ~date? v date? >= today                             |
-    |   => uses forecast endpoint (api.open-meteo.com)        |
-    |                                                          |
-    | POST date? < today                                       |
-    |   => uses archive endpoint (archive-api.open-meteo.com) |
-    |                                                          |
-    | POST cache hit for (lat, lon, date, tz)                 |
-    |   => result! = cached_value                              |
-    |                                                          |
-    | POST HTTP error or JSON failure or ~daily.sunrise        |
-    |   => result! = undef                                     |
-    |                                                          |
-    | POST otherwise                                           |
-    |   => result! = { sunrise => ISO8601, sunset => ISO8601 } |
-    |      cache.set(key, result!)                             |
-    |____________________________________________________________|
-
 ## ua
 
 Accessor method to get and set UserAgent object used internally.
@@ -452,25 +299,6 @@ When called with an argument the argument must be an object that responds to `ge
 #### Output
 
     { type => 'object', can => 'get' }
-
-### FORMAL SPECIFICATION
-
-    ___ UA ____________________________________________________
-    | self?   : Weather::Meteo                               |
-    | ua?     : OBJECT [can 'get']   (optional)              |
-    |____________________________________________________________|
-    | result! : OBJECT [can 'get']                            |
-    |____________________________________________________________|
-    |                                                          |
-    | PRE ua? defined ^ ~ua?.can('get')                       |
-    |   => croak /must be an object that understands the get method/ |
-    |                                                          |
-    | POST ua? defined                                         |
-    |   => self?.ua = ua? ^ result! = ua?                     |
-    |                                                          |
-    | POST ~ua?                                                |
-    |   => result! = self?.ua  (no state change)              |
-    |____________________________________________________________|
 
 # AUTHOR
 
@@ -524,6 +352,180 @@ You can also look for information at:
 - CPAN Testers Dependencies
 
     [http://deps.cpantesters.org/?module=Weather-Meteo](http://deps.cpantesters.org/?module=Weather-Meteo)
+
+# FORMAL SPECIFICATION
+
+## new
+
+    ___ NEW ___________________________________________________
+    | class?        : PACKAGE | Weather::Meteo               |
+    | params?       : NAME |--> VALUE                         |
+    |___________________________________________________________|
+    | result!       : Weather::Meteo                          |
+    |                                                          |
+    | blessed(result!) = 'Weather::Meteo'                     |
+    |                                                          |
+    | params?.ua?    => result!.ua    = params?.ua             |
+    | ~params?.ua    => result!.ua    : LWP::UserAgent         |
+    | params?.cache? => result!.cache = params?.cache          |
+    | ~params?.cache => result!.cache : CHI(Memory, global)    |
+    | params?.host?  => result!.host  = params?.host           |
+    | ~params?.host  => result!.host  = 'archive-api.open-meteo.com' |
+    | params?.min_interval? => result!.min_interval = params?.min_interval |
+    | ~params?.min_interval => result!.min_interval = 0        |
+    | result!.last_request  = 0                                |
+    |___________________________________________________________|
+    |                                                          |
+    | PRE:  class? is PACKAGE name or blessed Weather::Meteo  |
+    | POST: blessed(result!) = 'Weather::Meteo'               |
+    |       forall k in params? . result!.k = params?.k       |
+    |___________________________________________________________|
+
+## weather
+
+    ___ WEATHER _______________________________________________
+    | self?      : Weather::Meteo                            |
+    | latitude?  : REAL                                       |
+    | longitude? : REAL                                       |
+    | date?      : DATE_STRING | strftime_OBJECT              |
+    | tz?        : STRING  (optional, default 'Europe/London')|
+    |____________________________________________________________|
+    | result!    : HASHREF | undef                            |
+    |____________________________________________________________|
+    |                                                          |
+    | PRE (~latitude? v ~longitude? v ~date?)                 |
+    |   => croak /Usage: weather\(latitude/                   |
+    |                                                          |
+    | PRE lat? or lon? not matching /^-?\d+(\.\d+)?$/         |
+    |   (after leading-decimal normalisation)                  |
+    |   => croak /Invalid latitude\/longitude format/          |
+    |                                                          |
+    | PRE date? blessed ^ date?.can('strftime')               |
+    |   => date? := date?.strftime('%F')                       |
+    |   PRE date? !~ /^\d{4}-\d{2}-\d{2}$/                   |
+    |     => croak /Invalid date format. Expected YYYY-MM-DD/ |
+    |                                                          |
+    | PRE year(date?) < 1940                                   |
+    |   => result! = undef                                     |
+    |                                                          |
+    | POST cache hit for (lat, lon, date, tz)                 |
+    |   => result! = cached_value                              |
+    |                                                          |
+    | POST HTTP error response                                 |
+    |   => carp msg ^ result! = undef                          |
+    |                                                          |
+    | POST JSON parse failure                                  |
+    |   => carp /Failed to parse JSON response/ ^ result! = undef |
+    |                                                          |
+    | POST response.error = true                               |
+    |   => result! = undef                                     |
+    |                                                          |
+    | POST ~response.hourly                                    |
+    |   => result! = undef                                     |
+    |                                                          |
+    | POST otherwise                                           |
+    |   => result! = { hourly => HOURLY, daily => DAILY }     |
+    |      cache.set(key, result!)                             |
+    |____________________________________________________________|
+
+## forecast
+
+    ___ FORECAST ______________________________________________
+    | self?      : Weather::Meteo                            |
+    | latitude?  : REAL                                       |
+    | longitude? : REAL                                       |
+    | days?      : INTEGER [1..16]  (optional, default 7)    |
+    | tz?        : STRING  (optional, default 'Europe/London')|
+    |____________________________________________________________|
+    | result!    : HASHREF | undef                            |
+    |____________________________________________________________|
+    |                                                          |
+    | PRE (~latitude? v ~longitude?)                           |
+    |   => croak /Usage: forecast\(latitude/                  |
+    |                                                          |
+    | PRE lat? or lon? not matching /^-?\d+(\.\d+)?$/         |
+    |   => croak /Invalid latitude\/longitude format/          |
+    |                                                          |
+    | PRE days? defined ^ (days? < 1 v days? > 16)            |
+    |   => carp /days must be between 1 and 16/               |
+    |      days? := 7                                          |
+    |                                                          |
+    | POST cache hit for (lat, lon, days, tz)                 |
+    |   => result! = cached_value                              |
+    |                                                          |
+    | POST HTTP error response                                 |
+    |   => carp msg ^ result! = undef                          |
+    |                                                          |
+    | POST JSON parse failure                                  |
+    |   => carp /Failed to parse JSON response/ ^ result! = undef |
+    |                                                          |
+    | POST response.error = true                               |
+    |   => result! = undef                                     |
+    |                                                          |
+    | POST ~response.hourly                                    |
+    |   => result! = undef                                     |
+    |                                                          |
+    | POST otherwise                                           |
+    |   => result! = { hourly => HOURLY, daily => DAILY }     |
+    |      cache.set(key, result!)                             |
+    |____________________________________________________________|
+
+## sunrise\_sunset
+
+    ___ SUNRISE_SUNSET ________________________________________
+    | self?      : Weather::Meteo                            |
+    | latitude?  : REAL                                       |
+    | longitude? : REAL                                       |
+    | date?      : DATE_STRING  (optional, default today)     |
+    | tz?        : STRING  (optional, default 'Europe/London')|
+    |____________________________________________________________|
+    | result!    : HASHREF | undef                            |
+    |____________________________________________________________|
+    |                                                          |
+    | PRE (~latitude? v ~longitude?)                           |
+    |   => croak /Usage: sunrise_sunset\(latitude/            |
+    |                                                          |
+    | PRE lat? or lon? not matching /^-?\d+(\.\d+)?$/         |
+    |   => croak /Invalid latitude\/longitude format/          |
+    |                                                          |
+    | PRE date? defined ^ date? !~ /^\d{4}-\d{2}-\d{2}$/     |
+    |   => carp /not a valid date/ ^ result! = undef           |
+    |                                                          |
+    | POST ~date? v date? >= today                             |
+    |   => uses forecast endpoint (api.open-meteo.com)        |
+    |                                                          |
+    | POST date? < today                                       |
+    |   => uses archive endpoint (archive-api.open-meteo.com) |
+    |                                                          |
+    | POST cache hit for (lat, lon, date, tz)                 |
+    |   => result! = cached_value                              |
+    |                                                          |
+    | POST HTTP error or JSON failure or ~daily.sunrise        |
+    |   => result! = undef                                     |
+    |                                                          |
+    | POST otherwise                                           |
+    |   => result! = { sunrise => ISO8601, sunset => ISO8601 } |
+    |      cache.set(key, result!)                             |
+    |____________________________________________________________|
+
+## ua
+
+    ___ UA ____________________________________________________
+    | self?   : Weather::Meteo                               |
+    | ua?     : OBJECT [can 'get']   (optional)              |
+    |____________________________________________________________|
+    | result! : OBJECT [can 'get']                            |
+    |____________________________________________________________|
+    |                                                          |
+    | PRE ua? defined ^ ~ua?.can('get')                       |
+    |   => croak /must be an object that understands the get method/ |
+    |                                                          |
+    | POST ua? defined                                         |
+    |   => self?.ua = ua? ^ result! = ua?                     |
+    |                                                          |
+    | POST ~ua?                                                |
+    |   => result! = self?.ua  (no state change)              |
+    |____________________________________________________________|
 
 # LICENSE AND COPYRIGHT
 

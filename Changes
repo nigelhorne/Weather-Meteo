@@ -1,6 +1,6 @@
 Revision history for Weather::Meteo
 
-0.15
+0.15	Mon Jul 13 12:51:54 EDT 2026
 	[ Security ]
 	- Fix SSRF: validate and untaint the host parameter in new() against a
 	  hostname-only regex; rejects IP addresses, @-injection, and path segments

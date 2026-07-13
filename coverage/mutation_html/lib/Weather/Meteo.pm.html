@@ -246,7 +246,7 @@ pre details.mutant-details ul {
 <strong>Structural Coverage (Approximate)</strong><p>
 TER1 (Statement): 98.06%<br>
 TER2 (Branch): 90.91%<br>
-TER3 (LCSAJ): 100.0% (41/41)<br>
+TER3 (LCSAJ): 100.0% (19/19)<br>
 Approximate LCSAJ segments: 67<br>
 </div>
 
@@ -460,7 +460,7 @@ Approximate LCSAJ segments: 67<br>
 </span><span class="">  168: =cut
 </span><span class="">  169: 
 </span><span class="">  170: sub new {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">171 → 174 → 192</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">171 → 174 → 0</span></span>  171: 	my $class = shift;
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">171 → 174 → 192</span></span>  171: 	my $class = shift;
 </span><span class="">  172: 	my $params = Params::Get::get_params(undef, \@_) || {};
 </span><span class="">  173: 
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  174: 	if(!defined($class)) {
@@ -481,14 +481,14 @@ Approximate LCSAJ segments: 67<br>
 </span><span class="">  189: 		return bless { %{$class}, %{$params} }, ref($class);
 </span><span class="">  190: 	}
 </span><span class="">  191: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">192 → 195 → 199</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">192 → 195 → 0</span></span>  192: 	$params = Object::Configure::configure($class, $params);
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">192 → 195 → 199</span></span>  192: 	$params = Object::Configure::configure($class, $params);
 </span><span class="">  193: 
 </span><span class="">  194: 	my $ua = $params-&gt;{ua};
 </span><span class="">  195: 	if(!defined($ua)) {
 </span><span class="">  196: 		$ua = LWP::UserAgent-&gt;new(agent =&gt; __PACKAGE__ . &quot;/$VERSION&quot;);
 </span><span class="">  197: 		$ua-&gt;default_header(accept_encoding =&gt; &#39;gzip,deflate&#39;);
 </span><span class="">  198: 	}
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">199 → 211 → 0</span></span>  199: 	my $host = $params-&gt;{host} || &#39;archive-api.open-meteo.com&#39;;
+</span><span class="">  199: 	my $host = $params-&gt;{host} || &#39;archive-api.open-meteo.com&#39;;
 </span><span class="">  200: 
 </span><span class="">  201: 	# Set up caching (default to an in-memory cache if none provided)
 </span><span class="">  202: 	my $cache = $params-&gt;{cache} || CHI-&gt;new(
@@ -628,7 +628,7 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </span><span class="">  323: 
 </span><span class="">  324: sub weather
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  325: {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">326 → 329 → 342</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">326 → 329 → 0</span></span>  326: 	my $self = shift;
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">326 → 329 → 342</span></span>  326: 	my $self = shift;
 </span><span class="">  327: 	my $params;
 </span><span class="">  328: 
 </span><span class="">  329: 	if((scalar(@_) == 2) &amp;&amp; Scalar::Util::blessed($_[0]) &amp;&amp; ($_[0]-&gt;can(&#39;latitude&#39;))) {
@@ -644,7 +644,7 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  339: 		$params = Params::Get::get_params(undef, \@_);
 </span><span class="">  340: 	}
 </span><span class="">  341: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">342 → 348 → 353</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">342 → 348 → 0</span></span>  342: 	my $latitude = $params-&gt;{latitude};
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">342 → 348 → 353</span></span>  342: 	my $latitude = $params-&gt;{latitude};
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  343: 	my $longitude = $params-&gt;{longitude};
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  344: 	my $location = $params-&gt;{&#39;location&#39;};
 </span>
@@ -661,7 +661,7 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </span><span class="">  350: 		$latitude = $location-&gt;latitude();
 </span><span class="">  351: 		$longitude = $location-&gt;longitude();
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  352: 	}
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">353 → 353 → 362</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">353 → 353 → 0</span></span>  353: 	if((!defined($latitude)) || (!defined($longitude)) || (!defined($date))) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">353 → 353 → 362</span></span>  353: 	if((!defined($latitude)) || (!defined($longitude)) || (!defined($date))) {
 </span><span class="">  354: 		if(my $logger = $self-&gt;{&#39;logger&#39;}) {
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  355: 			$logger-&gt;error(&#39;Usage: weather(latitude =&gt; $latitude, longitude =&gt; $longitude, date =&gt; &quot;YYYY-MM-DD&quot;)&#39;);
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  356: 		}
@@ -670,10 +670,10 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  359: 	}
 </span><span class="">  360: 
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  361: 	# Handle numbers starting with a decimal point
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">362 → 362 → 365</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">362 → 362 → 0</span></span>  362: 	if($latitude =~ /^\./) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">362 → 362 → 365</span></span>  362: 	if($latitude =~ /^\./) {
 </span><span class="">  363: 		$latitude = &quot;0$latitude&quot;;
 </span><span class="">  364: 	}
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">365 → 365 → 368</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">365 → 365 → 0</span></span>  365: 	if($latitude =~ /^\-\.(\d+)$/) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">365 → 365 → 368</span></span>  365: 	if($latitude =~ /^\-\.(\d+)$/) {
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  366: 		$latitude = &quot;-0.$1&quot;;
 </span>
 					<details class="mutant-details">
@@ -682,21 +682,21 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 				<li><b>COND_INV_366_3: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
 </li></ul></details>
 <span class="">  367: 	}
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">368 → 368 → 371</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">368 → 368 → 0</span></span>  368: 	if($longitude =~ /^\./) {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">368 → 368 → 371</span></span>  368: 	if($longitude =~ /^\./) {
 </span><span class="">  369: 		$longitude = &quot;0$longitude&quot;;
 </span><span class="">  370: 	}
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">371 → 371 → 375</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">371 → 371 → 0</span></span>  371: 	if($longitude =~ /^\-\.(\d+)$/) {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">371 → 371 → 375</span></span>  371: 	if($longitude =~ /^\-\.(\d+)$/) {
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  372: 		$longitude = &quot;-0.$1&quot;;
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  373: 	}
 </span><span class="">  374: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">375 → 375 → 382</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">375 → 375 → 0</span></span>  375: 	if(($latitude !~ /^-?\d+(\.\d+)?$/) || ($longitude !~ /^-?\d+(\.\d+)?$/)) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">375 → 375 → 382</span></span>  375: 	if(($latitude !~ /^-?\d+(\.\d+)?$/) || ($longitude !~ /^-?\d+(\.\d+)?$/)) {
 </span><p> <b> Mutants (Total: 3, Killed: 3, Survived: 0)</b><p><span class="">  376: 		if(my $logger = $self-&gt;{&#39;logger&#39;}) {
 </span><span class="">  377: 			$logger-&gt;error(__PACKAGE__ . &quot;: Invalid latitude/longitude format ($latitude, $longitude)&quot;);
 </span><span class="">  378: 		}
 </span><span class="">  379: 		Carp::croak(__PACKAGE__, &quot;: Invalid latitude/longitude format ($latitude, $longitude)&quot;);
 </span><span class="">  380: 	}
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  381: 
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">382 → 382 → 391</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">382 → 382 → 0</span></span>  382: 	if(Scalar::Util::blessed($date) &amp;&amp; $date-&gt;can(&#39;strftime&#39;)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">382 → 382 → 391</span></span>  382: 	if(Scalar::Util::blessed($date) &amp;&amp; $date-&gt;can(&#39;strftime&#39;)) {
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
@@ -711,14 +711,14 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </span><span class="">  388: 		return;
 </span><span class="">  389: 	}
 </span><span class="">  390: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">391 → 391 → 398</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">391 → 391 → 0</span></span>  391: 	unless($date =~ /^\d{4}-\d{2}-\d{2}$/) {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">391 → 391 → 398</span></span>  391: 	unless($date =~ /^\d{4}-\d{2}-\d{2}$/) {
 </span><span class="">  392: 		if(my $logger = $self-&gt;{&#39;logger&#39;}) {
 </span><span class="">  393: 			$logger-&gt;error(&#39;Invalid date format. Expected YYYY-MM-DD&#39;);
 </span><span class="">  394: 		}
 </span><span class="">  395: 		croak(&#39;Invalid date format. Expected YYYY-MM-DD&#39;);
 </span><span class="">  396: 	}
 </span><span class="">  397: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">398 → 419 → 424</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">398 → 419 → 0</span></span>  398: 	my $uri = URI-&gt;new(&quot;https://$self-&gt;{host}/v1/archive&quot;);
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">398 → 419 → 424</span></span>  398: 	my $uri = URI-&gt;new(&quot;https://$self-&gt;{host}/v1/archive&quot;);
 </span><span class="">  399: 	my %query_parameters = (
 </span><span class="">  400: 		&#39;latitude&#39; =&gt; $latitude,
 </span><span class="">  401: 		&#39;longitude&#39; =&gt; $longitude,
@@ -744,13 +744,13 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </span><span class="">  421: 	}
 </span><span class="">  422: 
 </span><span class="">  423: 	# Enforce rate-limiting: ensure at least min_interval seconds between requests
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">424 → 426 → 430</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">424 → 426 → 0</span></span>  424: 	my $now = time();
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">424 → 426 → 430</span></span>  424: 	my $now = time();
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  425: 	my $elapsed = $now - $self-&gt;{last_request};
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  426: 	if($elapsed &lt; $self-&gt;{min_interval}) {
 </span><span class="">  427: 		Time::HiRes::sleep($self-&gt;{min_interval} - $elapsed);
 </span><span class="">  428: 	}
 </span><span class="">  429: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">430 → 435 → 440</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">430 → 435 → 0</span></span>  430: 	my $res = $self-&gt;{ua}-&gt;get($url);
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">430 → 435 → 440</span></span>  430: 	my $res = $self-&gt;{ua}-&gt;get($url);
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  431: 
 </span><span class="">  432: 	# Update last_request timestamp
 </span><span class="">  433: 	$self-&gt;{last_request} = time();
@@ -760,20 +760,20 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </span><span class="">  437: 		return;
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  438: 	}
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  439: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">440 → 440 → 446</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">440 → 440 → 0</span></span>  440: 	if($res-&gt;is_error()) {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">440 → 440 → 446</span></span>  440: 	if($res-&gt;is_error()) {
 </span><span class="">  441: 		Carp::carp(ref($self), &quot;: $url API returned error: &quot;, $res-&gt;status_line());
 </span><span class="">  442: 		return;
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  443: 	}
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  444: 	# $res-&gt;content_type(&#39;text/plain&#39;);	# May be needed to decode correctly
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  445: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">446 → 448 → 453</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">446 → 448 → 0</span></span>  446: 	my $rc;
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">446 → 448 → 453</span></span>  446: 	my $rc;
 </span><span class="">  447: 	eval { $rc = JSON::MaybeXS-&gt;new()-&gt;utf8()-&gt;decode($res-&gt;decoded_content()) };
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  448: 	if($@) {
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  449: 		Carp::carp(&quot;Failed to parse JSON response: $@&quot;);
 </span><span class="">  450: 		return;
 </span><span class="">  451: 	}
 </span><span class="">  452: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">453 → 453 → 466</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">453 → 453 → 0</span></span>  453: 	if($rc &amp;&amp; (ref($rc) eq &#39;HASH&#39;)) {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">453 → 453 → 466</span></span>  453: 	if($rc &amp;&amp; (ref($rc) eq &#39;HASH&#39;)) {
 </span><span class="">  454: 		if($rc-&gt;{&#39;error&#39;}) {
 </span><span class="">  455: 			# TODO: print error code
 </span><span class="">  456: 			return;
@@ -786,7 +786,7 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </span><span class="">  463: 		}
 </span><span class="">  464: 	}
 </span><span class="">  465: 
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">466 → 466 → 0</span></span>  466: 	return;
+</span><span class="">  466: 	return;
 </span><span class="">  467: }
 </span><span class="">  468: 
 </span><span class="">  469: =head2 ua
@@ -846,7 +846,7 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </span><span class="">  517: =cut
 </span><span class="">  518: 
 </span><span class="">  519: sub ua {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">520 → 522 → 541</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">520 → 522 → 0</span></span>  520: 	my $self = shift;
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">520 → 522 → 541</span></span>  520: 	my $self = shift;
 </span><span class="">  521: 
 </span><span class="">  522: 	if (@_) {
 </span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  523: 		my $params = Params::Validate::Strict::validate_strict({
@@ -900,7 +900,7 @@ is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
 </span><span class="">  538: 		}
 </span><span class="">  539: 		$self-&gt;{ua} = $params-&gt;{ua};
 </span><span class="">  540: 	}
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">541 → 541 → 0</span></span>  541: 	return $self-&gt;{ua};
+</span><span class="">  541: 	return $self-&gt;{ua};
 </span><span class="">  542: }
 </span><span class="">  543: 
 </span><span class="">  544: =head1 AUTHOR

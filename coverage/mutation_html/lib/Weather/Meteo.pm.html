@@ -408,7 +408,7 @@ Approximate LCSAJ segments: 133<br>
 </span><span class="">  116: The archive API host endpoint.
 </span><span class="">  117: Defaults to C&lt;archive-api.open-meteo.com&gt;.
 </span><span class="">  118: 
-</span><span class="">  119: Must be a plain DNS hostname &acirc;&#128;&#148; letters, digits, hyphens, and dots &acirc;&#128;&#148; with an
+</span><span class="">  119: Must be a plain DNS hostname - letters, digits, hyphens, and dots - with an
 </span><span class="">  120: optional port suffix (e.g. C&lt;mock.example.com:8080&gt;).
 </span><span class="">  121: Values containing C&lt;@&gt;, path segments, or other special characters are rejected
 </span><span class="">  122: with a C&lt;croak&gt; to prevent Server-Side Request Forgery (SSRF) via the
@@ -1039,7 +1039,7 @@ Approximate LCSAJ segments: 133<br>
 </span><span class="">  741: 
 </span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">742 → 743 → 747</span></span>  742: 	my $cache_key = &quot;forecast:$latitude:$longitude:$days:$tz&quot;;
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  743: 	if(my $cached = $self-&gt;{&#39;cache&#39;}-&gt;get($cache_key)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-2 tooltip" data-tooltip="Return value mutation survived. Add tests asserting exact return values. Boolean logic mutation survived. Add tests covering both true and false paths.">  744: 		return $cached;
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-2 tooltip" data-tooltip="Boolean logic mutation survived. Add tests covering both true and false paths. Return value mutation survived. Add tests asserting exact return values.">  744: 		return $cached;
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 2, Killed: 0, Survived: 2)</summary>

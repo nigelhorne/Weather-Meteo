@@ -495,7 +495,9 @@ subtest 'weather() -- malformed JSON carp identifies the failure' => sub {
 };
 
 # Purpose: an API-level {"error":true} payload must return undef.
-subtest 'weather() -- API error flag in response returns undef' => sub {
+subtest 'weather() -- API error flag returns undef and carps the API reason' => sub {
+	# The module now surfaces the API-provided reason via carp (resolved TODO).
+	# warning_like captures the carp; $result is set via lexical capture.
 	mock 'LWP::UserAgent::get' => sub {
 		my $r = HTTP::Response->new(200, 'OK');
 		$r->content($config{api_error_json});
@@ -503,7 +505,11 @@ subtest 'weather() -- API error flag in response returns undef' => sub {
 	};
 
 	my $meteo  = Weather::Meteo->new(cache => _fresh_cache());
-	my $result = $meteo->weather({ latitude => $LAT, longitude => $LON, date => $DATE });
+	my $result;
+	warning_like {
+		$result = $meteo->weather({ latitude => $LAT, longitude => $LON, date => $DATE });
+	} qr/API error/,
+	'API error flag emits a carp mentioning "API error"';
 
 	ok(!defined($result), 'API error flag returns undef');
 

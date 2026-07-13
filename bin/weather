@@ -4,6 +4,7 @@
 
 use strict;
 use warnings;
+use Cwd qw(realpath);
 use File::Basename;
 use File::HomeDir;
 use File::Spec;
@@ -26,8 +27,13 @@ my $coordinates = Geo::Coder::Free::Local->new()->geocode($location) //
 	Geo::Coder::Free->new()->geocode($location);
 
 if(!defined($coordinates) && $ENV{'OPENADDR_HOME'}) {
+	# Untaint and canonicalise the path before handing it to the geocoder
+	my ($safe_oa) = ($ENV{'OPENADDR_HOME'} =~ m{\A([\w/.\-]+)\z})
+		or die "OPENADDR_HOME contains invalid characters\n";
+	my $real_oa = realpath($safe_oa)
+		or die "OPENADDR_HOME '$safe_oa' cannot be resolved: $!\n";
 	$coordinates = Geo::Coder::Free::OpenAddresses->new(
-		openaddr => $ENV{'OPENADDR_HOME'},
+		openaddr => $real_oa,
 	)->geocode(location => $location);
 }
 
@@ -38,15 +44,25 @@ if(!defined($coordinates)) {
 # Determine cache directory: $CACHE_DIR env var or ~/.cache/lwp-cache
 my $cache_dir;
 if($ENV{'CACHE_DIR'}) {
-	$cache_dir = $ENV{'CACHE_DIR'};
-	mkdir $cache_dir, 0700 if !-d $cache_dir;
+	# Untaint: accept only printable path characters; reject shell metacharacters
+	my ($safe_dir) = ($ENV{'CACHE_DIR'} =~ m{\A([\w/.\-]+)\z})
+		or die "CACHE_DIR contains invalid characters\n";
+	# Canonicalise via realpath to prevent ../.. traversal attacks
+	my $real_dir = realpath($safe_dir)
+		or die "CACHE_DIR '$safe_dir' cannot be resolved: $!\n";
+	$cache_dir = $real_dir;
+	# Atomic mkdir: ignore EEXIST from concurrent creation (avoids TOCTOU race)
+	unless(mkdir($cache_dir, 0700) || $!{EEXIST}) {
+		die "$cache_dir: $!\n";
+	}
 	$cache_dir = File::Spec->catfile($cache_dir, 'lwp-cache');
 } else {
 	$cache_dir = File::Spec->catfile(File::HomeDir->my_home(), '.cache', 'lwp-cache');
 }
 
-if(!-d $cache_dir) {
-	mkdir $cache_dir, 0700 or die "$cache_dir: $!\n";
+# Atomic mkdir for the final cache leaf directory
+unless(mkdir($cache_dir, 0700) || $!{EEXIST}) {
+	die "$cache_dir: $!\n";
 }
 
 my $cached_browser = LWP::UserAgent::Cached->new(

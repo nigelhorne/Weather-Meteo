@@ -1,5 +1,8 @@
 Revision history for Weather::Meteo
 
+0.16
+	Mark helper routines as protected
+
 0.15	Mon Jul 13 12:51:54 EDT 2026
 	[ Security ]
 	- Fix SSRF: validate and untaint the host parameter in new() against a

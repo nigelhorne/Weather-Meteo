@@ -12,6 +12,7 @@ use Params::Get 0.13;
 use Params::Validate::Strict;
 use Return::Set;
 use Scalar::Util;
+use Sub::Protected;
 use Time::HiRes;
 use URI;
 
@@ -928,11 +929,9 @@ sub ua {
 #              normalise before validating.
 # Entry:       $coord -- a coordinate string, possibly with a leading "."
 # Exit:        normalised string: ".5" -> "0.5", "-.5" -> "-0.5", others unchanged
-# Side effects: none
 # ---------------------------------------------------------------------------
-sub _normalise_coord {
-	my ($coord) = @_;
-	my $result = $coord;
+sub _normalise_coord :Protected {
+	my $result = $_[0];
 	# Anchored with \z; atomic group on \d+ prevents O(n) backtracking
 	if(my ($frac) = $result =~ /\A-\.((?>\d+))\z/) { $result = "-0.$frac" }
 	elsif($result =~ /\A\./)                         { $result = "0$result" }
@@ -947,8 +946,8 @@ sub _normalise_coord {
 # Exit:        (nothing returned)
 # Side effects: may block for up to min_interval seconds via Time::HiRes::sleep
 # ---------------------------------------------------------------------------
-sub _enforce_rate_limit {
-	my ($self) = @_;
+sub _enforce_rate_limit :Protected {
+	my $self = $_[0];
 	my $elapsed = time() - $self->{last_request};
 	if($elapsed < $self->{min_interval}) {
 		Time::HiRes::sleep($self->{min_interval} - $elapsed);
@@ -967,7 +966,7 @@ sub _enforce_rate_limit {
 # Side effects: enforces rate limit (may sleep); updates last_request timestamp;
 #              carps on HTTP errors and JSON parse failures
 # ---------------------------------------------------------------------------
-sub _fetch_json {
+sub _fetch_json :Protected {
 	my ($self, $url) = @_;
 
 	$self->_enforce_rate_limit();

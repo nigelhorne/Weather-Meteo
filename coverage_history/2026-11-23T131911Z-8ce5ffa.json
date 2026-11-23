@@ -1,0 +1,680 @@
+{
+   "runs" : [
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439978.11782,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "-e",
+         "start" : 1795439961.7789,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439961.90009,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "-e",
+         "start" : 1795439961.89998,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439962.23327,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/00-load.t",
+         "start" : 1795439962.23205,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439962.76737,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/10-compile.t",
+         "start" : 1795439962.47392,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439963.14288,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/20-new.t",
+         "start" : 1795439962.97123,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439963.64208,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/30-basics.t",
+         "start" : 1795439963.58442,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439964.13242,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/carp.t",
+         "start" : 1795439964.07474,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439964.42461,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/comment-spelling.t",
+         "start" : 1795439964.42438,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439964.61481,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/critic.t",
+         "start" : 1795439964.61457,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439965.16619,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/edge_cases.t",
+         "start" : 1795439964.95775,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439965.52746,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/eof.t",
+         "start" : 1795439965.52723,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439965.71799,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/eol.t",
+         "start" : 1795439965.71776,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439966.20085,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/extended_tests.t",
+         "start" : 1795439966.05904,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439966.93963,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/function.t",
+         "start" : 1795439966.68994,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439970.38816,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/fuzz.t",
+         "start" : 1795439967.42228,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439968.84258,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "/opt/hostedtoolcache/perl/5.40.5/x64/bin/fuzz-harness-generator",
+         "start" : 1795439967.64359,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439968.8008,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "/opt/hostedtoolcache/perl/5.40.5/x64/bin/prove",
+         "start" : 1795439967.81869,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439968.25163,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "/tmp/nI7fGZt5BY",
+         "start" : 1795439968.18089,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439970.29349,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "/opt/hostedtoolcache/perl/5.40.5/x64/bin/fuzz-harness-generator",
+         "start" : 1795439969.15142,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439970.24827,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "/opt/hostedtoolcache/perl/5.40.5/x64/bin/prove",
+         "start" : 1795439969.33023,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439969.74292,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "/tmp/U5jIdxux1L",
+         "start" : 1795439969.68914,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439970.92103,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/integration.t",
+         "start" : 1795439970.76393,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439971.27777,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/kwalitee.t",
+         "start" : 1795439971.27752,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439972.6768,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/limiting.t",
+         "start" : 1795439971.62177,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439972.9736,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/links.t",
+         "start" : 1795439972.97336,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439973.43938,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/locales.t",
+         "start" : 1795439973.31875,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439974.02962,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/mutant_killers.t",
+         "start" : 1795439973.90478,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439974.36513,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/no404s.t",
+         "start" : 1795439974.36487,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439974.56366,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/noplan.t",
+         "start" : 1795439974.56341,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439974.83073,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/pod-cm.t",
+         "start" : 1795439974.82997,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439975.03198,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/pod-coverage.t",
+         "start" : 1795439975.03173,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439975.22673,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/pod-snippets.t",
+         "start" : 1795439975.2265,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439975.44008,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/pod-spelling.t",
+         "start" : 1795439975.43947,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439975.64125,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/pod-synopsis.t",
+         "start" : 1795439975.64101,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439975.83599,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/pod.t",
+         "start" : 1795439975.83574,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439976.05142,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/port.t",
+         "start" : 1795439976.05117,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439976.2521,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/strict.t",
+         "start" : 1795439976.25186,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439976.80072,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/unit.t",
+         "start" : 1795439976.59943,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439977.1788,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/unused.t",
+         "start" : 1795439977.17817,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439977.38503,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/vars.t",
+         "start" : 1795439977.3848,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439977.58043,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/version.t",
+         "start" : 1795439977.58019,
+         "version" : "0.15"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Interface to L<https://open-meteo.com> for historical and forecast weather data",
+         "dir" : "/home/runner/work/Weather-Meteo/Weather-Meteo",
+         "finish" : 1795439977.96987,
+         "name" : "Weather-Meteo",
+         "perl" : "5.40.5",
+         "run" : "t/weather.t",
+         "start" : 1795439977.91628,
+         "version" : "0.15"
+      }
+   ],
+   "summary" : {
+      "/opt/hostedtoolcache/perl/5.40.5/x64/bin/fuzz-harness-generator" : {
+         "branch" : {
+            "covered" : 14,
+            "error" : 76,
+            "percentage" : 15.5555555555556,
+            "total" : 90,
+            "uncoverable" : 0
+         },
+         "condition" : {
+            "covered" : 5,
+            "error" : 30,
+            "percentage" : 14.2857142857143,
+            "total" : 35,
+            "uncoverable" : 0
+         },
+         "statement" : {
+            "covered" : 66,
+            "error" : 136,
+            "percentage" : 32.6732673267327,
+            "total" : 202
+         },
+         "subroutine" : {
+            "covered" : 13,
+            "error" : 5,
+            "percentage" : 72.2222222222222,
+            "total" : 18
+         },
+         "total" : {
+            "covered" : 98,
+            "error" : 247,
+            "percentage" : 28.4057971014493,
+            "total" : 345,
+            "uncoverable" : 0
+         }
+      },
+      "/opt/hostedtoolcache/perl/5.40.5/x64/bin/prove" : {
+         "branch" : {
+            "covered" : 2,
+            "error" : 2,
+            "percentage" : 50,
+            "total" : 4,
+            "uncoverable" : 0
+         },
+         "statement" : {
+            "covered" : 14,
+            "percentage" : 100,
+            "total" : 14
+         },
+         "subroutine" : {
+            "covered" : 4,
+            "percentage" : 100,
+            "total" : 4
+         },
+         "total" : {
+            "covered" : 20,
+            "error" : 2,
+            "percentage" : 90.9090909090909,
+            "total" : 22,
+            "uncoverable" : 0
+         }
+      },
+      "/tmp/U5jIdxux1L" : {
+         "branch" : {
+            "covered" : 60,
+            "error" : 1002,
+            "percentage" : 5.64971751412429,
+            "total" : 1062,
+            "uncoverable" : 0
+         },
+         "condition" : {
+            "covered" : 32,
+            "error" : 605,
+            "percentage" : 5.02354788069074,
+            "total" : 637,
+            "uncoverable" : 0
+         },
+         "statement" : {
+            "covered" : 297,
+            "error" : 1276,
+            "percentage" : 18.8811188811189,
+            "total" : 1573
+         },
+         "subroutine" : {
+            "covered" : 36,
+            "error" : 68,
+            "percentage" : 34.6153846153846,
+            "total" : 104
+         },
+         "total" : {
+            "covered" : 425,
+            "error" : 2951,
+            "percentage" : 12.5888625592417,
+            "total" : 3376,
+            "uncoverable" : 0
+         }
+      },
+      "/tmp/nI7fGZt5BY" : {
+         "branch" : {
+            "covered" : 140,
+            "error" : 1046,
+            "percentage" : 11.8043844856661,
+            "total" : 1186,
+            "uncoverable" : 0
+         },
+         "condition" : {
+            "covered" : 82,
+            "error" : 585,
+            "percentage" : 12.2938530734633,
+            "total" : 667,
+            "uncoverable" : 0
+         },
+         "statement" : {
+            "covered" : 434,
+            "error" : 1337,
+            "percentage" : 24.5059288537549,
+            "total" : 1771
+         },
+         "subroutine" : {
+            "covered" : 45,
+            "error" : 64,
+            "percentage" : 41.2844036697248,
+            "total" : 109
+         },
+         "total" : {
+            "covered" : 701,
+            "error" : 3032,
+            "percentage" : 18.778462362711,
+            "total" : 3733,
+            "uncoverable" : 0
+         }
+      },
+      "Total" : {
+         "branch" : {
+            "covered" : 300,
+            "error" : 2160,
+            "percentage" : 12.1951219512195,
+            "total" : 2460,
+            "uncoverable" : 0
+         },
+         "condition" : {
+            "covered" : 207,
+            "error" : 1268,
+            "percentage" : 14.0338983050847,
+            "total" : 1475,
+            "uncoverable" : 0
+         },
+         "pod" : {
+            "covered" : 5,
+            "error" : 0,
+            "percentage" : 100,
+            "total" : 5
+         },
+         "statement" : {
+            "covered" : 1058,
+            "error" : 2759,
+            "percentage" : 27.718103222426,
+            "total" : 3817
+         },
+         "subroutine" : {
+            "covered" : 126,
+            "error" : 137,
+            "percentage" : 47.9087452471483,
+            "total" : 263
+         },
+         "total" : {
+            "covered" : 1696,
+            "error" : 6324,
+            "percentage" : 21.1471321695761,
+            "total" : 8020,
+            "uncoverable" : 0
+         }
+      },
+      "blib/lib/Weather/Meteo.pm" : {
+         "branch" : {
+            "covered" : 84,
+            "error" : 34,
+            "percentage" : 71.1864406779661,
+            "total" : 118,
+            "uncoverable" : 0
+         },
+         "condition" : {
+            "covered" : 88,
+            "error" : 48,
+            "percentage" : 64.7058823529412,
+            "total" : 136,
+            "uncoverable" : 0
+         },
+         "pod" : {
+            "covered" : 5,
+            "error" : 0,
+            "percentage" : 100,
+            "total" : 5
+         },
+         "statement" : {
+            "covered" : 247,
+            "error" : 10,
+            "percentage" : 96.1089494163424,
+            "total" : 257
+         },
+         "subroutine" : {
+            "covered" : 28,
+            "percentage" : 100,
+            "total" : 28
+         },
+         "total" : {
+            "covered" : 452,
+            "error" : 92,
+            "percentage" : 83.0882352941177,
+            "total" : 544,
+            "uncoverable" : 0
+         }
+      }
+   }
+}

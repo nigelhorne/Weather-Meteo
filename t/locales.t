@@ -273,8 +273,12 @@ for my $locale (@locales) {
 		}
 
 		like($usage,       qr/\AVerwendung: weather\(.*äöü/, "[$locale] usage croak is the translation");
-		like($warnings[0], qr/\A「kein-datum」は有効な日付ではありません/,       "[$locale] warning is the translation, placeholder filled");
-		unlike($usage . $warnings[0], qr/Usage:|is not a valid date/,         "[$locale] no English leaks through");
+		# Look for our warning rather than assuming it is the first: a
+		# configured logger (Log4perl, say) may emit warnings of its own, such as
+		# "Wide character in print", when it is handed non-ASCII text.
+		my ($warned) = grep { /「kein-datum」/ } @warnings;
+		like($warned // '', qr/\A「kein-datum」は有効な日付ではありません/, "[$locale] warning is the translation, placeholder filled");
+		unlike($usage . join('', @warnings), qr/Usage:|is not a valid date/,   "[$locale] no English leaks through");
 		ok(length($ua_error),                                                  "[$locale] ua(undef) still throws");
 
 		diag("[$locale] translated usage: $usage") if $ENV{TEST_VERBOSE};

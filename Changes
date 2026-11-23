@@ -1,6 +1,6 @@
 Revision history for Weather::Meteo
 
-0.16
+0.16	Mon Nov 23 10:13:37 EST 2026
 	[ Enhancements ]
 	- Retry transient API failures (HTTP 429, 502, 503, 504) with exponential
 	  backoff, honouring a numeric Retry-After header (waits capped at 60s)
@@ -32,8 +32,16 @@ Revision history for Weather::Meteo
 	- bin/weather: shared safe_path(), File::Path::make_path() replaces the
 	  hand-written mkdir idiom, autodie; the three output lines now all
 	  use "label: value" (two lacked the colon)
-	- New prerequisites: Readonly, Sub::Private, autodie (with
-	  IPC::System::Simple), POSIX, File::Path
+	- New prerequisites: Readonly, Sub::Private (0.09), Sub::Protected (0.03),
+	  autodie, POSIX, File::Path
+	- Geo::Coder::Free, LWP::UserAgent::Cached and File::HomeDir are needed
+	  only by bin/weather, so they are now "recommends" instead of hard
+	  prerequisites; bin/weather says what to install if one is missing
+	- The library uses plain "use autodie", so IPC::System::Simple is no
+	  longer a runtime prerequisite
+	- Licence wording in the POD now agrees with Makefile.PL and LICENSE (GPL2)
+	- Tests: declare IPC::Run3 and HTTP::Response; add an author test that
+	  checks the code needs no more than Perl 5.10
 
 0.15	Mon Jul 13 12:51:54 EDT 2026
 	[ Security ]

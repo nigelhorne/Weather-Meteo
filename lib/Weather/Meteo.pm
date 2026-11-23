@@ -2,7 +2,7 @@ package Weather::Meteo;
 
 use strict;
 use warnings;
-use autodie qw(:all);
+use autodie;
 
 use Carp;
 use CHI;
@@ -26,9 +26,9 @@ use URI;
 # ---------------------------------------------------------------------------
 
 # Archive API host (historical data from 1940 onwards)
-Readonly my $DEFAULT_HOST   => 'archive-api.open-meteo.com';
+Readonly my $DEFAULT_HOST => 'archive-api.open-meteo.com';
 # Forecast API host (up to 16 days ahead)
-Readonly my $FORECAST_HOST  => 'api.open-meteo.com';
+Readonly my $FORECAST_HOST => 'api.open-meteo.com';
 Readonly my $FIRST_YEAR     => 1940;
 Readonly my $EXPIRES_IN     => '1 hour';
 Readonly my $MIN_INTERVAL   => 0;
@@ -92,11 +92,11 @@ Weather::Meteo - Interface to L<https://open-meteo.com> for historical and forec
 
 =head1 VERSION
 
-Version 0.15
+Version 0.16
 
 =cut
 
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 
 =head1 SYNOPSIS
 
@@ -118,6 +118,14 @@ The module supports object-oriented usage and allows customisation of the HTTP u
       # Sunrise and sunset for a specific date
       my $times = $meteo->sunrise_sunset({ latitude => 51.34, longitude => 1.42, date => '2025-06-21' });
       print "Sunrise: $times->{sunrise}\n";
+
+      # Retry transient API failures up to 5 times, starting with a 2 second delay
+      my $patient = Weather::Meteo->new(max_retries => 5, retry_delay => 2);
+
+      # Reword or translate the warnings and errors
+      my $french = Weather::Meteo->new(messages => {
+          not_a_date => "'{date}' n'est pas une date valide",
+      });
 
 =over 4
 
@@ -208,6 +216,7 @@ Defaults to the built-in English messages.
 =item * C<min_interval>
 
 Minimum number of seconds to wait between API requests.
+May be fractional, for example C<0.5>.
 Defaults to C<0> (no delay).
 Use this option to enforce rate-limiting.
 
@@ -475,6 +484,8 @@ Returns up to 16 days of hourly and daily data.
 The C<daily> key of the response includes C<sunrise> and C<sunset> ISO-8601 datetime strings.
 
 Takes an optional C<days> argument (integer 1-16, default 7).
+Anything that is not a whole number from 1 to 16, such as C<0>, C<17>, C<1.5> or C<abc>,
+is replaced by 7 with a warning.
 Takes an optional C<tz> argument for the time zone; defaults to C<Europe/London>.
 
 On success returns a hashref containing at minimum the key C<hourly>.
@@ -1412,6 +1423,16 @@ Helper methods that need the object are L<Sub::Protected>: callable from this
 class and its subclasses but not from unrelated code.
 White-box tests therefore have to go through the public methods or subclass
 C<Weather::Meteo>.
+
+Both modules switch their checks off when C<$ENV{HARNESS_ACTIVE}> is set,
+which C<prove> and C<make test> do, so under a test harness the helpers can be
+called from anywhere.
+Set C<$Sub::Private::config{harness_bypass}> and
+C<$Sub::Protected::config{harness_bypass}> to C<0> to test the enforcement
+itself, as F<t/i18n.t> does.
+Also note that L<Sub::Protected> registers the C<:Protected> attribute in
+C<UNIVERSAL>, so it is available to every package in the process once this
+module is loaded.
 The cost of this strictness is that a subclass can reuse the protected methods
 but not the private functions, so it cannot change, for example, how URLs are built.
 
@@ -1485,7 +1506,8 @@ your caller might produce non-decimal representations.
 Nigel Horne, C<< <njh@nigelhorne.com> >>
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+it under the terms of the GNU General Public License, version 2.
+See L</LICENSE AND COPYRIGHT> below.
 
 Lots of thanks to the folks at L<https://open-meteo.com>.
 

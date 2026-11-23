@@ -4,18 +4,35 @@
 
 use strict;
 use warnings;
-use autodie qw(:all);
+use autodie;
 use Cwd qw(realpath);
 use File::Basename;
-use File::HomeDir;
 use File::Path qw(make_path);
 use File::Spec;
-use Geo::Coder::Free;
-use Geo::Coder::Free::Local;
-use Geo::Coder::Free::OpenAddresses;
-use LWP::UserAgent::Cached;
 use Readonly;
 use Weather::Meteo;
+
+# Only this script needs these, so the Weather::Meteo library does not depend on
+# them (the distribution lists them as "recommends").  Geo::Coder::Free in
+# particular pulls in a large dependency tree, including C libraries.  Check for
+# them here so that a missing one gives an instruction instead of a stack trace.
+BEGIN {
+	my @missing = grep {
+		(my $file = "$_.pm") =~ s{::}{/}g;
+		!eval { require $file; 1 };
+	} qw(
+		File::HomeDir
+		Geo::Coder::Free
+		Geo::Coder::Free::Local
+		Geo::Coder::Free::OpenAddresses
+		LWP::UserAgent::Cached
+	);
+
+	if(@missing) {
+		die "$0 needs these modules, which Weather::Meteo itself does not: @missing\n",
+			"Install them with: cpanm Geo::Coder::Free LWP::UserAgent::Cached File::HomeDir\n";
+	}
+}
 
 # What to print, in order: [ label, field in the API's 'daily' section ]
 Readonly my @REPORT => (

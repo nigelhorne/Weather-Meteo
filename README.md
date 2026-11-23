@@ -4,7 +4,7 @@ Weather::Meteo - Interface to [https://open-meteo.com](https://open-meteo.com) f
 
 ## Version
 
-Version 0.15
+Version 0.16
 
 ## Synopsis
 
@@ -27,6 +27,14 @@ The module supports object-oriented usage and allows customisation of the HTTP u
   # Sunrise and sunset for a specific date
   my $times = $meteo->sunrise_sunset({ latitude => 51.34, longitude => 1.42, date => '2025-06-21' });
   print "Sunrise: $times->{sunrise}\n";
+
+  # Retry transient API failures up to 5 times, starting with a 2 second delay
+  my $patient = Weather::Meteo->new(max_retries => 5, retry_delay => 2);
+
+  # Reword or translate the warnings and errors
+  my $french = Weather::Meteo->new(messages => {
+      not_a_date => "'{date}' n'est pas une date valide",
+  });
 ```
 
 - Caching
@@ -114,6 +122,7 @@ clones that object and merges the supplied parameters.
 - `min_interval`
 
     Minimum number of seconds to wait between API requests.
+    May be fractional, for example `0.5`.
     Defaults to `0` (no delay).
     Use this option to enforce rate-limiting.
 
@@ -332,6 +341,8 @@ Returns up to 16 days of hourly and daily data.
 The `daily` key of the response includes `sunrise` and `sunset` ISO-8601 datetime strings.
 
 Takes an optional `days` argument (integer 1-16, default 7).
+Anything that is not a whole number from 1 to 16, such as `0`, `17`, `1.5` or `abc`,
+is replaced by 7 with a warning.
 Takes an optional `tz` argument for the time zone; defaults to `Europe/London`.
 
 On success returns a hashref containing at minimum the key `hourly`.
@@ -702,6 +713,16 @@ Weather::Meteo: no '$category' variant in message    confess  variant hashref la
     class and its subclasses but not from unrelated code.
     White-box tests therefore have to go through the public methods or subclass
     `Weather::Meteo`.
+
+    Both modules switch their checks off when `$ENV{HARNESS_ACTIVE}` is set,
+    which `prove` and `make test` do, so under a test harness the helpers can be
+    called from anywhere.
+    Set `$Sub::Private::config{harness_bypass}` and
+    `$Sub::Protected::config{harness_bypass}` to `0` to test the enforcement
+    itself, as `t/i18n.t` does.
+    Also note that [Sub::Protected](https://metacpan.org/pod/Sub%3A%3AProtected) registers the `:Protected` attribute in
+    `UNIVERSAL`, so it is available to every package in the process once this
+    module is loaded.
     The cost of this strictness is that a subclass can reuse the protected methods
     but not the private functions, so it cannot change, for example, how URLs are built.
 
@@ -773,7 +794,8 @@ Weather::Meteo: no '$category' variant in message    confess  variant hashref la
 Nigel Horne, `<njh@nigelhorne.com>`
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+it under the terms of the GNU General Public License, version 2.
+See ["LICENSE AND COPYRIGHT"](#license-and-copyright) below.
 
 Lots of thanks to the folks at [https://open-meteo.com](https://open-meteo.com).
 

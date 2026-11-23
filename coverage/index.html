@@ -42,7 +42,7 @@
 		/* Show cursor points on the headers to show that they are clickable */
 		th { background-color: #f2f2f2; cursor: pointer; }
 		th.sortable {
-			cursor: pointer;
+			cursor: grab;
 			user-select: none;
 			white-space: nowrap;
 		}
@@ -54,6 +54,11 @@
 			color: #000;	/* dark for active */
 			font-weight: bold;
 		}
+		/* Prevent child spans intercepting drag events so enter/leave fire only on the th */
+		th.sortable .label,
+		th.sortable .arrow { pointer-events: none; }
+		th.col-dragging { opacity: 0.4; cursor: grabbing; }
+		th.col-drag-over { outline: 2px dashed #555; background-color: #d8eaff !important; }
 		.sparkline {
 			display: inline-block;
 			vertical-align: middle;
@@ -134,10 +139,10 @@
 	<a href="https://github.com/nigelhorne/Weather-Meteo">
 		<img src="https://img.shields.io/github/stars/nigelhorne/Weather-Meteo?style=social" alt="GitHub stars">
 	</a>
-	<img src="https://img.shields.io/badge/coverage-84%25-yellow" alt="Coverage badge">
+	<img src="https://img.shields.io/badge/coverage-83%25-yellow" alt="Coverage badge">
 </div>
 <h1>Weather::Meteo</h1><h2>Coverage Report</h2>
-<table data-sort-col="0" data-sort-order="asc">
+<table data-sort-col="0" data-sort-order="asc" data-table-id="coverage">
 <!-- Make the column headers clickable -->
 <thead>
 <tr>
@@ -153,9 +158,9 @@
 
 <tbody>
 
-<tr class="med"><td><a href="blib-lib-Weather-Meteo-pm.html" title="View coverage line by line" target="_blank">lib/Weather/Meteo.pm</a> <a href="https://github.com/nigelhorne/Weather-Meteo/blob/ac7c89b78555e07e340e6bb926cf8a57831d1417/lib/Weather/Meteo.pm" class="icon-link" title="View source on GitHub">&#128269;</a><canvas class="sparkline" width="80" height="20" data-points="97.5,92.4,92.2,97.5,95.2,84.0,83.5,77.3,84.0,95.2"></canvas></td><td>96.4</td><td>74.2</td><td>66.2</td><td>100.0</td><td><span class="coverage-badge badge-warn" title="Moderate coverage">84.2%</span></td><td class="positive" title="Previous (sparkline): 84.0%">&#9650; 11.2%</td></tr>
-<tr class="summary-row nosort"><td colspan="2"><strong>Summary</strong></td><td colspan="2">1 files</td><td colspan="3">Avg: 84%, Low: 0</td></tr>
-<tr class="high nosort"><td><strong>Total</strong></td><td>96.4</td><td>74.2</td><td>66.2</td><td>100.0</td><td colspan="2"><strong>84.2</strong></td></tr>
+<tr class="med"><td><a href="blib-lib-Weather-Meteo-pm.html" title="View coverage line by line" target="_blank">lib/Weather/Meteo.pm</a> <a href="https://github.com/nigelhorne/Weather-Meteo/blob/8ce5ffabbd63a10681f76a2794304723a233eea2/lib/Weather/Meteo.pm" class="icon-link" title="View source on GitHub">&#128269;</a><canvas class="sparkline" width="80" height="20" data-points="92.4,92.2,97.5,95.2,84.0,83.5,77.3,84.2,84.0,95.2"></canvas></td><td>96.1</td><td>71.2</td><td>64.7</td><td>100.0</td><td><span class="coverage-badge badge-warn" title="Moderate coverage">83.1%</span></td><td class="negative" title="Previous: 95.2%">&#9660; 12.1%</td></tr>
+<tr class="summary-row nosort"><td colspan="2"><strong>Summary</strong></td><td colspan="2">1 files</td><td colspan="3">Avg: 83%, Low: 0</td></tr>
+<tr class="high nosort"><td><strong>Total</strong></td><td>96.1</td><td>71.2</td><td>64.7</td><td>100.0</td><td colspan="2"><strong>83.1</strong></td></tr>
 </tbody></table>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1em;">
 	<div>
@@ -204,14 +209,15 @@ function linearRegression(data) {
 
 const dataPoints = [ { x: "2026-06-01T00:28:06+00:00", y: 92.2480620155039, delta: 0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/77687c99ef4f4a84c42560a88103e2c37afb295e", label: "2026-06-01T00:28:06+00:00", pointBackgroundColor: "gray", comment: "Update mutation results (2026-06-01 8c0c7f7)" },
 { x: "2026-06-01T01:49:30+00:00", y: 92.3636363636364, delta: 0.1, url: "https://github.com/nigelhorne/Weather-Meteo/commit/674a9df7393323739614c1d0dd8ad499fe7ccd95", label: "2026-06-01T01:49:30+00:00", pointBackgroundColor: "green", comment: "Update mutation results (2026-06-01 900bedf)" },
-{ x: "2026-06-01T02:29:06+00:00", y: 97.4545454545455, delta: 5.1, url: "https://github.com/nigelhorne/Weather-Meteo/commit/3bdb57cf3cc6c11fdd53ebd0fe23168e5648bf44", label: "2026-06-01T02:29:06+00:00", pointBackgroundColor: "green", comment: "Update mutation results (2026-06-01 8d8da55)" },
-{ x: "2026-06-01T12:41:58+00:00", y: 97.4545454545455, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/b9c6625a0adf2dc2394b40d3f8c95f30cd9de3db", label: "2026-06-01T12:41:58+00:00", pointBackgroundColor: "gray", comment: "Update mutation results (2026-06-01 cc8adad)" },
+{ x: "2026-06-01T12:41:58+00:00", y: 97.4545454545455, delta: 5.1, url: "https://github.com/nigelhorne/Weather-Meteo/commit/b9c6625a0adf2dc2394b40d3f8c95f30cd9de3db", label: "2026-06-01T12:41:58+00:00", pointBackgroundColor: "green", comment: "Update mutation results (2026-06-01 cc8adad)" },
 { x: "2026-06-01T22:56:03+00:00", y: 95.221843003413, delta: -2.2, url: "https://github.com/nigelhorne/Weather-Meteo/commit/e6f6e17b6c02bd20f2f7c45320b4d8c6f9ad9877", label: "2026-06-01T22:56:03+00:00", pointBackgroundColor: "red", comment: "Update mutation results (2026-06-01 92ee724)" },
-{ x: "2026-07-13T07:58:49-04:00", y: 95.221843003413, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/e048e7d55f6449f3db6ae15a83d0aea85c8007b3", label: "2026-07-13T07:58:49-04:00", pointBackgroundColor: "gray", comment: "Update ATG dashbard" },
-{ x: "2026-07-13T08:37:51-04:00", y: 77.2585669781931, delta: -18.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/65faba01de2a32cbcf454d7477848a1ebac6669e", label: "2026-07-13T08:37:51-04:00", pointBackgroundColor: "red", comment: "Moved the Z to the bottom of the file" },
+{ x: "2026-07-13T07:58:49-04:00", y: 47.6109215017065, delta: -47.6, url: "https://github.com/nigelhorne/Weather-Meteo/commit/e048e7d55f6449f3db6ae15a83d0aea85c8007b3", label: "2026-07-13T07:58:49-04:00", pointBackgroundColor: "red", comment: "Update ATG dashbard" },
+{ x: "2026-07-13T08:37:51-04:00", y: 77.2585669781931, delta: 29.6, url: "https://github.com/nigelhorne/Weather-Meteo/commit/65faba01de2a32cbcf454d7477848a1ebac6669e", label: "2026-07-13T08:37:51-04:00", pointBackgroundColor: "green", comment: "Moved the Z to the bottom of the file" },
 { x: "2026-07-13T10:24:09-04:00", y: 83.4845735027223, delta: 6.2, url: "https://github.com/nigelhorne/Weather-Meteo/commit/2f08da4b9c0ba7bc96b22267f155114cee184207", label: "2026-07-13T10:24:09-04:00", pointBackgroundColor: "green", comment: "Added examples" },
 { x: "2026-07-13T11:47:22-04:00", y: 84.0277777777778, delta: 0.5, url: "https://github.com/nigelhorne/Weather-Meteo/commit/0ee7bf143b94a3232d1160c04e276edadda7c60f", label: "2026-07-13T11:47:22-04:00", pointBackgroundColor: "green", comment: "Security fixes" },
-{ x: "2026-07-13T12:22:48-04:00", y: 84.0277777777778, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/bf9d833117932a8f8a5aa9f7258a3f063894e5c6", label: "2026-07-13T12:22:48-04:00", pointBackgroundColor: "gray", comment: "Update the POD covering the security change" } ];
+{ x: "2026-07-13T12:22:48-04:00", y: 84.0277777777778, delta: 0.0, url: "https://github.com/nigelhorne/Weather-Meteo/commit/bf9d833117932a8f8a5aa9f7258a3f063894e5c6", label: "2026-07-13T12:22:48-04:00", pointBackgroundColor: "gray", comment: "Update the POD covering the security change" },
+{ x: "2026-07-13T13:06:18-04:00", y: 84.1652323580034, delta: 0.1, url: "https://github.com/nigelhorne/Weather-Meteo/commit/ac7c89b78555e07e340e6bb926cf8a57831d1417", label: "2026-07-13T13:06:18-04:00", pointBackgroundColor: "green", comment: "Install DB_File" },
+{ x: "2026-11-23T13:19:52+00:00", y: 83.0882352941177, delta: -1.1, url: "https://github.com/nigelhorne/Weather-Meteo/commit/8ce5ffabbd63a10681f76a2794304723a233eea2", label: "2026-11-23T13:19:52+00:00", pointBackgroundColor: "red", comment: "Latest CI tools" } ];
 const regressionPoints = linearRegression(dataPoints);
 // Try to register the zoom plugin (handles different UMD builds)
 (function registerZoomPlugin(){
@@ -334,7 +340,10 @@ if(resetBtn) {
 	});
 }
 
-function sortTable(th, colIndex) {
+function sortTable(th) {
+	// Always recompute colIndex from DOM so it stays correct after drag-reordering.
+	// The historic onclick="sortTable(this, N)" calls still work; the N is ignored.
+	const colIndex = Array.from(th.parentElement.cells).indexOf(th);
 	const table = th.closest("table");
 	if(!table || !table.tBodies.length) return;
 
@@ -345,21 +354,30 @@ function sortTable(th, colIndex) {
 	const prevOrder = table.getAttribute("data-sort-order") || "desc";
 	const asc = (prevCol != colIndex) ? true : (prevOrder === "desc");
 
-	const isNumeric = colIndex === 0; // Date column
+	const isDate = th.dataset.sortType === 'date';
 
 	const normalRows = rows.filter(r => !r.classList.contains("nosort"));
 	const fixedRows = rows.filter(r => r.classList.contains("nosort"));
 
 	normalRows.sort((a, b) => {
-		let x = a.cells[colIndex]?.innerText.trim() || "";
-		let y = b.cells[colIndex]?.innerText.trim() || "";
+		const cellA = a.cells[colIndex];
+		const cellB = b.cells[colIndex];
+		let x = (cellA?.dataset.value ?? cellA?.innerText ?? "").trim();
+		let y = (cellB?.dataset.value ?? cellB?.innerText ?? "").trim();
 
-		if(isNumeric) {
+		if(isDate) {
 			x = Date.parse(x) || 0;
 			y = Date.parse(y) || 0;
 		} else {
-			x = x.toLowerCase();
-			y = y.toLowerCase();
+			const nx = parseFloat(x);
+			const ny = parseFloat(y);
+			if(!isNaN(nx) && !isNaN(ny)) {
+				x = nx;
+				y = ny;
+			} else {
+				x = x.toLowerCase();
+				y = y.toLowerCase();
+			}
 		}
 
 		if(x < y) return asc ? -1 : 1;
@@ -387,28 +405,235 @@ function sortTable(th, colIndex) {
 
 	table.setAttribute("data-sort-col", colIndex);
 	table.setAttribute("data-sort-order", asc ? "asc" : "desc");
+	saveSortState(table);
 }
 
+// ---------------------------------------------------------
+// Column drag-to-reorder
+// ---------------------------------------------------------
+let _dragSrcTh = null;
+let _initializingTables = false;
+
+// ---------------------------------------------------------
+// localStorage persistence for sort state and column order
+// ---------------------------------------------------------
+function _tableId(table) {
+	return table ? table.dataset.tableId : null;
+}
+
+function saveColOrder(table) {
+	const id = _tableId(table);
+	if(!id) return;
+	const headerRow = table.tHead && table.tHead.rows[0];
+	if(!headerRow) return;
+	const order = Array.from(headerRow.cells).map(th => parseInt(th.dataset.colId, 10));
+	try { localStorage.setItem('atg_col_order_' + id, JSON.stringify(order)); } catch(e) {}
+}
+
+function saveSortState(table) {
+	if(_initializingTables) return;
+	const id = _tableId(table);
+	if(!id) return;
+	const colIdx = parseInt(table.getAttribute('data-sort-col'), 10);
+	const order  = table.getAttribute('data-sort-order') || 'asc';
+	const headerRow = table.tHead && table.tHead.rows[0];
+	if(!headerRow) return;
+	const th = headerRow.cells[colIdx];
+	const colId = th ? parseInt(th.dataset.colId, 10) : colIdx;
+	try { localStorage.setItem('atg_sort_' + id, JSON.stringify({colId, order})); } catch(e) {}
+}
+
+function _restoreColOrder(table, savedOrder) {
+	const headerRow = table.tHead && table.tHead.rows[0];
+	if(!headerRow) return;
+	const placed = new Set();
+	savedOrder.forEach((wantedId, dstPos) => {
+		const srcTh = Array.from(headerRow.cells).find(
+			th => parseInt(th.dataset.colId, 10) === wantedId && !placed.has(th)
+		);
+		if(!srcTh) return;
+		const srcIdx = Array.from(headerRow.cells).indexOf(srcTh);
+		const dstIdx = dstPos < headerRow.cells.length ? dstPos : headerRow.cells.length - 1;
+		if(srcIdx === dstIdx) { placed.add(srcTh); return; }
+		Array.from(table.rows).forEach(row => {
+			if(row.cells.length <= Math.max(srcIdx, dstIdx)) return;
+			const moved = row.cells[srcIdx];
+			const ref = row.cells[dstIdx];
+			if(srcIdx < dstIdx) row.insertBefore(moved, ref ? ref.nextSibling : null);
+			else row.insertBefore(moved, ref);
+		});
+		placed.add(srcTh);
+	});
+}
+
+function _applySort(table, th, order) {
+	// Force the desired direction then call sortTable
+	const colIndex = Array.from(th.parentElement.cells).indexOf(th);
+	// Preset state so sortTable's toggle logic lands on `order`
+	table.setAttribute('data-sort-col', colIndex === 0 ? -1 : 0); // make it differ
+	table.setAttribute('data-sort-order', order === 'asc' ? 'desc' : 'asc');
+	sortTable(th);
+}
+
+function _colDragStart(e) {
+	_dragSrcTh = this;
+	e.dataTransfer.effectAllowed = 'move';
+	e.dataTransfer.setData('text/plain', ''); // required by Firefox
+	this.classList.add('col-dragging');
+}
+
+function _colDragOver(e) {
+	if(!_dragSrcTh || _dragSrcTh === this) return;
+	e.preventDefault();
+	e.dataTransfer.dropEffect = 'move';
+}
+
+function _colDragEnter(e) {
+	if(!_dragSrcTh || _dragSrcTh === this) return;
+	// Clear previous drag-over highlight before setting the new one
+	document.querySelectorAll('th.col-drag-over').forEach(t => t.classList.remove('col-drag-over'));
+	this.classList.add('col-drag-over');
+}
+
+function _colDragLeave(e) {
+	// Only clear when leaving to something truly outside this th
+	if(!this.contains(e.relatedTarget)) {
+		this.classList.remove('col-drag-over');
+	}
+}
+
+function _colDrop(e) {
+	e.preventDefault();
+	e.stopPropagation();
+	if(!_dragSrcTh || _dragSrcTh === this) return false;
+
+	const table = this.closest('table');
+	const srcIdx = Array.from(_dragSrcTh.parentElement.cells).indexOf(_dragSrcTh);
+	const dstIdx = Array.from(this.parentElement.cells).indexOf(this);
+
+	// Move the cell at srcIdx to dstIdx in every row (thead + tbody)
+	Array.from(table.rows).forEach(row => {
+		const cells = row.cells;
+		if(cells.length <= Math.max(srcIdx, dstIdx)) return;
+		const moved = cells[srcIdx];
+		if(srcIdx < dstIdx) {
+			row.insertBefore(moved, cells[dstIdx].nextSibling);
+		} else {
+			row.insertBefore(moved, cells[dstIdx]);
+		}
+	});
+
+	// Update data-sort-col so the next sort-click knows the active column's new position
+	const activeArrow = table.querySelector('thead .arrow.active');
+	if(activeArrow) {
+		const activeTh = activeArrow.closest('th');
+		const newIdx = Array.from(activeTh.parentElement.cells).indexOf(activeTh);
+		table.setAttribute('data-sort-col', newIdx);
+	}
+
+	saveColOrder(table);
+	return false;
+}
+
+function _colDragEnd(e) {
+	this.classList.remove('col-dragging');
+	document.querySelectorAll('th.col-drag-over').forEach(t => t.classList.remove('col-drag-over'));
+	_dragSrcTh = null;
+}
 
 // Initial display.
-// The table has been set up sorted in ascending order on the filename; reflect that in the GUI
+// The coverage table is pre-sorted ascending by filename from Perl; reflect that in the GUI.
+// The mutation and duplication tables are sorted by JS on load so the arrows always match data.
+// Saved column order and sort state are restored from localStorage when present.
 document.addEventListener("DOMContentLoaded", () => {
-	const table = document.querySelector("table");
-	if(!table) return;
+	_initializingTables = true;
 
-	const headers = table.tHead.rows[0].cells;
-	for(let i = 0; i < headers.length; i++) {
-		const arrow = headers[i].querySelector(".arrow");
-		if(!arrow) continue;
+	// Assign original column indices as data-col-id (must be done before any reordering)
+	document.querySelectorAll('table[data-table-id]').forEach(table => {
+		const headerRow = table.tHead && table.tHead.rows[0];
+		if(!headerRow) return;
+		Array.from(headerRow.cells).forEach((th, i) => { th.dataset.colId = i; });
+	});
 
-		if(i === 0) {
-			arrow.textContent = "▲";
-			arrow.classList.add("active");
-		} else {
-			arrow.textContent = "▲";
-			arrow.classList.remove("active");
+	// Restore saved column order, then sort state, for every identified table
+	document.querySelectorAll('table[data-table-id]').forEach(table => {
+		const id = _tableId(table);
+		// --- column order ---
+		let savedOrder = null;
+		try { savedOrder = JSON.parse(localStorage.getItem('atg_col_order_' + id)); } catch(e) {}
+		if(Array.isArray(savedOrder) && savedOrder.length) {
+			_restoreColOrder(table, savedOrder);
+		}
+
+		// --- sort state ---
+		let savedSort = null;
+		try { savedSort = JSON.parse(localStorage.getItem('atg_sort_' + id)); } catch(e) {}
+		if(savedSort && typeof savedSort.colId === 'number') {
+			const headerRow = table.tHead && table.tHead.rows[0];
+			const th = headerRow && Array.from(headerRow.cells).find(
+				c => parseInt(c.dataset.colId, 10) === savedSort.colId
+			);
+			if(th) {
+				_applySort(table, th, savedSort.order || 'asc');
+				return; // done with this table
+			}
+		}
+
+		// No saved sort — apply defaults
+		if(table.classList.contains('mut-table')) {
+			// Score% column (original col 5)
+			const headerRow = table.tHead && table.tHead.rows[0];
+			const th = headerRow && Array.from(headerRow.cells).find(
+				c => parseInt(c.dataset.colId, 10) === 5
+			);
+			if(th) _applySort(table, th, 'asc');
+		} else if(table.classList.contains('dup-table')) {
+			// File column (original col 0)
+			const headerRow = table.tHead && table.tHead.rows[0];
+			const th = headerRow && Array.from(headerRow.cells).find(
+				c => parseInt(c.dataset.colId, 10) === 0
+			);
+			if(th) _applySort(table, th, 'asc');
+		} else if(table.classList.contains('sortable-table') && !table.classList.contains('mut-table') && !table.classList.contains('dup-table')) {
+			// CPAN Testers: sort by Date (original col 0) ascending
+			const headerRow = table.tHead && table.tHead.rows[0];
+			const th = headerRow && Array.from(headerRow.cells).find(
+				c => parseInt(c.dataset.colId, 10) === 0
+			);
+			if(th) _applySort(table, th, 'asc');
+		}
+	});
+
+	// Coverage table: pre-sorted ascending by File (col 0) from Perl — just update arrows
+	const covTable = document.querySelector("table[data-table-id='coverage']");
+	if(covTable && covTable.tHead) {
+		const id = _tableId(covTable);
+		let savedSort = null;
+		try { savedSort = JSON.parse(localStorage.getItem('atg_sort_' + id)); } catch(e) {}
+		if(!savedSort) {
+			const headers = covTable.tHead.rows[0].cells;
+			for(let i = 0; i < headers.length; i++) {
+				const arrow = headers[i].querySelector(".arrow");
+				if(!arrow) continue;
+				arrow.textContent = "▲";
+				arrow.classList.toggle("active", i === 0);
+			}
 		}
 	}
+
+	_initializingTables = false;
+
+	// Wire up drag-to-reorder on every sortable column header
+	document.querySelectorAll('th.sortable').forEach(th => {
+		th.setAttribute('draggable', 'true');
+		th.title = (th.title ? th.title + ' · ' : '') + 'Drag to reorder columns';
+		th.addEventListener('dragstart',  _colDragStart);
+		th.addEventListener('dragover',   _colDragOver);
+		th.addEventListener('dragenter',  _colDragEnter);
+		th.addEventListener('dragleave',  _colDragLeave);
+		th.addEventListener('drop',       _colDrop);
+		th.addEventListener('dragend',    _colDragEnd);
+	});
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -463,138 +688,7 @@ function refresh(){
 
 <p><center>Use mouse wheel or pinch to zoom; drag to pan</center></p>
 <p>No issues active on <a href="https://rt.cpan.org/Public/Dist/Display.html?Name=Weather-Meteo">RT</a></p>
-<h2>CPAN Testers Failures for Weather-Meteo 0.14</h2>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-	const toggleFail = document.getElementById('toggleFail');
-	const toggleUnknown = document.getElementById('toggleUnknown');
-	const toggleNA = document.getElementById('toggleNA');
-	const toggleNew = document.getElementById('toggleNew');
-
-	function update() {
-		document.querySelectorAll('tr').forEach(row => {
-			// Skip header rows
-			if(row.querySelector('th')) return;
-
-			// Determine row status
-			const isFail = row.classList.contains('cpan-fail');
-			const isUnknown = row.classList.contains('cpan-unknown');
-			const isNA = row.classList.contains('cpan-na');
-			const isNew = !!row.querySelector('.new-failure');
-
-			// Decide whether to show the row
-			let show = true;
-
-			if(toggleFail && !toggleFail.checked && isFail) show = false;
-			if(toggleUnknown && !toggleUnknown.checked && isUnknown) show = false;
-			if(toggleNA && !toggleNA.checked && isNA) show = false;
-			if(toggleNew && toggleNew.checked && !isNew) show = false;
-
-			row.style.display = show ? '' : 'none';
-		});
-	}
-
-	[toggleFail, toggleUnknown, toggleNA, toggleNew].forEach(cb => {
-		if(cb) cb.addEventListener('change', update);
-	});
-
-	update();
-});
-document.addEventListener("DOMContentLoaded", () => {
-	const th = document.querySelector("table.sortable-table th");
-	if(th) sortTable(th, 0);
-});
-</script>
-
-<p><em>Showing one failure per OS/Perl combination.</em></p>
-<div style="margin-bottom: 0.5em;">
-	<label>
-		<input type="checkbox" id="toggleFail" checked>
-		FAIL
-	</label>
-	<label style="margin-left: 1em;">
-		<input type="checkbox" id="toggleUnknown">
-		UNKNOWN
-	</label>
-	<label style="margin-left: 1em;">
-		<input type="checkbox" id="toggleNA">
-		NA
-	</label>
-	<label style="margin-left: 1em;">
-		<input type="checkbox" id="toggleNew">
-		NEW only
-	</label>
-</div>
-
-<table class="sortable-table" data-sort-col="0" data-sort-order="asc">
-<thead>
-<tr>
-	<th class="sortable" onclick="sortTable(this, 0)">
-		<span class="label">Date</span> <span class="arrow">&#x25B2;</span>
-	</th>
-	<th class="sortable" onclick="sortTable(this, 1)">
-		<span class="label">OS</span> <span class="arrow">&#x25B2;</span>
-	</th>
-	<th class="sortable" onclick="sortTable(this, 2)">
-		<span class="label">Perl</span> <span class="arrow">&#x25B2;</span>
-	</th>
-	<th class="sortable" onclick="sortTable(this, 3)">
-		<span class="label">Reporter</span> <span class="arrow">&#x25B2;</span>
-	</th>
-	<th class="sortable" onclick="sortTable(this, 4)" title="Marks failures that did not occur in the previous release. The same OS, Perl version, architecture, and platform were passing before.">
-		<span class="label">New</span> <span class="arrow">&#x25B2;</span>
-	</th>
-	<th>Report</th>
-	<th>Repro</th>
-</tr>
-</thead>
-<tbody>
-
-<tr class="cpan-fail"><td>2026-06-05T18:49:00Z</td><td>linux</td><td>5.28.0</td><td>Chris Williams (BINGOS)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/581309c8-610f-11f1-a3bc-a055f9c4ba34" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-12T05:37:00Z</td><td>freebsd</td><td>5.30.3</td><td>Slaven Rezi&#x107;</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/de64e6c0-6620-11f1-8a98-b61e6e8775ea" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-01T16:05:00Z</td><td>linux</td><td>5.32.0</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/b5fc480e-5dd3-11f1-a797-994bb4af1c87" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-03T14:53:00Z</td><td>linux</td><td>5.30.3</td><td>Chris Williams (BINGOS)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/ee1a8a32-5f5b-11f1-a3bc-a055f9c4ba34" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-06T11:30:00Z</td><td>linux</td><td>5.38.2</td><td>Slaven Rezi&#x107;</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/19ff540c-619b-11f1-8984-04e16d8775ea" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-08T22:08:00Z</td><td>linux</td><td>5.26.2</td><td>Chris Williams (BINGOS)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/89d5a406-6386-11f1-a3bc-a055f9c4ba34" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-02T23:44:00Z</td><td>freebsd</td><td>5.36.3</td><td>David Cantrell (DCANTRELL)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/0b66560e-5edd-11f1-a508-f8ccbc3ca49b" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-01T15:46:00Z</td><td>linux</td><td>5.40.3</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/fd9a94b6-5dd0-11f1-9fc9-de620401a9cf" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-01T15:54:00Z</td><td>linux</td><td>5.38.3</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/2b68f27e-5dd2-11f1-91bc-876424243059" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-03T07:07:00Z</td><td>linux</td><td>5.40.2</td><td>Slaven Rezi&#x107;</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/e0847766-5f1a-11f1-80f4-00d66d8775ea" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-01T15:56:00Z</td><td>linux</td><td>5.40.1</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/69d0aad4-5dd2-11f1-ae54-9023ba6e8d90" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-02T05:07:00Z</td><td>linux</td><td>5.38.2</td><td>Slaven Rezi&#x107;</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/eb08ad72-5e40-11f1-99ab-633a6e8775ea" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-02T15:22:00Z</td><td>linux</td><td>5.32.1</td><td>Chris Williams (BINGOS)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/e8b053c6-5e96-11f1-a3bc-a055f9c4ba34" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-01T15:50:00Z</td><td>linux</td><td>5.38.4</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/a84d169a-5dd1-11f1-97f9-b349d96a6c8d" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-01T15:58:00Z</td><td>linux</td><td>5.40.0</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/ab0e6c7a-5dd2-11f1-8dd3-d5fda510f666" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-03T07:03:00Z</td><td>freebsd</td><td>5.18.4</td><td>Slaven Rezi&#x107;</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/5b672b96-5f1a-11f1-80f4-00d66d8775ea" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-02T06:54:00Z</td><td>linux</td><td>5.32.1</td><td>David Solimano</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/f5f425fe-5e4f-11f1-9d13-f2f1d732b622" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-01T15:16:00Z</td><td>linux</td><td>5.42.2</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/ec02e3ba-5dcc-11f1-9ebd-af03e4007718" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-05T22:50:00Z</td><td>linux</td><td>5.28.2</td><td>Chris Williams (BINGOS)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/fdef1050-6130-11f1-a3bc-a055f9c4ba34" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-03T07:05:00Z</td><td>linux</td><td>5.36.0</td><td>Slaven Rezi&#x107;</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/895aff82-5f1a-11f1-80f4-00d66d8775ea" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-04T18:47:00Z</td><td>linux</td><td>5.30.0</td><td>Chris Williams (BINGOS)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/cc952efe-6045-11f1-a3bc-a055f9c4ba34" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-06-03T03:23:00Z</td><td>linux</td><td>5.32.0</td><td>Chris Williams (BINGOS)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/9bc05a6a-5efb-11f1-a3bc-a055f9c4ba34" target="_blank">View</a></td><td></td></tr>
-</tbody></table>
+<p>No <A HREF="https://fast2-matrix.cpantesters.org/?dist=Weather-Meteo+0.15">CPAN Testers</A> failures reported for Weather-Meteo 0.15</p>
 <h2>Mutation Report</h2>
 <h3>Mutation Summary</h3>
 <ul>
@@ -606,30 +700,47 @@ document.addEventListener("DOMContentLoaded", () => {
 <li><b>Survived</b>: 
 9
 </li>
+<li><b>Skipped (compile)</b>: 
+0
+ <em>(mutants that did not compile; not run and not in the score)</em></li>
+<li><b>Duplication</b>: no duplicate code blocks detected</li>
 </ul>
 <h3>Mutation Files</h3>
 
-<table border='1' cellpadding='5'>
+<table border='1' cellpadding='5' class="sortable-table mut-table" data-sort-col="5" data-sort-order="asc" data-table-id="mut">
 
-<tr><th>File</th><th>Total</th><th>Killed</th><th>Survivors</th><th>Skipped</th><th>Score%</th><th>Complexity</th><th title="TER1=Statement, TER2=Branch, TER3=LCSAJ Path">TER1 / TER2 / TER3</th></tr>
+<thead>
+<tr>
+<th class="sortable" onclick="sortTable(this, 0)"><span class="label">File</span> <span class="arrow">&#x25B2;</span></th>
+<th class="sortable" onclick="sortTable(this, 1)"><span class="label">Total</span> <span class="arrow">&#x25B2;</span></th>
+<th class="sortable" onclick="sortTable(this, 2)"><span class="label">Killed</span> <span class="arrow">&#x25B2;</span></th>
+<th class="sortable" onclick="sortTable(this, 3)"><span class="label">Survivors</span> <span class="arrow">&#x25B2;</span></th>
+<th class="sortable" onclick="sortTable(this, 4)"><span class="label">Skipped</span> <span class="arrow">&#x25B2;</span></th>
+<th class="sortable" onclick="sortTable(this, 5)"><span class="label">Score%</span> <span class="arrow active">&#x25B2;</span></th>
+<th class="sortable" onclick="sortTable(this, 6)"><span class="label">Complexity</span> <span class="arrow">&#x25B2;</span></th>
+<th class="sortable" onclick="sortTable(this, 7)" title="TER1=Statement, TER2=Branch, TER3=LCSAJ Path"><span class="label">TER1 / TER2 / TER3</span> <span class="arrow">&#x25B2;</span></th>
+<th class="sortable" onclick="sortTable(this, 8)"><span class="label">Dup%</span> <span class="arrow">&#x25B2;</span></th>
+</tr>
+</thead>
+<tbody>
 
-<tr class="med"><td><a href="mutation_html/lib/Weather/Meteo.pm.html" title="View mutation line by line" target="_blank">lib/Weather/Meteo.pm</a> <a href="https://github.com/nigelhorne/Weather-Meteo/blob/ac7c89b78555e07e340e6bb926cf8a57831d1417/lib/Weather/Meteo.pm" class="icon-link" title="View source on GitHub">&#128269;</a></td><td>77</td><td>68</td><td>9</td><td>0</td><td><span class="coverage-badge badge-warn" title="Moderate">88.3%</span></td><td><span class="coverage-badge badge-bad" title="Needs improvement">113</span></td><td><span class="coverage-badge badge-good" title="Excellent">96.4%</span> / <span class="coverage-badge badge-warn" title="Moderate">74.2%</span> / <span class="coverage-badge badge-good" title="Excellent">100.0%</span></td></tr>
-</table>
+<tr class="med"><td><a href="mutation_html/lib/Weather/Meteo.pm.html" title="View mutation line by line" target="_blank">lib/Weather/Meteo.pm</a> <a href="https://github.com/nigelhorne/Weather-Meteo/blob/8ce5ffabbd63a10681f76a2794304723a233eea2/lib/Weather/Meteo.pm" class="icon-link" title="View source on GitHub">&#128269;</a></td><td>77</td><td>68</td><td>9</td><td>0</td><td><span class="coverage-badge badge-warn" title="Moderate">88.3%</span></td><td><span class="coverage-badge badge-bad" title="Needs improvement">113</span></td><td><span class="coverage-badge badge-good" title="Excellent">96.1%</span> / <span class="coverage-badge badge-warn" title="Moderate">71.2%</span> / <span class="coverage-badge badge-good" title="Excellent">100.0%</span></td><td><span class="coverage-badge badge-good" title="Low duplication">0.0%</span></td></tr>
+</tbody></table>
 
 <h2>Structural Coverage (Approximate)</h2>
 <div class='summary'>
-Statement Coverage: 96.36% (265 / 275)<br>
-Branch Coverage: 74.24% (98 / 132)<br>
+Statement Coverage: 96.11% (247 / 257)<br>
+Branch Coverage: 71.19% (84 / 118)<br>
 <em>Approximate LCSAJ derived from branch and statement coverage.</em>
 </div>
 <h2>Executive Summary</h2>
 <div class='summary'>
-Tests execute 96.36% of the code but detect only 88.31% of injected faults.
+Tests execute 96.11% of the code but detect only 88.31% of injected faults.
 </div>
 <footer>
 	<p>Project: <a href="https://github.com/nigelhorne/Weather-Meteo">Weather-Meteo</a></p>
-	<p><em>Last updated: 2026-07-13 17:10:01 - <a href="https://github.com/nigelhorne/Weather-Meteo/commit/ac7c89b78555e07e340e6bb926cf8a57831d1417">commit <code>ac7c89b</code></a></em></p>
-	<p style="float: right; font-size: 0.85em; color: #999;">Powered by <a href="https://metacpan.org/dist/App-Test-Generator">App::Test::Generator 0.43</a></p>
+	<p><em>Last updated: 2026-11-23 13:19:38 - <a href="https://github.com/nigelhorne/Weather-Meteo/commit/8ce5ffabbd63a10681f76a2794304723a233eea2">commit <code>8ce5ffa</code></a></em></p>
+	<p style="float: right; font-size: 0.85em; color: #999;">Powered by <a href="https://metacpan.org/dist/App-Test-Generator">App::Test::Generator 0.51</a></p>
 </footer>
 </body>
 </html>

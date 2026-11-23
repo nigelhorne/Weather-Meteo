@@ -7,9 +7,9 @@ permissions:
 on:
   push:
     branches:
-      - '*'
+      - "*"
     tags-ignore:
-      - '*'
+      - "*"
   pull_request:
 jobs:
   build:
@@ -19,11 +19,11 @@ jobs:
       matrix:
         os:
           - windows-latest
-        perl: ['5.32', '5.30', '5.28']
+        perl: ["5.32", "5.30", "5.28"]
     name: Perl ${{ matrix.perl }} on ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
       - name: Setup perl
         uses: shogo82148/actions-setup-perl@v1
         with:

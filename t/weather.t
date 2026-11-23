@@ -4,6 +4,7 @@ use warnings;
 use strict;
 use Test::Most tests => 12;
 use Geo::Location::Point 0.09;
+use Test::RequiresInternet ('archive-api.open-meteo.com' => 443);
 
 BEGIN {
 	use_ok('Weather::Meteo');
@@ -25,6 +26,9 @@ WEATHER: {
 		}
 		# Weather in Ramsgate on Christmas Day 2022
 		my $weather = $meteo->weather({ latitude => 51.34, longitude => 1.42, date => '2022-12-25' });
+		# weather() returns undef on HTTP/API errors (rate limiting, outage, no
+		# network), which says nothing about this code, so don't fail on it
+		skip('Open-Meteo API unavailable (rate limited or offline)', 10) unless defined($weather);
 		ok(defined($weather), 'We get data back');
 		cmp_ok(scalar(@{$weather->{'hourly'}->{'rain'}}), '==', 24, '24 sets of hourly rainfall data');
 		my @rain = @{$weather->{'hourly'}->{'rain'}};
@@ -40,18 +44,22 @@ WEATHER: {
 		} else {
 			$location = new_ok('Geo::Location::Point' => [ latitude => 51.34, longitude => 1.42 ]);
 		}
+		sleep(1);	# Throttle to be nice
 		$weather = $meteo->weather($location, '2022-12-25');
 		cmp_ok(scalar(@{$weather->{'hourly'}->{'rain'}}), '==', 24, '24 sets of hourly rainfall data');
 		@rain = @{$weather->{'hourly'}->{'rain'}};
 		isnt(qr/\D/, $rain[1]);	# Must only be digits
 
+		sleep(1);	# Throttle to be nice
 		$weather = $meteo->weather({ location => $location, date => new_ok('DateTime' => [ year => 2000, month => 6, day => 5 ]) });
 
+		sleep(1);	# Throttle to be nice
 		$weather = $meteo->weather(latitude => 51.283333, longitude => .4, date => '1970-02-12');
 		is(ref($weather), 'HASH');
 
 		# Data prior to 1940 is not in the database
 
+		sleep(1);	# Throttle to be nice
 		is($meteo->weather(latitude => 51.34, longitude => 1.42, date => '1704-11-14'), undef, 'pre 1940 data is not found');
 
 		is(ref($meteo->ua()), 'LWP::UserAgent', 'get ua works');

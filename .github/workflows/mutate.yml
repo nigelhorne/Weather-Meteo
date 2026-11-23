@@ -30,6 +30,9 @@ jobs:
           fetch-depth: 0
       - uses: shogo82148/actions-setup-perl@8b574cdc2dffdae49f803204a4f2b716a2fa1db7 # v1.44.2
 
+      - name: Install DB_File, needed for a lot of CPAN modules
+        run: sudo apt-get update && sudo apt-get install -y libdb-dev
+
       - run: cpanm --verbose --skip-satisfied --installdeps .
       - run: prove -l t/
 

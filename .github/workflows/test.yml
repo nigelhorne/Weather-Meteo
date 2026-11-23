@@ -33,6 +33,11 @@ jobs:
         with:
           perl-version: ${{ matrix.perl }}
       - run: perl -V
+      - name: Install DB_File, needed for a lot of CPAN modules
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libdb-dev
+        if: runner.os == 'Linux'
       - name: Install Dependencies
         env:
           AUTOMATED_TESTING: 1

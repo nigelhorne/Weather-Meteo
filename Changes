@@ -1,7 +1,14 @@
 Revision history for Weather::Meteo
 
 0.16
-	Mark helper routines as protected
+	[ Enhancements ]
+	- Retry transient API failures (HTTP 429, 502, 503, 504) with exponential
+	  backoff, honouring a numeric Retry-After header (waits capped at 60s)
+	- Add max_retries (default 3, 0 disables) and retry_delay (default 1s)
+	  options to new()
+
+	[ Bug Fixes ]
+	- Mark helper routines as protected
 
 0.15	Mon Jul 13 12:51:54 EDT 2026
 	[ Security ]

@@ -23,6 +23,9 @@ use constant FORECAST_HOST => 'api.open-meteo.com';
 use constant FIRST_YEAR    => 1940;
 use constant EXPIRES_IN    => '1 hour';
 use constant MIN_INTERVAL  => 0;
+use constant MAX_RETRIES   => 3;
+use constant RETRY_DELAY   => 1;
+use constant MAX_RETRY_WAIT => 60;
 # Default timezone when neither the caller nor the location object supplies one
 use constant DEFAULT_TZ    => 'Europe/London';
 
@@ -130,11 +133,27 @@ An optional logger object.
 Must respond to C<error()>.
 When supplied, API errors are reported through this logger in addition to C<Carp::carp>.
 
+=item * C<max_retries>
+
+Maximum number of times a request is retried after a transient failure:
+HTTP 429 (Too Many Requests), 502, 503 or 504.
+Defaults to C<3>.
+Set to C<0> to disable retrying.
+Other errors, including HTTP 500 and 404, are never retried.
+
 =item * C<min_interval>
 
 Minimum number of seconds to wait between API requests.
 Defaults to C<0> (no delay).
 Use this option to enforce rate-limiting.
+
+=item * C<retry_delay>
+
+Base delay in seconds before the first retry.
+The delay doubles on each subsequent retry (C<retry_delay>, C<2 * retry_delay>, ...).
+A numeric C<Retry-After> header from the server takes precedence.
+Waits are capped at 60 seconds.
+Defaults to C<1>.
 
 =item * C<ua>
 
@@ -178,6 +197,8 @@ merging any supplied parameters.
         cache        => { type => 'object',                  optional => 1 },
         host         => { type => 'scalar',                  optional => 1 },
         min_interval => { type => 'scalar',                  optional => 1 },
+        max_retries  => { type => 'scalar',                  optional => 1 },
+        retry_delay  => { type => 'scalar',                  optional => 1 },
         logger       => { type => 'object', can => 'error', optional => 1 },
     }
 
@@ -193,6 +214,10 @@ merging any supplied parameters.
     method
     Invalid host '$host': must be a plain hostname     croak  host contains @, /, or other chars
                                                               that are not safe in a DNS label
+    Invalid max_retries '$n': must be a non-negative   croak  max_retries is not a small integer
+    integer
+    Invalid retry_delay '$d': must be a non-negative   croak  retry_delay is not a plain number
+    number
 
 =cut
 
@@ -226,6 +251,18 @@ sub new {
 		(my $safe_host) = ($params->{host} =~ /\A([A-Za-z0-9][A-Za-z0-9.\-]*(:\d{1,5})?)\z/)
 			or Carp::croak("Invalid host '$params->{host}': must be a plain hostname");
 		$params->{host} = $safe_host;
+	}
+
+	# Validate and untaint retry settings (non-negative numbers only)
+	if(defined($params->{max_retries})) {
+		(my $n) = ($params->{max_retries} =~ /\A(\d{1,3})\z/)
+			or Carp::croak("Invalid max_retries '$params->{max_retries}': must be a non-negative integer");
+		$params->{max_retries} = $n;
+	}
+	if(defined($params->{retry_delay})) {
+		(my $d) = ($params->{retry_delay} =~ /\A(\d{1,4}(?:\.\d{1,3})?)\z/)
+			or Carp::croak("Invalid retry_delay '$params->{retry_delay}': must be a non-negative number");
+		$params->{retry_delay} = $d;
 	}
 
 	my $ua = $params->{ua};
@@ -969,14 +1006,35 @@ sub _enforce_rate_limit :Protected {
 sub _fetch_json :Protected {
 	my ($self, $url) = @_;
 
-	$self->_enforce_rate_limit();
+	my $max_retries = $self->{max_retries} // MAX_RETRIES;
+	my $delay       = $self->{retry_delay} // RETRY_DELAY;
+	my $res;
 
-	my $res = $self->{ua}->get($url);
-	$self->{last_request} = time();
+	for my $attempt (0 .. $max_retries) {
+		$self->_enforce_rate_limit();
 
-	unless(defined($res) && ref($res) && $res->can('is_error')) {
-		Carp::carp(ref($self) . ': UA->get did not return a valid HTTP response');
-		return;
+		$res = $self->{ua}->get($url);
+		$self->{last_request} = time();
+
+		unless(defined($res) && ref($res) && $res->can('is_error')) {
+			Carp::carp(ref($self) . ': UA->get did not return a valid HTTP response');
+			return;
+		}
+
+		last unless $res->is_error();
+
+		# Only transient failures are worth retrying
+		last unless $res->code() =~ /\A(?:429|502|503|504)\z/;
+		last if $attempt >= $max_retries;
+
+		# Honour a numeric Retry-After header, else exponential backoff
+		my $wait = $delay * (2 ** $attempt);
+		my $ra = $res->header('Retry-After');
+		if(defined($ra) && $ra =~ /\A(\d{1,6})\z/) {
+			$wait = $1;
+		}
+		$wait = MAX_RETRY_WAIT if $wait > MAX_RETRY_WAIT;
+		Time::HiRes::sleep($wait) if $wait > 0;
 	}
 
 	if($res->is_error()) {

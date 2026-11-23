@@ -4,6 +4,11 @@
 name: Test Code on BSD
 permissions:
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
@@ -19,15 +24,15 @@ jobs:
       matrix:
         os:
           - name: freebsd
-            version: "13.3"
+            version: "14.3"
             pkginstall: |
               sudo pkg install -y p5-ExtUtils-MakeMaker p5-JSON-MaybeXS p5-IPC-System-Simple p5-Test-Needs
               sudo pkg install -y p5-Params-Util p5-LWP-Protocol-https p5-Test-NoWarnings
               sudo pkg install -y p5-Devel-StackTrace
           - name: openbsd
-            version: "7.5"
+            version: "7.7"
             pkginstall: |
-              pkg_add p5-JSON-MaybeXS p5-LWP-Protocol-https p5-Params-Util
+              sudo pkg_add p5-JSON-MaybeXS p5-LWP-Protocol-https p5-Params-Util
 
     steps:
       - uses: actions/checkout@main
@@ -41,8 +46,8 @@ jobs:
           shell: bash
           run: |
             sudo hostname example.com
-            sudo ${{ matrix.os.pkginstall }}
-            curl -L https://cpanmin.us | sudo perl - --notest --installdeps --with-configure --with-develop .
+            ${{ matrix.os.pkginstall }}
+            curl -L https://cpanmin.us | sudo perl - --notest --configure-timeout=600 --build-timeout=600 --installdeps --with-configure --with-develop .
             sudo chown -R runner:runner .
             AUTOMATED_TESTING=1 perl Makefile.PL
             AUTOMATED_TESTING=1 make

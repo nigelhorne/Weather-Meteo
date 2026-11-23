@@ -96,11 +96,34 @@ clones that object and merges the supplied parameters.
     Must respond to `error()`.
     When supplied, API errors are reported through this logger in addition to `Carp::carp`.
 
+- `max_retries`
+
+    Maximum number of times a request is retried after a transient failure:
+    HTTP 429 (Too Many Requests), 502, 503 or 504.
+    Defaults to `3`.
+    Set to `0` to disable retrying.
+    Other errors, including HTTP 500 and 404, are never retried.
+
+- `messages`
+
+    A hashref of message keys to replacement text, for translating or rewording
+    the module's warnings and errors.
+    See ["i18n"](#i18n) for the keys, the placeholder syntax and plural support.
+    Defaults to the built-in English messages.
+
 - `min_interval`
 
     Minimum number of seconds to wait between API requests.
     Defaults to `0` (no delay).
     Use this option to enforce rate-limiting.
+
+- `retry_delay`
+
+    Base delay in seconds before the first retry.
+    The delay doubles on each subsequent retry (`retry_delay`, `2 * retry_delay`, ...).
+    A numeric `Retry-After` header from the server takes precedence.
+    Waits are capped at 60 seconds.
+    Defaults to `1`.
 
 - `ua`
 
@@ -145,6 +168,9 @@ merging any supplied parameters.
     cache        => { type => 'object',                  optional => 1 },
     host         => { type => 'scalar',                  optional => 1 },
     min_interval => { type => 'scalar',                  optional => 1 },
+    max_retries  => { type => 'scalar',                  optional => 1 },
+    messages     => { type => 'hashref',                 optional => 1 },
+    retry_delay  => { type => 'scalar',                  optional => 1 },
     logger       => { type => 'object', can => 'error', optional => 1 },
 }
 ```
@@ -164,6 +190,11 @@ Message                                            Type   Trigger
 method
 Invalid host '$host': must be a plain hostname     croak  host contains @, /, or other chars
                                                           that are not safe in a DNS label
+Invalid max_retries '$n': must be a non-negative   croak  max_retries is not a small integer
+integer
+Invalid retry_delay '$d': must be a non-negative   croak  retry_delay is not a plain number
+number
+'messages' argument must be a hash reference       croak  messages is not a hashref
 ```
 
 ### Weather
@@ -251,7 +282,9 @@ Message                                              Type   Trigger
 Usage: weather(latitude => ...)                      croak  lat, lon, or date is missing
 Invalid latitude/longitude format ($lat, $lon)       croak  coordinate is not numeric
 '$date' is not a valid date                          carp   date string is not YYYY-MM-DD
-Invalid date format. Expected YYYY-MM-DD             croak  strftime() returned wrong format
+Invalid date format. Expected YYYY-MM-DD             croak  date starts with a year but is not
+                                                           exactly YYYY-MM-DD (also if
+                                                           strftime() returned something else)
 UA->get did not return a valid HTTP response         carp   UA returned non-response object
 $url API returned error: $status                     carp   HTTP 4xx/5xx response
 Failed to parse JSON response: $err                  carp   response body is not valid JSON
@@ -263,24 +296,19 @@ Weather::Meteo: API error: $reason                   carp   API returned {"error
 
 #### Pseudocode
 
-```
-parse call form (3 variants: hashref, flat list, positional (location, date))
-extract lat, lon, date, tz; resolve location object if given
-croak if lat, lon, or date is missing
-normalise leading-decimal coordinates via _normalise_coord()
-validate coordinates with /\A(-?(?>\d+)(?:\.(?>\d+))?)\z/
-  (atomic groups prevent ReDoS; list-context capture also untaints for perl -T)
-croak if either coordinate does not match
-if date is a strftime object: call strftime('%F'); croak if result not YYYY-MM-DD
-return undef silently if year < 1940
-carp and return undef if date string is not YYYY-MM-DD
-return cached result if available
-build URL for /v1/archive endpoint with hourly and daily fields
-fetch and decode JSON via _fetch_json()
-return undef if HTTP error, JSON error, or API-level error (with carp)
-return undef if response has no 'hourly' key
-store result in cache
-return hashref (enforced by Return::Set)
+```perl
+params = _location_params(args)         # hashref, flat list or (location, date)
+(lat, lon) = _coordinates(params)       # croak if missing or not decimal numbers
+date = _archive_date(params.date)
+  # object with strftime => strftime('%F'); other strings must start with a year
+  # return undef quietly if year < 1940; croak unless exactly YYYY-MM-DD
+return undef if date is undef
+url = _build_url(archive host, '/v1/archive', hourly+daily fields, units)
+return _cached_report(key, url)
+  # cache hit => return it
+  # else _api_get(url): _fetch_json() with retry on 429/502/503/504;
+  #   carp and undef on HTTP error, bad JSON, or {"error":true}
+  # undef if no 'hourly' key; else cache it and return hashref (Return::Set)
 ```
 
 ### Forecast
@@ -367,25 +395,18 @@ Failed to parse JSON response: $err                  carp   response body is not
                                                            ($err is the exception with control
                                                            chars stripped and length capped at
                                                            200 chars to prevent log injection)
+Weather::Meteo: API error: $reason                   carp   API returned {"error":true,...}
 ```
 
 #### Pseudocode
 
 ```
-parse call form (3 variants: hashref, flat list, positional (location) or (location, days))
-extract lat, lon, days, tz; resolve location object if given
-croak if lat or lon is missing
-normalise leading-decimal coordinates via _normalise_coord()
-validate coordinates with /\A(-?(?>\d+)(?:\.(?>\d+))?)\z/
-  (atomic groups prevent ReDoS; list-context capture also untaints for perl -T)
-croak if either coordinate does not match
-clamp days to 1-16: carp and default to 7 if out of range
-return cached result if available
-build URL for FORECAST_HOST/v1/forecast with forecast_days parameter
-fetch and decode JSON via _fetch_json()
-return undef on error or if response has no 'hourly' key
-store result in cache
-return hashref (enforced by Return::Set)
+params = _location_params(args)         # hashref, flat list or (location, days)
+(lat, lon) = _coordinates(params)       # croak if missing or not decimal numbers
+days = params.days // 7
+if days is not an integer in 1..16: carp 'days_range'; days = 7
+url = _build_url(forecast host, '/v1/forecast', forecast_days, hourly+daily, units)
+return _cached_report(key, url)         # as for weather()
 ```
 
 ### Sunrise\_Sunset
@@ -480,29 +501,22 @@ Failed to parse JSON response: $err                  carp   response body is not
                                                            ($err is the exception with control
                                                            chars stripped and length capped at
                                                            200 chars to prevent log injection)
+Weather::Meteo: API error: $reason                   carp   API returned {"error":true,...}
 ```
 
 #### Pseudocode
 
-```
-parse call form (3 variants: hashref, flat list, positional (location) or (location, date))
-extract lat, lon, date, tz; resolve location object if given
-croak if lat or lon is missing
-normalise leading-decimal coordinates via _normalise_coord()
-validate coordinates with /\A(-?(?>\d+)(?:\.(?>\d+))?)\z/
-  (atomic groups prevent ReDoS; list-context capture also untaints for perl -T)
-croak if either coordinate does not match
-if date is a strftime object: call strftime('%F')
-carp and return undef if date string is not YYYY-MM-DD
-determine endpoint: archive for historical dates, forecast for today/future
-default date to today if omitted
-return cached result if available
-build URL with daily=sunrise,sunset only (no hourly fields)
-fetch and decode JSON via _fetch_json()
-return undef on error or if daily sunrise/sunset arrays are absent
-extract sunrise[0] and sunset[0]
-store { sunrise, sunset } in cache
-return hashref
+```perl
+params = _location_params(args)         # hashref, flat list or (location, date)
+(lat, lon) = _coordinates(params)       # croak if missing or not decimal numbers
+date = params.date (strftime('%F') if an object)
+if date is defined and not YYYY-MM-DD: carp 'not_a_date'; return undef
+use_forecast = date is undef or date >= today (host-local date)
+return cached {sunrise, sunset} if present
+url = _build_url(forecast or archive host, daily=sunrise,sunset)
+daily = _api_get(url).daily             # carp and undef on any failure
+return undef unless first sunrise and first sunset are both defined
+cache and return { sunrise => ..., sunset => ... }
 ```
 
 ### Ua
@@ -565,6 +579,77 @@ ua() requires a defined value                        croak  ua(undef) called
 must be an object that understands the get method    croak  ua arg lacks get() method
 ```
 
+### i18n
+
+```perl
+my $text = $meteo->i18n('days_range', { min => 1, max => 16, default => 7 });
+```
+
+Returns the text of a diagnostic message, with its placeholders filled in.
+Every warning and error raised by this module is produced through this method,
+so each one can be translated or reworded without touching the code.
+
+Messages are looked up first in the `messages` hashref given to ["new"](#new),
+then in the built-in English table.
+Placeholders are written `{name}` and are replaced from the arguments hashref.
+A placeholder with no matching argument is left as it is, so a missing value is
+visible in the output instead of silently vanishing.
+
+A message may be a hashref of variants instead of a string.
+The variant is chosen by the `count` argument (`one` if it is 1, otherwise
+`other`) and, if a `gender` argument is also given, the variant named
+`` one_`gender` `` or `` other_`gender` `` is preferred when it exists.
+Only the English rule for singular and plural is built in; translators for
+languages with more plural forms should put the form they need under `other`
+or add their own keys and select them with `count`.
+
+If the arguments hashref has a `sprintf` arrayref, the message is first passed
+through `sprintf` with those values, which allows `%s` style translations.
+
+Can be called as a class method.
+Confesses (with a stack trace) if the key is unknown, because that is a
+programming error and not something a caller can recover from.
+
+#### Example
+
+```perl
+# Built-in English
+print $meteo->i18n('invalid_host', { value => 'bad host' }), "\n";
+
+# German overrides, with a plural
+my $de = Weather::Meteo->new(messages => {
+    days_range => 'Tage muessen zwischen {min} und {max} liegen; verwende {default}',
+    days_left  => { one => 'noch {count} Tag', other => 'noch {count} Tage' },
+});
+print $de->i18n('days_left', { count => 3 }), "\n";    # noch 3 Tage
+```
+
+#### Api Specification
+
+##### Input
+
+```perl
+{
+    key  => { type => 'string' },
+    args => { type => 'hashref', optional => 1 },
+}
+```
+
+##### Output
+
+```perl
+{ type => 'string', min => 1 }
+```
+
+#### Messages
+
+```
+Message                                              Type     Trigger
+---------------------------------------------------  -------  ----------------------------------
+Weather::Meteo: no message defined for key '$key'    confess  key is in neither table
+Weather::Meteo: no '$category' variant in message    confess  variant hashref lacks one/other
+```
+
 ## Limitations
 
 - Archive data lag
@@ -608,12 +693,61 @@ must be an object that understands the get method    croak  ua arg lacks get() m
     [Return::Set](https://metacpan.org/pod/Return%3A%3ASet).
     List context is not currently supported.
 
-- Access control by convention only
+- Access control is enforced, but only by convention for subclasses
 
-    Private methods (prefixed with `_`) are not enforced by a module such as
-    [Sub::Private](https://metacpan.org/pod/Sub%3A%3APrivate).
-    Callers are expected to treat them as internal; white-box test files may
-    access them directly.
+    Helper functions with no need of an object (coordinate and URL handling, retry
+    arithmetic) are [Sub::Private](https://metacpan.org/pod/Sub%3A%3APrivate) and cannot be called, overridden or mocked from
+    outside this file.
+    Helper methods that need the object are [Sub::Protected](https://metacpan.org/pod/Sub%3A%3AProtected): callable from this
+    class and its subclasses but not from unrelated code.
+    White-box tests therefore have to go through the public methods or subclass
+    `Weather::Meteo`.
+    The cost of this strictness is that a subclass can reuse the protected methods
+    but not the private functions, so it cannot change, for example, how URLs are built.
+
+- Errors are reported as `undef` plus a warning
+
+    Every failure of `weather()`, `forecast()` and `sunrise_sunset()` that is not
+    a usage error comes back as `undef` with a `carp`.
+    A caller therefore cannot tell a rate limit from an outage from an unknown
+    place without parsing the warning text.
+    This is the documented contract, kept for compatibility, but an exception
+    class (or at least a `last_error()` accessor) would be a better design.
+
+- Retries block the caller
+
+    Retrying a transient failure sleeps in the calling process, for up to
+    `max_retries` times the (doubling, capped) delay: about 7 seconds with the
+    defaults.
+    Set `max_retries` to `0` for a non-blocking client, or do the retrying
+    yourself.
+
+- Messages are translatable, but the plural rules are not
+
+    ["i18n"](#i18n) understands `one` and `other` only, which is right for English,
+    German and French but not for languages with several plural forms.
+    It also does not translate strings that come from outside the module, such as
+    the text of an HTTP status line or an exception from the JSON decoder.
+
+- Dates are checked by shape, not by calendar
+
+    `2022-02-31` and `2022-13-45` have the shape `YYYY-MM-DD` and are passed to
+    the API, which rejects them.
+    The module does not check them itself because no calendar module is a
+    dependency.
+
+- "Today" is the host's date, not the location's
+
+    When `sunrise_sunset()` is called without a date, or with today's date, "today"
+    is taken from the local clock of the machine running the code, not from the
+    `tz` requested.
+    Near midnight and for distant time zones that can be a day out.
+
+- Cache keys use the text of the coordinates
+
+    `51.34` and `51.340` are cached separately, and so are `tz` spellings that
+    the API treats as the same zone.
+    The results are correct; only the hit rate suffers.
 
 - Host parameter restricted to plain DNS hostnames
 
@@ -712,6 +846,12 @@ ___ NEW ___________________________________________________
 |   => croak /Invalid host/                                |
 |   valid_hostname(h) ::= h =~ /\A[A-Za-z0-9][A-Za-z0-9.\-]*(:\d{1,5})?\z/ |
 | ~params?.host? => result!.host  = DEFAULT_HOST           |
+| params?.max_retries? ^ ~(params?.max_retries? =~ /\A\d{1,3}\z/) |
+|   => croak /Invalid max_retries/                         |
+| params?.retry_delay? ^ ~(params?.retry_delay? =~ /\A\d{1,4}(\.\d{1,3})?\z/) |
+|   => croak /Invalid retry_delay/                         |
+| params?.messages? ^ ~hashref(params?.messages?)         |
+|   => croak /'messages' argument must be a hash reference/ |
 | params?.min_interval? => result!.min_interval = params?.min_interval |
 | ~params?.min_interval => result!.min_interval = 0        |
 | result!.last_request  = 0                                |
@@ -748,10 +888,10 @@ ___ WEATHER _______________________________________________
 |                                                          |
 | PRE date? blessed ^ date?.can('strftime')               |
 |   => date? := date?.strftime('%F')                       |
-|   PRE date? !~ /^\d{4}-\d{2}-\d{2}$/                   |
+|   PRE date? !~ /\A\d{4}-\d{2}-\d{2}\z/                 |
 |     => croak /Invalid date format. Expected YYYY-MM-DD/ |
 |                                                          |
-| PRE year(date?) < 1940                                   |
+| PRE year(date?) < 1940   (string or strftime object)    |
 |   => result! = undef                                     |
 |                                                          |
 | POST cache hit for (lat, lon, date, tz)                 |
@@ -846,7 +986,7 @@ ___ SUNRISE_SUNSET ________________________________________
 |   NOTE: list-context capture untaints lat/lon (perl -T) |
 |         atomic groups eliminate O(n) backtracking        |
 |                                                          |
-| PRE date? defined ^ date? !~ /^\d{4}-\d{2}-\d{2}$/     |
+| PRE date? defined ^ date? !~ /\A\d{4}-\d{2}-\d{2}\z/   |
 |   => carp /not a valid date/ ^ result! = undef           |
 |                                                          |
 | POST ~date? v date? >= today                             |
@@ -885,6 +1025,36 @@ ___ UA ____________________________________________________
 |                                                          |
 | POST ~ua?                                                |
 |   => result! = self?.ua  (no state change)              |
+|____________________________________________________________|
+```
+
+### i18n
+
+```perl
+___ I18N __________________________________________________
+| self?  : Weather::Meteo | PACKAGE                      |
+| key?   : STRING                                         |
+| args?  : NAME |--> VALUE   (optional, default empty)    |
+|____________________________________________________________|
+| result! : STRING                                        |
+|____________________________________________________________|
+|                                                          |
+| format == self?.messages(key?)  if defined               |
+|        == BUILTIN(key?)         otherwise                |
+|                                                          |
+| ~defined(format) => confess /no message defined for key/ |
+|                                                          |
+| format : HASHREF                                         |
+|   => format := variant(format, args?.count, args?.gender)|
+|      variant prefers  <cat>_<gender>, then <cat>, then   |
+|      other;  cat = 'one' if count = 1 else 'other'       |
+|                                                          |
+| args?.sprintf : ARRAY                                    |
+|   => format := sprintf(format, args?.sprintf)            |
+|                                                          |
+| result! = format with every {n} in dom(args?) replaced  |
+|           by args?.n   (undef becomes the empty string;  |
+|           names not in dom(args?) are left as {n})       |
 |____________________________________________________________|
 ```
 

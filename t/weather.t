@@ -2,9 +2,11 @@
 
 use warnings;
 use strict;
+# Must come before the plan: with NO_NETWORK_TESTING set (or no network) it
+# issues "plan skip_all", and a second plan from Test::Most is a TAP error.
+use Test::RequiresInternet ('archive-api.open-meteo.com' => 443);
 use Test::Most tests => 12;
 use Geo::Location::Point 0.09;
-use Test::RequiresInternet ('archive-api.open-meteo.com' => 443);
 
 BEGIN {
 	use_ok('Weather::Meteo');

@@ -6,9 +6,34 @@ Revision history for Weather::Meteo
 	  backoff, honouring a numeric Retry-After header (waits capped at 60s)
 	- Add max_retries (default 3, 0 disables) and retry_delay (default 1s)
 	  options to new()
+	- Add i18n() and a messages option to new(): every warning and error is
+	  now looked up by key and can be translated or reworded; supports
+	  {name} placeholders, plural/gender variants and sprintf arguments
+	- forecast() and sunrise_sunset() now carp with the API's reason when
+	  the API reports {"error":true}, as weather() already did
 
 	[ Bug Fixes ]
 	- Mark helper routines as protected
+	- weather() returned data for a pre-1940 date given as an object with
+	  strftime(); it now returns undef silently, as for a string
+	- Dates and days were matched with $ so a trailing newline was accepted;
+	  now anchored with \z, and dates are untainted
+	- The rate limiter used whole-second time() and could wait for the wrong
+	  length of time; it now uses Time::HiRes::time()
+	- The JSON body was decoded twice (once by HTTP::Message, once as UTF-8);
+	  non-ASCII text in a response could fail to parse
+
+	[ Internal ]
+	- Coordinate, call-form, URL, cache and error handling that was copied
+	  into weather(), forecast() and sunrise_sunset() is now shared
+	- Helper functions are Sub::Private (enforce mode), helper methods are
+	  Sub::Protected; both are relaxed under a test harness
+	- Magic numbers and strings moved into Readonly tables
+	- bin/weather: shared safe_path(), File::Path::make_path() replaces the
+	  hand-written mkdir idiom, autodie; the three output lines now all
+	  use "label: value" (two lacked the colon)
+	- New prerequisites: Readonly, Sub::Private, autodie (with
+	  IPC::System::Simple), POSIX, File::Path
 
 0.15	Mon Jul 13 12:51:54 EDT 2026
 	[ Security ]

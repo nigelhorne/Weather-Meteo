@@ -85,12 +85,15 @@ WriteMakefile(
 	PL_FILES	=> {},
 	TEST_REQUIRES => $test_requires,
 	PREREQ_PM => {
+		'autodie' => 0,
 		'constant' => 0,
 		'CHI' => 0,
 		'Cwd' => 0,
 		'ExtUtils::MakeMaker' => 6.64,	# 6.64 for TEST_REQUIRES
 		'File::HomeDir' => 0,
+		'File::Path' => 0,
 		'Geo::Coder::Free' => 0,
+		'IPC::System::Simple' => 0,	# needed by autodie qw(:all)
 		'JSON::MaybeXS' => 0,
 		'LWP::UserAgent' => 0,
 		'LWP::Protocol::https' => 0,
@@ -98,8 +101,11 @@ WriteMakefile(
 		'Object::Configure' => 0,
 		'Params::Get' => 0.13,
 		'Params::Validate::Strict' => 0,
+		'POSIX' => 0,
+		'Readonly' => 0,
 		'Return::Set' => 0,
 		'Scalar::Util' => 0,
+		'Sub::Private' => 0,
 		'Sub::Protected' => 0,
 		'Time::HiRes' => 0,
 		'URI' => 0,
